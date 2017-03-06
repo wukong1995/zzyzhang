@@ -1,0 +1,82 @@
+extends ../../layout
+
+block content
+	#breadcrumbs.breadcrumbs
+		script(type="text/javascript").
+			try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+		ul.breadcrumb
+			li
+				i.ace-icon.fa.fa-home.home-icon
+				a(href="/index") 主页
+			li.active 
+				a(href="#") 个人资料
+		#nav-search.nav-search
+			form.form-search
+				span.input-icon
+					input#nav-search-input.nav-search-input(type="text", placeholder="Search ...", autocomplete="off")
+					i.ace-icon.fa.fa-search.nav-search-icon
+	.page-content
+		include ../page
+		.page-content-area
+			.row
+				.col-xs-12
+					div
+						.user-profile.row
+							.col-xs-12.col-sm-3.center
+								div
+									span.profile-picture
+										img#avatar.img-responsive(alt="Alex's Avatar", src='/libs/ace/avatars/profile-pic.jpg')
+									.space-4
+									.width-80.label.label-info.label-xlg.arrowed-in.arrowed-in-right
+										.inline.position-relative
+											span.white #{user.name}
+								.space-6
+							.col-xs-12.col-sm-9
+								.space-12
+								.profile-user-info.profile-user-info-striped
+									.profile-info-row
+										.profile-info-name  用户名 
+										.profile-info-value
+											span #{user.name}
+									.profile-info-row
+										.profile-info-name  级别 
+										.profile-info-value
+											if user.role == 0
+												span 普通用户
+											else
+												span 超级管理员
+									.profile-info-row
+										.profile-info-name  状态
+										.profile-info-value
+											if user.state == 0
+												span.label.label-sm.label-success 正常
+											else
+												span.label.label-sm.label-warning 冻结
+									.profile-info-row
+										.profile-info-name  邮箱 
+										.profile-info-value
+											span #{user.email}
+									.profile-info-row
+										.profile-info-name  联系方式 
+										.profile-info-value
+											span #{user.telphone}
+									.profile-info-row
+										.profile-info-name  注册时间 
+										.profile-info-value
+											span #{moment(user.meta.createAt).format('YYYY-MM-DD')}
+									.profile-info-row
+										.profile-info-name  更新时间
+										.profile-info-value
+											span #{moment(user.meta.updateAt).format('YYYY-MM-DD')}
+									.profile-info-row
+										.profile-info-name  个性签名 
+										.profile-info-value
+											span Editable as WYSIWYG
+								.space-20
+								.hr.hr2.hr-double
+								.space-6
+								.center
+									a.btn.btn-sm.btn-primary.btn-white.btn-round(href="/user/change")
+										i.ace-icon.fa.fa-rss.bigger-150.middle.orange2
+										span.bigger-110 修改个人资料
+										i.icon-on-right.ace-icon.fa.fa-arrow-right

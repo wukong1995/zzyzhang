@@ -1,0 +1,51 @@
+doctype
+html
+	meta(charset='utf-8')
+	include ../includes/head
+	title #{title}
+body.no-skin
+	.main-container
+		.row
+			.col-xs-12
+				.error-container
+					.well
+						h1.grey.lighter.smaller
+							span.blue.bigger-125
+								i.ace-icon.fa.fa-sitemap
+								| 												404
+							| 											页面找不到
+						| 										
+						hr
+						| 										
+						h3.lighter.smaller 本网站找不到此路径！
+						| 										
+						div									
+							.space
+							| 											
+							h4.smaller 尝试以下方法：
+							| 											
+							ul.list-unstyled.spaced.inline.bigger-110.margin-15
+								li
+									i.ace-icon.fa.fa-hand-o-right.blue
+									| 检查路径
+								| 												
+								li
+									i.ace-icon.fa.fa-hand-o-right.blue
+									| 													阅读FAQ
+								| 												
+								li
+									i.ace-icon.fa.fa-hand-o-right.blue
+									| 													将此情况反馈
+						| 										
+						hr
+						| 										
+						.space
+						| 										
+						.center
+							a.btn.btn-grey(href="javascript:history.back()")
+								i.ace-icon.fa.fa-arrow-left
+								| 												后退
+							| 											
+							a.btn.btn-primary(href="/")
+								i.ace-icon.fa.fa-tachometer
+								| 												访问首页
