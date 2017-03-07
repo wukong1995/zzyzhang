@@ -175,25 +175,23 @@ exports.showChange = function(req, res) {
 
 // changeprofile
 exports.changeprofile = function(req, res) {
-	var user = req.session.user
-		/*var id = req.query.id;
-		if (id) {
-			Bond.remove({
-				_id: id
-			}, function(err, movie) {
-				if (err) {
-					console.log(err)
-				} else {
-					res.json({
-						success: 1
-					})
-				}
-			})
-		}*/
+	var id = req.session.user._id;
+	var _user = req.body.user;
+	var userObj;
 
-	res.json({
-		success: 1
-	});
+	User.findById(id, function(err, user) {
+		if (err) {
+			console.log(err)
+		}
+		userObj = _.extend(user, _user);
+		userObj.save(function(err, user) {
+			if (err) {
+				console.log(err)
+			}
+			// 重定向请求
+			res.redirect('/user/detail');
+		})
+	})
 }
 
 // logout
@@ -215,8 +213,8 @@ exports.signinRequired = function(req, res, next) {
 /* 中间件 */
 exports.adminRequired = function(req, res, next) {
 	var user = req.session.user
-	if (user.role <= 10) {
-		return res.redirect('/signin')
+	if (user.role < 10) {
+		return res.redirect('/')
 	}
 	next()
 }
