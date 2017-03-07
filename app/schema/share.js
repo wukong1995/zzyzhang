@@ -34,7 +34,8 @@ ShareSchema.pre('save', function(next) {
 	} else {
 		this.meta.updateAt = Date.now()
 	}
-})
+	next();
+});
 
 ShareSchema.statics = {
 	fetch: function(cb) {

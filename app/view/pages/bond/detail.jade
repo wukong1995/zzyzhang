@@ -1,0 +1,55 @@
+extends ../../layout
+
+block content
+	#breadcrumbs.breadcrumbs
+		script(type="text/javascript").
+			try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+		ul.breadcrumb
+			li
+				i.ace-icon.fa.fa-home.home-icon
+				a(href="/index") 主页
+			li
+				a(href="/bond/list") 债券列表
+			li.active 
+				a(href="#") 债券详情
+		#nav-search.nav-search
+			form.form-search
+				span.input-icon
+					input#nav-search-input.nav-search-input(type="text", placeholder="Search ...", autocomplete="off")
+					i.ace-icon.fa.fa-search.nav-search-icon
+	.page-content
+		include ../page
+		.page-content-area
+			.page-header
+				h1 债券详情
+			.row
+				.col-xs-12
+					form.form-horizontal(role='form')
+						.form-group
+							label.col-sm-4.control-label.no-padding-right 债券名字 
+							.col-sm-8
+								input#bond_name.col-xs-10.col-sm-4(type='text', placeholder='债券名字',disabled="disabled",value=bond.name)
+						.form-group
+							label.col-sm-4.control-label.no-padding-right  债券代码 
+							.col-sm-8
+								input#bond_price.col-xs-10.col-sm-4(type='text', placeholder='债券代码',disabled="disabled",value=bond.code)
+						.form-group
+							label.col-sm-4.control-label.no-padding-righ 买入价格
+							.col-sm-8
+								input#bond_price.col-xs-10.col-sm-4(type='text', placeholder='买入价格',disabled="disabled",value=bond.purchase)
+						.form-group
+							label.col-sm-4.control-label.no-padding-righ 收益率
+							.col-sm-8
+								input#bond_price.col-xs-10.col-sm-4(type='text', placeholder='收益率',disabled="disabled",value=bond.yield)
+						.form-group
+							label.col-sm-4.control-label.no-padding-righ 收入
+							.col-sm-8
+								input#bond_price.col-xs-10.col-sm-4(type='text', placeholder='收益率',disabled="disabled",value=bond.income)
+						.form-group
+							label.col-sm-4.control-label.no-padding-right  备注
+							.col-sm-8
+								textarea#bond_remark.col-xs-10.col-sm-4(name="bond[remark]") #{bond.remark}				
+
+
+								
+						

@@ -6,8 +6,7 @@ var User = require('../model/account');
 exports.detail = function(req, res) {
 	var id = req.params.id
 
-	// res.sendFile()直接输出html文件
-	bond.findById(id, function(err, bond) {
+	Bond.findById(id, function(err, bond) {
 		res.render('bond/detail', {
 			title: '详情页',
 			bond: bond
@@ -16,23 +15,33 @@ exports.detail = function(req, res) {
 };
 
 exports.list = function(req, res) {
+	//判断是否是第一页，并把请求的页数转换成 number 类型
+	var page = req.query.p ? parseInt(req.query.p) : 1;
+	var count = 10;
+	var totalPage = 1;
+	var user = req.session.user;
 
 	User.findOne({
-			_id: req.session.user._id
+			_id: user._id
 		}).populate({
-			path: 'bond',
-			options: {
-				limit: 10
-			}
+			path: 'bond'
 		})
 		.exec(function(err, user) {
 			if (err) {
 				console.log(err)
 			}
+			var index = (page - 1) * count;
+			totalPage = Math.ceil(user.bond.length / count);
+			var results = user.bond.slice(index, index + count);
+			console.log(results)
+
 			// 渲染视图模板
 			res.render('bond/list', {
 				title: '列表页',
-				bonds: user.bond || []
+				bond: results || [],
+				currentPage: page,
+				totalPage: totalPage,
+				user: user
 			})
 		});
 };
@@ -64,6 +73,7 @@ exports.edit = function(req, res) {
 exports.save = function(req, res) {
 	var id = req.body.bond._id;
 	var bondObj = req.body.bond;
+	bondObj.income = parseFloat(bondObj.purchase) * parseFloat(bondObj.yield);
 	var _bond;
 
 	if (id) {
@@ -99,7 +109,7 @@ exports.save = function(req, res) {
 					if (err) {
 						console.log(err)
 					}
-					res.redirect('/bond/detail/' + food._id);
+					res.redirect('/bond/detail/' + bond._id);
 				});
 			});
 
