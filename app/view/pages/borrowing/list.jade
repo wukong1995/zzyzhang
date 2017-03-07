@@ -1,0 +1,82 @@
+extends ../../layout
+
+block content
+	#breadcrumbs.breadcrumbs
+		script(type="text/javascript").
+			try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+		ul.breadcrumb
+			li
+				i.ace-icon.fa.fa-home.home-icon
+				a(href="/index") 主页
+			li.active 
+				a(href="#") 资产列表
+		#nav-search.nav-search
+			form.form-search
+				span.input-icon
+					input#nav-search-input.nav-search-input(type="text", placeholder="Search ...", autocomplete="off")
+					i.ace-icon.fa.fa-search.nav-search-icon
+	.page-content
+		include ../page
+		.page-content-area
+			.row
+				.col-xs-12
+					.table-header
+						| 资产列表
+					div
+						table#sample-table-2.table.table-striped.table-bordered.table-hover
+							thead
+								tr
+									th.center
+										label.position-relative
+											input.ace(type='checkbox')
+											span.lbl
+									th 名字
+									th 类型
+									th.hidden-480 价格
+									th 备注
+									th 创建日期
+									th 修改日期
+									th 操作
+							tbody
+								each item in assets
+									tr
+										td.center
+											label.position-relative
+												input.ace(type='checkbox')
+												span.lbl
+										td #{item.name}
+										td #{item.type}
+										td #{item.price}
+										td #{item.remark}
+										td #{moment(item.meta.createAt).format('YYYY-MM-DD')}
+										td #{moment(item.meta.updateAt).format('YYYY-MM-DD')}
+										td
+											a.btn.btn-xs.btn-success(href="/assets/detail/#{item._id}") 详情
+											
+											a.btn.btn-xs.btn-success(href="/assets/edit/#{item._id}") 编辑
+											button.btn.btn-xs.btn-danger(type="button") 删除
+						.row
+							.col-xs-6
+								button.btn.btn-xs.btn-danger(type="button") 删除
+							.col-xs-6
+								#sample-table-2_paginate.dataTables_paginate.paging_simple_numbers
+									ul.pagination
+										if currentPage != 1
+											li.paginate_button.previous
+												a(href='/assets/list?p=1') 首页
+										- for (var i = 0; i < totalPage; i++) {
+											- if (currentPage == (i + 1)) {
+												li.paginate_button.active
+													a(href='#') #{currentPage}
+											- }
+											- else {
+												li.paginate_button
+													a(href='/assets/list?p=#{i+1}') #{i + 1}
+											- }
+										- }
+
+										li.paginate_button.next
+											if currentPage != totalPage
+												a(href='/admin/list?p=#{currentPage+1}' ) 下一页
+	script(src="/javascript/table.js")
+

@@ -16,23 +16,33 @@ exports.detail = function(req, res) {
 };
 
 exports.list = function(req, res) {
+	//判断是否是第一页，并把请求的页数转换成 number 类型
+	var page = req.query.p ? parseInt(req.query.p) : 1;
+	var count = 10;
+	var totalPage = 1;
+	var user = req.session.user;
 
 	User.findOne({
-			_id: req.session.user._id
+			_id: user._id
 		}).populate({
-			path: 'borrowing',
-			options: {
-				limit: 10
-			}
+			path: 'borrowing'
 		})
 		.exec(function(err, user) {
 			if (err) {
 				console.log(err)
 			}
+			var index = (page - 1) * count;
+			totalPage = Math.ceil(user.borrowing.length / count);
+			var results = user.borrowing.slice(index, index + count);
+			console.log(results)
+
 			// 渲染视图模板
 			res.render('borrowing/list', {
 				title: '列表页',
-				borrowings: user.borrowing || []
+				borrowing: results || [],
+				currentPage: page,
+				totalPage: totalPage,
+				user: user
 			})
 		});
 };

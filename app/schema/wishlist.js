@@ -33,7 +33,8 @@ WishlistSchema.pre('save', function(next) {
 	} else {
 		this.meta.updateAt = Date.now()
 	}
-})
+	next();
+});
 
 WishlistSchema.statics = {
 	fetch: function(cb) {

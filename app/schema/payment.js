@@ -37,7 +37,8 @@ PaymentSchema.pre('save', function(next) {
 	} else {
 		this.meta.updateAt = Date.now()
 	}
-})
+	next();
+});
 
 PaymentSchema.statics = {
 	fetch: function(cb) {

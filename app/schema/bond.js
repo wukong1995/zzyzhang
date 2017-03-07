@@ -7,8 +7,12 @@ var SALT_WORK_FACTOR = 10;
 var BondSchema = new mongoose.Schema({
 	name: String,
 	code: String,
-	price: Number,
-	interest_rate: String,
+	purchase: Number,
+	// 收益率
+	yield: Number,
+	// 收益
+	income: Number,
+	remark: String,
 	meta: {
 		createAt: {
 			type: Date,
@@ -33,7 +37,8 @@ BondSchema.pre('save', function(next) {
 	} else {
 		this.meta.updateAt = Date.now()
 	}
-})
+	next();
+});
 
 
 BondSchema.statics = {
