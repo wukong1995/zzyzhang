@@ -12,6 +12,12 @@ var AccountSchema = new mongoose.Schema({
 	password: String,
 	telphone: String,
 	email: String,
+	Head_portrait: String,
+	real_name: String,
+	// 1男2女
+	sex: Number,
+	birth: Date,
+	signature: String,
 
 	// 0:normal user
 	// 1:verified user
@@ -81,13 +87,13 @@ AccountSchema.pre('save', function(next) {
 
 	bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
 		if (err) {
-			return next(err)
+			return next(err);
 		}
 		bcrypt.hash(_account.password, salt, function(err, hash) {
 			if (err) {
-				return next(err)
+				return next(err);
 			}
-			_account.password = hash
+			_account.password = hash;
 			next()
 		}, null)
 	})

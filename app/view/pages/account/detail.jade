@@ -52,6 +52,22 @@ block content
 												span.label.label-sm.label-success 正常
 											else
 												span.label.label-sm.label-warning 冻结
+
+									.profile-info-row
+										.profile-info-name  真实姓名 
+										.profile-info-value
+											span #{user.real_name}
+									.profile-info-row
+										.profile-info-name  性别 
+										.profile-info-value
+											if user.sex == 1
+												span 男
+											else
+												span 女
+									.profile-info-row
+										.profile-info-name  出生日期 
+										.profile-info-value
+											span #{moment(user.birth).format('YYYY-MM-DD')}
 									.profile-info-row
 										.profile-info-name  邮箱 
 										.profile-info-value
@@ -71,7 +87,7 @@ block content
 									.profile-info-row
 										.profile-info-name  个性签名 
 										.profile-info-value
-											span Editable as WYSIWYG
+											span #{user.signature}
 								.space-20
 								.hr.hr2.hr-double
 								.space-6

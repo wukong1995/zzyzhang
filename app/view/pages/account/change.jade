@@ -8,8 +8,10 @@ block content
 			li
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
+			li
+				a(href="/user/detail") 个人资料
 			li.active 
-				a(href="#") 个人资料
+				a(href="#") 修改资料
 		#nav-search.nav-search
 			form.form-search
 				span.input-icon
@@ -23,7 +25,7 @@ block content
 					div
 						#user-profile-1.user-profile.row
 							.col-sm-12
-								form.form-horizontal
+								form#Form.form-horizontal(method="POST",action="/user/changeprofile")
 									.tabbable
 										ul.nav.nav-tabs
 											li.active
@@ -35,35 +37,43 @@ block content
 												h4.header.blue.bolder.smaller 基本资料
 												.row
 													.col-xs-12.col-sm-4
-														input#header_portrait(type='file')
+														input#header_portrait(type='file',name="user[head_portrait]")
 													.vspace-12-sm
 													.col-xs-12.col-sm-8
 														.form-group
 															label.col-sm-4.control-label.no-padding-right(for='form-field-username') 用户名
 															.col-sm-8
-																input#form-field-username.col-xs-12.col-sm-10(type='text', placeholder='Username', value='#{user.name}')
+																input#form-field-username.col-xs-12.col-sm-10(type='text', placeholder='Username', value=user.name,name="user[name]")
 														.space-4
 														.form-group
 															label.col-sm-4.control-label.no-padding-right(for='form-field-first') 真实姓名
 															.col-sm-8
-																input#form-field-first.col-xs-12.col-sm-10(type='text', placeholder='First Name', value='#{user.name}')
+																input#form-field-first.col-xs-12.col-sm-10(type='text', placeholder='真实姓名', value=user.real_name,name="user[real_name]")
 												hr
 												.form-group
 													label.col-sm-3.control-label.no-padding-right 性别
 													.col-sm-9
 														label.inline
-															input.ace(name='form-field-radio', type='radio')
-															span.lbl.middle  男
+															if user.sex == 1
+																input.ace(type='radio',checked="checked",value="1",name="user[sex]")
+																span.lbl.middle  男
+															else 
+																input.ace(type='radio',value="1",name="user[sex]")
+																span.lbl.middle  男
 														label.inline
-															input.ace(name='form-field-radio', type='radio')
-															span.lbl.middle  女
+															if user.sex == 2
+																input.ace(type='radio',checked="checked",value="2",name="user[sex]")
+																span.lbl.middle  女
+															else 
+																input.ace(type='radio',value="2",name="user[sex]")
+																span.lbl.middle  女
 												.space-4
 												.form-group
 													label.col-sm-3.control-label.no-padding-right(for='form-field-date') 生日
 													.col-sm-9
 														.input-medium
 															.input-group
-																input#form-field-date.input-xlarge.date-picker(type='text', data-date-format='dd-mm-yyyy', placeholder='dd-mm-yyyy')
+																input#form-field-date.input-xlarge.date-picker(type='text', data-date-format='yyyy-mm-dd', placeholder='yyyy-mm-dd',value=moment(user.birth).format('YYYY-MM-DD'),name="user[birth]")
 																span.input-group-addon
 																	i.ace-icon.fa.fa-calendar
 												.space-4
@@ -71,27 +81,27 @@ block content
 													label.col-sm-3.control-label.no-padding-right(for='form-field-email') 邮箱
 													.col-sm-9
 														span.input-icon.input-icon-right
-															input#form-field-email.input-xlarge(type='email', value='#{user.email}')
+															input#form-field-email.input-xlarge(type='email', value=user.email,name="user[email]")
 															i.ace-icon.fa.fa-envelope
 												.space-4
 												.form-group
 													label.col-sm-3.control-label.no-padding-right(for='form-field-phone') 手机号
 													.col-sm-9
 														span.input-icon.input-icon-right
-															input#form-field-phone.input-xlarge(type='text',value="#{user.telphone}")
+															input#form-field-phone.input-xlarge(type='text',value=user.telphone,name="user[telphone]")
 															i.ace-icon.fa.fa-phone.fa-flip-horizontal
 												.space-4
 												.form-group
 													label.col-sm-3.control-label.no-padding-right(for='form-field-comment') 个性签名
 													.col-sm-9
-														textarea#form-field-comment
+														textarea#form-field-comment(,name="user[signature]") #{user.signature}
 												.space
 									.clearfix.form-actions
 										.col-md-offset-4.col-md-8
 											button.btn(type='reset')
 												i.ace-icon.fa.fa-undo.bigger-110
 												| 	重置
-											button.btn.btn-info(type='button')
+											button#form_submit.btn.btn-info(type='button')
 												i.ace-icon.fa.fa-check.bigger-110
 												| 	确定
 	script(src="/javascript/account_detail.js")
