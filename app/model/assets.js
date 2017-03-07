@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var AssetSchema = require('../schema/assets');
-var Asset = mongoose.model('Asset', AssetSchema);
+var AssetsSchema = require('../schema/assets');
+var Assets = mongoose.model('Assets', AssetsSchema);
 
-module.exports = Asset;
+module.exports = Assets;
