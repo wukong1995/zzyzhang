@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
-var SALT_WORK_FACTOR = 10;
 
 var AssetsSchema = new mongoose.Schema({
 	name: String,
@@ -38,6 +37,7 @@ AssetsSchema.pre('save', function(next) {
 	} else {
 		this.meta.updateAt = Date.now()
 	}
+	next()
 })
 
 AssetsSchema.statics = {

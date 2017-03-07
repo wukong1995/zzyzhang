@@ -17,22 +17,33 @@ exports.detail = function(req, res) {
 
 exports.list = function(req, res) {
 
+	//判断是否是第一页，并把请求的页数转换成 number 类型
+	var page = req.query.p ? parseInt(req.query.p) : 1;
+	var count = 10;
+	var totalPage = 1;
+	var user = req.session.user;
+
 	User.findOne({
-			_id: req.session.user._id
+			_id: user._id
 		}).populate({
-			path: 'assets',
-			options: {
-				limit: 10
-			}
+			path: 'assets'
 		})
 		.exec(function(err, user) {
 			if (err) {
 				console.log(err)
 			}
+			var index = (page - 1) * count;
+			totalPage = Math.ceil(user.assets.length / count);
+			var results = user.assets.slice(index, index + count);
+			console.log(results)
+
 			// 渲染视图模板
 			res.render('assets/list', {
 				title: '列表页',
-				foods: user.assets || []
+				assets: results || [],
+				currentPage: page,
+				totalPage: totalPage,
+				user: user
 			})
 		});
 };
@@ -40,7 +51,7 @@ exports.list = function(req, res) {
 exports.add = function(req, res) {
 	// res.sendFile()直接输出html文件
 	res.render('assets/add', {
-		title: '新增页',
+		title: '添加资产',
 		assets: {
 			name: '',
 			type: '',
@@ -71,6 +82,10 @@ exports.save = function(req, res) {
 			if (err) {
 				console.log(err)
 			}
+
+			console.log(assets)
+			console.log(assetsObj)
+
 			_assets = _.extend(assets, assetsObj);
 			_assets.save(function(err, assets) {
 				if (err) {
@@ -81,25 +96,26 @@ exports.save = function(req, res) {
 			})
 		})
 	} else {
+
 		var user_id = req.session.user._id;
 		assetsObj.account = user_id;
-		_assets = new Assert(assetsObj);
+		_assets = new Assets(assetsObj);
 
 		_assets.save(function(err, assets) {
 			if (err) {
 				console.log(err);
 			}
-
 			User.findById(user_id, function(err, user) {
 				if (err) {
 					console.log(err);
 				}
+
 				user.assets.push(assets._id)
 				user.save(function(err, user) {
 					if (err) {
 						console.log(err)
 					}
-					res.redirect('/assets/detail/' + food._id);
+					res.redirect('/assets/detail/' + assets._id);
 				});
 			});
 
