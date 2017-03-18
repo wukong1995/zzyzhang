@@ -19,8 +19,9 @@ exports.list = function(req, res) {
 
 	//判断是否是第一页，并把请求的页数转换成 number 类型
 	var page = req.query.p ? parseInt(req.query.p) : 1;
-	var count = 10;
+	var count = 15;
 	var totalPage = 1;
+	var totalCount = 0;
 	var user = req.session.user;
 
 	User.findOne({
@@ -33,7 +34,10 @@ exports.list = function(req, res) {
 				console.log(err)
 			}
 			var index = (page - 1) * count;
-			totalPage = Math.ceil(user.assets.length / count);
+			totalCount = user.assets.length;
+			if (totalCount != 0) {
+				totalPage = Math.ceil(totalCount / count);
+			}
 			var results = user.assets.slice(index, index + count);
 			console.log(results)
 
@@ -43,6 +47,7 @@ exports.list = function(req, res) {
 				assets: results || [],
 				currentPage: page,
 				totalPage: totalPage,
+				totalCount: totalCount,
 				user: user
 			})
 		});
@@ -130,11 +135,14 @@ exports.del = function(req, res) {
 			_id: id
 		}, function(err, assets) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					success: 0
+				});
 			} else {
 				res.json({
 					success: 1
-				})
+				});
 			}
 		})
 	}

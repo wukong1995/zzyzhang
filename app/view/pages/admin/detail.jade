@@ -8,8 +8,10 @@ block content
 			li
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
+			li
+				a(href="/admin/list") 用户列表
 			li.active 
-				a(href="#") 个人资料
+				a(href="#") 用户资料
 		#nav-search.nav-search
 			form.form-search
 				span.input-icon
@@ -23,6 +25,7 @@ block content
 					div
 						.user-profile.row
 							.col-xs-12.col-sm-3.center
+								.space-12
 								div
 									span.profile-picture
 										img#avatar.img-responsive(alt="Alex's Avatar", src='/libs/ace/avatars/profile-pic.jpg')

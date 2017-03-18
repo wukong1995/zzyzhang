@@ -19,6 +19,7 @@ exports.list = function(req, res) {
 	var page = req.query.p ? parseInt(req.query.p) : 1;
 	var count = 10;
 	var totalPage = 1;
+	var totalCount = 0;
 	var user = req.session.user;
 
 	User.findOne({
@@ -31,7 +32,10 @@ exports.list = function(req, res) {
 				console.log(err)
 			}
 			var index = (page - 1) * count;
-			totalPage = Math.ceil(user.bond.length / count);
+			totalCount = user.bond.length;
+			if (totalCount != 0) {
+				totalPage = Math.ceil(totalCount / count);
+			}
 			var results = user.bond.slice(index, index + count);
 			console.log(results)
 
@@ -41,6 +45,7 @@ exports.list = function(req, res) {
 				bond: results || [],
 				currentPage: page,
 				totalPage: totalPage,
+				totalCount: totalCount,
 				user: user
 			})
 		});
@@ -124,11 +129,14 @@ exports.del = function(req, res) {
 			_id: id
 		}, function(err, movie) {
 			if (err) {
-				console.log(bond)
+				console.log(err);
+				res.json({
+					success: 0
+				});
 			} else {
 				res.json({
 					success: 1
-				})
+				});
 			}
 		})
 	}

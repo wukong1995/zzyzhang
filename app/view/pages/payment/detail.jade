@@ -9,9 +9,9 @@ block content
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
 			li
-				a(href="/assets/list") 资产列表
+				a(href="/payment/list") 收支列表
 			li.active 
-				a(href="#") 资产详情
+				a(href="#") 收支详情
 		#nav-search.nav-search
 			form.form-search
 				span.input-icon
@@ -21,26 +21,33 @@ block content
 		include ../page
 		.page-content-area
 			.page-header
-				h1 资产详情
+				h1 收支详情
 			.row
 				.col-xs-12
-					form#assets_form.form-horizontal(role='form',method="POST",action="/assets/action/save")
+					form#payment_form.form-horizontal(role='form',method="POST",action="/payment/action/save")
 						.form-group
-							label.col-sm-4.control-label.no-padding-right 资产名字 
+							label.col-sm-4.control-label.no-padding-right 类型 
 							.col-sm-8
-								input#assets_name.col-xs-10.col-sm-4(type='text', placeholder='资产名字',name="assets[name]",value=assets.name,disabled="disabled")
+								if payment.type == 0
+									| 收入
+								else 
+									| 支出
 						.form-group
-							label.col-sm-4.control-label.no-padding-right  资产类型 
+							label.col-sm-4.control-label.no-padding-right 收支名字 
 							.col-sm-8
-								input#assets_type.col-xs-10.col-sm-4(type='text', placeholder='资产名字',name="assets[name]",value=assets.type,disabled="disabled")
+								input#payment_name.col-xs-10.col-sm-4(type='text', placeholder='收支名字',name="payment[name]",value=payment.name,disabled="disabled")
 						.form-group
-							label.col-sm-4.control-label.no-padding-righ 资产价格
+							label.col-sm-4.control-label.no-padding-right  类型 
 							.col-sm-8
-								input#assets_price.col-xs-10.col-sm-4(type='text', placeholder='资产价格',name="assets[price]",value=assets.price,disabled="disabled")
+								input#payment_type.col-xs-10.col-sm-4(type='text', placeholder='收支名字',name="payment[product_type]",value=payment.product_type,disabled="disabled")
+						.form-group
+							label.col-sm-4.control-label.no-padding-righ 收支价格
+							.col-sm-8
+								input#payment_price.col-xs-10.col-sm-4(type='text', placeholder='收支价格',name="payment[price]",value=payment.price,disabled="disabled")
 						.form-group
 							label.col-sm-4.control-label.no-padding-right(for='form-field-1')  备注
 							.col-sm-8
-								input#assets_remark.col-xs-10.col-sm-4(type='text', placeholder='备注',name="assets[remark]",value=assets.remark,disabled="disabled")
+								input#payment_remark.col-xs-10.col-sm-4(type='text', placeholder='备注',name="payment[remark]",value=payment.remark,disabled="disabled")
 
 
 								

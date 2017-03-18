@@ -5,6 +5,7 @@ var _ = require('underscore');
 exports.showSignin = function(req, res) {
 	res.render('signin', {
 		title: '登录页面',
+		error: req.session.error
 	})
 }
 
@@ -78,8 +79,14 @@ exports.signin = function(req, res) {
 			console.log(err)
 		}
 		if (!user) {
-			console.log("no user")
-			return res.redirect('/signup')
+			console.log("no user");
+			req.session.error = '找不到该用户'
+			return res.redirect('/');
+		}
+		if (user.state == 1) {
+			console.log("user freeze");
+			req.session.error = '账户已冻结'
+			return res.redirect('/');
 		}
 		user.comparePassword(_user.password, function(err, isMatch) {
 			if (err) {
@@ -88,10 +95,12 @@ exports.signin = function(req, res) {
 
 			if (isMatch) {
 				req.session.user = user;
-				console.log("success");
+				delete req.session.error;
+				console.log(user.name, "success");
 				return res.redirect('/index');
 			} else {
-				console.log("password is not matched")
+				console.log("password is not matched");
+				req.session.error = '密码不匹配'
 				return res.redirect('/')
 			}
 		})
@@ -207,7 +216,7 @@ exports.signinRequired = function(req, res, next) {
 	if (!user) {
 		return res.redirect('/signin')
 	}
-	next()
+	next();
 }
 
 /* 中间件 */
@@ -216,5 +225,5 @@ exports.adminRequired = function(req, res, next) {
 	if (user.role < 10) {
 		return res.redirect('/')
 	}
-	next()
+	next();
 }

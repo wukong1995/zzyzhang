@@ -26,10 +26,6 @@ block content
 						table#sample-table-2.table.table-striped.table-bordered.table-hover
 							thead
 								tr
-									th.center
-										label.position-relative
-											input.ace(type='checkbox')
-											span.lbl
 									th 用户名
 									th 电话
 									th.hidden-480 邮箱
@@ -37,14 +33,13 @@ block content
 										i.ace-icon.fa.fa-clock-o.bigger-110.hidden-480
 										| 			角色
 									th.hidden-480 状态
-									th
+									th 操作
 							tbody
-								each item in users
+								if users.length == 0
 									tr
-										td.center
-											label.position-relative
-												input.ace(type='checkbox')
-												span.lbl
+										td.center(colspan="10") 无记录
+								each item in users
+									tr(id="i-#{item._id}")
 										td #{item.name}
 										td #{item.telphone}
 										td #{item.email}
@@ -53,37 +48,112 @@ block content
 												span 普通用户
 											else
 												span 超级管理员
-										td.hidden-480
-											if item.state == 0
-												span.label.label-sm.label-success 正常
-											else
-												span.label.label-sm.label-warning 冻结
 										td
-											a.btn.btn-xs.btn-success(href="/admin/detail/#{item._id}")
-												i.ace-icon.fa.fa-check.bigger-120
-												| 详情
+											if item.state == 0
+												span.state.label.label-sm.label-success 正常
+											else
+												span.state.label.label-sm.label-warning 冻结
+										td
+											.hidden-sm.hidden-xs.action-buttons
+												a.blue(href='/admin/detail/#{item._id}')
+													i.ace-icon.fa.fa-search-plus.bigger-130
+												a.change_btn.blue(href="javascript:void(0);",data-id="#{item._id}")
+													i.ace-icon.fa.fa-pencil.bigger-130
+											.hidden-md.hidden-lg
+												.inline.position-relative
+													button.btn.btn-minier.btn-yellow.dropdown-toggle(data-toggle='dropdown', data-position='auto')
+														i.ace-icon.fa.fa-caret-down.icon-only.bigger-120
+													ul.dropdown-menu.dropdown-only-icon.dropdown-yellow.dropdown-menu-right.dropdown-caret.dropdown-close
+														li
+															a.tooltip-info(href='/admin/detail/#{item._id}', data-rel='tooltip', title='', data-original-title='View')
+																span.blue
+																	i.ace-icon.fa.fa-search-plus.bigger-120
+														li
+															a.change_btn.tooltip-error(data-rel='tooltip', title='', data-original-title='Change',data-id="#{item._id}")
+																span.red
+																	i.ace-icon.fa.fa-pencil.bigger-120
 						.row
 							.col-xs-6
 								.dataTables_info(role='status', aria-live='polite') 每页显示10条
 							.col-xs-6
-								#sample-table-2_paginate.dataTables_paginate.paging_simple_numbers
-									ul.pagination
-										if currentPage != 1
-											li.paginate_button.previous
-												a(href='/admin/list?p=1') 首页
-										- for (var i = 0; i < totalPage; i++) {
-											- if (currentPage == (i + 1)) {
-												li.paginate_button.active
-													a(href='#') #{currentPage}
-											- }
-											- else {
-												li.paginate_button
-													a(href='/admin/list?p=#{i+1}') #{i + 1}
-											- }
-										- }
+								.message-footer.clearfix(style="background-color:#ffffff;border:none;padding:0px;")
+									.pull-right
+										.inline.middle  
+											| #{currentPage}/
+											span#total_page #{totalPage}
+											| (共#{totalCount}条)&nbsp; &nbsp;
+											ul.pagination.middle
+												if currentPage == 1
+													li.disabled
+														span
+															i.ace-icon.fa.fa-step-backward.middle
+													li.disabled
+														span
+															i.ace-icon.fa.fa-caret-left.bigger-140.middle
+												else 
+													li
+														a(href="/admin/list?p=1")
+															i.ace-icon.fa.fa-step-backward.middle
+													li
+														a(href="/admin/list?p=#{currentPage-1}")
+															i.ace-icon.fa.fa-caret-left.bigger-140.middle
 
-										li.paginate_button.next
-											if currentPage != totalPage
-												a(href='/admin/list?p=#{currentPage+1}' ) 下一页
+												li
+													span
+														input#page(value="#{currentPage}" maxlength="3" type="text")
+												if currentPage != totalPage
+													li
+														a(href="/admin/list?p=#{currentPage+1}")
+															i.ace-icon.fa.fa-caret-right.bigger-140.middle
+
+													li
+														a(href="/admin/list?p=#{totalPage}")
+															i.ace-icon.fa.fa-step-forward.middle
+												else 
+													li.disabled
+														span
+															i.ace-icon.fa.fa-caret-right.bigger-140.middle
+
+													li.disabled
+														span
+															i.ace-icon.fa.fa-step-forward.middle
 	script(src="/javascript/table.js")
+	script(type="text/javascript").
+		$(function() {
+			$('.change_btn').on('click',function() {
+				var id = $(this).data('id');
+				var tr = $('#i-' + id);
 
+				bootbox.confirm("确定要修改账户状态吗?", function(result) {
+					if (result) {
+						$.ajax({
+							type: 'POST',
+							url: '/admin/edit?id=' + id,
+						})
+						.success(function(results) {
+							if (results.success === 1) {
+								if (tr.length > 0) {
+									if(results.state == 1) {
+										tr.find('.state')
+											.html('冻结')
+											.removeClass('label-success')
+											.addClass('label-warning');
+									} else {
+										tr.find('.state')
+											.html('正常')
+											.removeClass('label-warning')
+											.addClass('label-success');
+									}
+								}
+								bootbox.alert('修改成功！');
+							} else {
+								bootbox.alert('修改失败，请重试！');
+							}
+						})
+						.error(function(err) {
+							bootbox.alert(err);
+						});
+					}
+				});
+			});
+		});
