@@ -9,7 +9,7 @@ block content
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
 			li.active 
-				a(href="#") 添加资产
+				a(href="#") 添加心愿
 		#nav-search.nav-search
 			form.form-search
 				span.input-icon
@@ -20,36 +20,40 @@ block content
 		.page-content-area
 			.page-header
 				h1
-					| 添加资产
+					| 添加心愿
 					small
 						i.ace-icon.fa.fa-angle-double-right
 						| 	请填写以下信息：
 			.row
 				.col-xs-12
-					form#assets_form.form-horizontal(role='form',method="POST",action="/assets/action/save")
-						if assets._id
-							input(type="hidden",name="assets[_id]",value=assets._id)
+					form#wishlist_form.form-horizontal(role='form',method="POST",action="/wishlist/action/save")
+						if wishlist._id
+							input(type="hidden",name="wishlist[_id]",value=wishlist._id)
 						.form-group
-							label.col-sm-4.control-label.no-padding-right 资产名字 
+							label.col-sm-4.control-label.no-padding-right 心愿名字 
 							.col-sm-8
-								input#assets_name.col-xs-10.col-sm-4(type='text', placeholder='资产名字',name="assets[name]",value=assets.name)
+								input#wishlist_name.col-xs-10.col-sm-4(type='text', placeholder='心愿名字',name="wishlist[name]",value=wishlist.name)
 						.form-group
-							label.col-sm-4.control-label.no-padding-right  资产类型 
+							label.col-sm-4.control-label.no-padding-righ 价格
 							.col-sm-8
-								select#assets_type.col-xs-10.col-sm-4(name="assets[type]",value=assets.type)
-									option(value="流动资产") 流动资产
-									option(value="固定资产") 固定资产
-									option(value="有形资产") 有形资产
-									option(value="无形资产") 无形资产
-									option(value="不动产")	不动产
+								input#wishlist_price.col-xs-10.col-sm-4(type='text', placeholder='心愿价格',name="wishlist[price]",value=wishlist.price)
 						.form-group
-							label.col-sm-4.control-label.no-padding-righ 资产价格
+							label.col-sm-4.control-label.no-padding-right  心愿类型 
 							.col-sm-8
-								input#assets_price.col-xs-10.col-sm-4(type='text', placeholder='资产价格',name="assets[price]",value=assets.price)
+								select#wishlist_type.col-xs-10.col-sm-4(name="wishlist[product_type]",value=wishlist.product_type)
+									option(value="饮食") 饮食
+									option(value="服装") 服装
+									option(value="交通") 交通
+									option(value="水电") 水电
+									option(value="通讯")	通讯
+									option(value="日用品") 日用品
+									option(value="旅游") 旅游
+									option(value="保险") 保险
+									option(value="其他") 其他
 						.form-group
 							label.col-sm-4.control-label.no-padding-right  备注
 							.col-sm-8
-								textarea#assets_remark.col-xs-10.col-sm-4(name="assets[remark]") #{assets.remark}						
+								textarea#wishlist_remark.col-xs-10.col-sm-4(name="wishlist[remark]") #{wishlist.remark}						
 						.clearfix.form-actions
 							.col-md-offset-4.col-md-4
 								button#form_submit.btn.btn-info(type='button')
@@ -58,7 +62,7 @@ block content
 								button.btn(type='reset')
 									i.ace-icon.fa.fa-undo.bigger-110
 									| 	重置
-	script(src="/javascript/asserts_add.js")
+	script(src="/javascript/wishlist_add.js")
 
 								
 						

@@ -23,7 +23,11 @@ body.login-layout.light-login
 										h4.header.blue.lighter.bigger
 											i.ace-icon.fa.fa-coffee.green
 											| 登录
-										.space-6
+										if error
+											.alert.alert-danger(style="padding:5px;")
+												button(type="button" class="close")
+													i.ace-icon.fa.fa-times
+												| #{error}
 										form#signin_form(method="POST",action="/user/signin")
 											fieldset
 												label.block.clearfix

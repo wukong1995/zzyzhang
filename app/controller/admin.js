@@ -6,6 +6,7 @@ exports.list = function(req, res) {
 	var page = req.query.p ? parseInt(req.query.p) : 1;
 	var count = 10;
 	var totalPage = 1;
+	var totalCount = 0;
 	User.count({
 			role: {
 				$lte: 10
@@ -15,7 +16,10 @@ exports.list = function(req, res) {
 			if (err) {
 				console.log(err)
 			}
-			totalPage = Math.ceil(length / count);
+			totalCount = length;
+			if (totalCount != 0) {
+				totalPage = Math.ceil(totalCount / count);
+			}
 			User.find({
 					role: {
 						$lte: 10
@@ -32,6 +36,7 @@ exports.list = function(req, res) {
 						users: users,
 						user: req.session.user,
 						currentPage: page,
+						totalCount: totalCount,
 						totalPage: totalPage
 					})
 				});
@@ -70,17 +75,24 @@ exports.edit = function(req, res) {
 			user.save(function(err, user) {
 				if (err) {
 					console.log(err)
+					res.json({
+						success: 0, // 成功
+						state: user.state,
+						message: '失败'
+					});
 				}
 				console.log("type change")
 				res.json({
 					success: 1, // 成功
+					state: user.state,
 					message: '成功'
 				});
 			})
 		} else {
-			console.log("no user")
+			console.log("no user");
 			res.json({
 				success: 0,
+				state: user.state,
 				message: '找不到该用户！'
 			});
 		}

@@ -8,10 +8,10 @@ block content
 			li
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
-			li
-				a(href="/assets/list") 资产列表
+			li 
+				a(href="/borrowing/list") 借贷列表
 			li.active 
-				a(href="#") 资产详情
+				a(href="#") 借贷详情
 		#nav-search.nav-search
 			form.form-search
 				span.input-icon
@@ -21,26 +21,36 @@ block content
 		include ../page
 		.page-content-area
 			.page-header
-				h1 资产详情
+				h1
+					| 借贷详情
 			.row
 				.col-xs-12
-					form#assets_form.form-horizontal(role='form',method="POST",action="/assets/action/save")
+					form#borrowing_form.form-horizontal(role='form')
+						if borrowing._id
+							input(type="hidden",name="borrowing[_id]",value=borrowing._id)
 						.form-group
-							label.col-sm-4.control-label.no-padding-right 资产名字 
+							label.col-sm-4.control-label.no-padding-right 对方名字 
 							.col-sm-8
-								input#assets_name.col-xs-10.col-sm-4(type='text', placeholder='资产名字',name="assets[name]",value=assets.name,disabled="disabled")
+								input#borrowing_other.col-xs-10.col-sm-4(type='text', placeholder='对方名字',name="borrowing[other]",value=borrowing.other,disabled="disabled")
 						.form-group
-							label.col-sm-4.control-label.no-padding-right  资产类型 
+							label.col-sm-4.control-label.no-padding-right 对方电话
 							.col-sm-8
-								input#assets_type.col-xs-10.col-sm-4(type='text', placeholder='资产名字',name="assets[name]",value=assets.type,disabled="disabled")
+								input#borrowing_telephone.col-xs-10.col-sm-4(type='text', placeholder='对方电话',name="borrowing[telephone]",value=borrowing.telephone,disabled="disabled")
 						.form-group
-							label.col-sm-4.control-label.no-padding-righ 资产价格
+							label.col-sm-4.control-label.no-padding-right  借贷类型 
 							.col-sm-8
-								input#assets_price.col-xs-10.col-sm-4(type='text', placeholder='资产价格',name="assets[price]",value=assets.price,disabled="disabled")
+								if borrowing.type == 0
+									input#borrowing_telephone.col-xs-10.col-sm-4(type='text', placeholder='对方电话',name="borrowing[name]",value="借入",disabled="disabled")
+								else
+									input#borrowing_telephone.col-xs-10.col-sm-4(type='text', placeholder='对方电话',name="borrowing[name]",value="借出",disabled="disabled")
 						.form-group
-							label.col-sm-4.control-label.no-padding-right(for='form-field-1')  备注
+							label.col-sm-4.control-label.no-padding-righ 金额
 							.col-sm-8
-								input#assets_remark.col-xs-10.col-sm-4(type='text', placeholder='备注',name="assets[remark]",value=assets.remark,disabled="disabled")
+								input#borrowing_price.col-xs-10.col-sm-4(type='text', placeholder='借贷价格',name="borrowing[price]",value=borrowing.price,disabled="disabled")
+						.form-group
+							label.col-sm-4.control-label.no-padding-right  备注
+							.col-sm-8
+								textarea#borrowing_remark.col-xs-10.col-sm-4(name="borrowing[remark]",disabled="disabled") #{borrowing.remark}		
 
 
 								

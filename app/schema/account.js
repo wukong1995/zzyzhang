@@ -94,13 +94,14 @@ AccountSchema.pre('save', function(next) {
 				return next(err);
 			}
 			_account.password = hash;
-			next()
-		}, null)
+			next();
+		}, null);
 	})
 })
 
 AccountSchema.methods = {
 	comparePassword: function(_password, cb) {
+
 		bcrypt.compare(_password, this.password, function(err, isMatch) {
 			if (err) {
 				return cb(err)

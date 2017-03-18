@@ -37,7 +37,7 @@ module.exports = function(app) {
 	// Admin -- 超级管理员权限
 	app.get('/admin/list', User.adminRequired, Admin.list);
 	app.get('/admin/detail/:id', User.adminRequired, Admin.detail);
-	app.post('/admin/edit/:id', User.adminRequired, Admin.edit);
+	app.post('/admin/edit', User.adminRequired, Admin.edit);
 
 	// Assets-- 资产
 	app.get('/assets/list', User.signinRequired, Assets.list);
@@ -45,7 +45,7 @@ module.exports = function(app) {
 	app.get('/assets/add', User.signinRequired, Assets.add);
 	app.get('/assets/edit/:id', User.signinRequired, Assets.edit);
 	app.post('/assets/action/save', User.signinRequired, Assets.save);
-	app.delete('/assets/action/del', User.signinRequired, Assets.del);
+	app.delete('/assets/list', User.signinRequired, Assets.del);
 
 	// bond -- 债券
 	app.get('/bond/list', User.signinRequired, Bond.list);
@@ -53,7 +53,7 @@ module.exports = function(app) {
 	app.get('/bond/add', User.signinRequired, Bond.add);
 	app.get('/bond/edit/:id', User.signinRequired, Bond.edit);
 	app.post('/bond/action/save', User.signinRequired, Bond.save);
-	app.delete('/bond/action/del', User.signinRequired, Bond.del);
+	app.delete('/bond/list', User.signinRequired, Bond.del);
 
 	// borrowing -- 借贷
 	app.get('/borrowing/list', User.signinRequired, Borrowing.list);
@@ -61,7 +61,7 @@ module.exports = function(app) {
 	app.get('/borrowing/add', User.signinRequired, Borrowing.add);
 	app.get('/borrowing/edit/:id', User.signinRequired, Borrowing.edit);
 	app.post('/borrowing/action/save', User.signinRequired, Borrowing.save);
-	app.delete('/borrowing/action/del', User.signinRequired, Borrowing.del);
+	app.delete('/borrowing/list', User.signinRequired, Borrowing.del);
 
 	// payment -- 收支
 	app.get('/payment/list', User.signinRequired, Payment.list);
@@ -69,7 +69,7 @@ module.exports = function(app) {
 	app.get('/payment/add', User.signinRequired, Payment.add);
 	app.get('/payment/edit/:id', User.signinRequired, Payment.edit);
 	app.post('/payment/action/save', User.signinRequired, Payment.save);
-	app.delete('/payment/action/del', User.signinRequired, Payment.del);
+	app.delete('/payment/list', User.signinRequired, Payment.del);
 
 	// share -- 股票
 	app.get('/share/list', User.signinRequired, Share.list);
@@ -77,7 +77,7 @@ module.exports = function(app) {
 	app.get('/share/add', User.signinRequired, Share.add);
 	app.get('/share/edit/:id', User.signinRequired, Share.edit);
 	app.post('/share/action/save', User.signinRequired, Share.save);
-	app.delete('/share/action/del', User.signinRequired, Share.del);
+	app.delete('/share/list', User.signinRequired, Share.del);
 
 	// wishlist -- 心愿单
 	app.get('/wishlist/list', User.signinRequired, Wishlist.list);
@@ -86,7 +86,7 @@ module.exports = function(app) {
 	app.get('/wishlist/edit/:id', User.signinRequired, Wishlist.edit);
 	app.post('/wishlist/action/save', User.signinRequired, Wishlist.save);
 	app.post('/wishlist/action/buy', User.signinRequired, Wishlist.buy);
-	app.delete('/wishlist/action/del', User.signinRequired, Wishlist.del);
+	app.delete('/wishlist/list', User.signinRequired, Wishlist.del);
 
 
 	app.get('*', function(req, res) {

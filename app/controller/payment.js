@@ -20,6 +20,7 @@ exports.list = function(req, res) {
 	var page = req.query.p ? parseInt(req.query.p) : 1;
 	var count = 10;
 	var totalPage = 1;
+	var totalCount = 0;
 	var user = req.session.user;
 
 	User.findOne({
@@ -32,7 +33,10 @@ exports.list = function(req, res) {
 				console.log(err)
 			}
 			var index = (page - 1) * count;
-			totalPage = Math.ceil(user.payment.length / count);
+			totalCount = user.payment.length;
+			if (totalCount != 0) {
+				totalPage = Math.ceil(totalCount / count);
+			}
 			var results = user.payment.slice(index, index + count);
 			console.log(results)
 
@@ -42,6 +46,7 @@ exports.list = function(req, res) {
 				payment: results || [],
 				currentPage: page,
 				totalPage: totalPage,
+				totalCount: totalCount,
 				user: user
 			})
 		});
@@ -73,48 +78,32 @@ exports.edit = function(req, res) {
 };
 
 exports.save = function(req, res) {
-	var id = req.body.payment._id;
 	var paymentObj = req.body.payment;
 	var _payment;
 
-	if (id) {
-		Payment.findById(id, function(err, payment) {
-			if (err) {
-				console.log(err)
-			}
-			_payment = _.extend(payment, paymentObj);
-			_payment.save(function(err, payment) {
-				if (err) {
-					console.log(err)
-				}
-				// 重定向请求
-				res.redirect('/payment/detail/' + payment._id)
-			})
-		})
-	} else {
-		var user_id = req.session.user._id;
-		paymentObj.account = user_id;
-		_payment = new payment(paymentObj);
+	var user_id = req.session.user._id;
+	paymentObj.account = user_id;
+	_payment = new payment(paymentObj);
 
-		_payment.save(function(err, payment) {
+	_payment.save(function(err, payment) {
+		if (err) {
+			console.log(err);
+		}
+
+		User.findById(user_id, function(err, user) {
 			if (err) {
 				console.log(err);
 			}
-
-			User.findById(user_id, function(err, user) {
+			user.payment.push(payment._id)
+			user.save(function(err, user) {
 				if (err) {
-					console.log(err);
+					console.log(err)
 				}
-				user.payment.push(payment._id)
-				user.save(function(err, user) {
-					if (err) {
-						console.log(err)
-					}
-					res.redirect('/payment/detail/' + payment._id);
-				});
+				res.redirect('/payment/detail/' + payment._id);
 			});
 		});
-	}
+	});
+
 }
 
 exports.del = function(req, res) {
@@ -124,11 +113,14 @@ exports.del = function(req, res) {
 			_id: id
 		}, function(err, payment) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					success: 0
+				});
 			} else {
 				res.json({
 					success: 1
-				})
+				});
 			}
 		})
 	}

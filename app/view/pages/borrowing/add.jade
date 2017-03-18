@@ -9,7 +9,7 @@ block content
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
 			li.active 
-				a(href="#") 添加资产
+				a(href="#") 添加借贷
 		#nav-search.nav-search
 			form.form-search
 				span.input-icon
@@ -20,36 +20,37 @@ block content
 		.page-content-area
 			.page-header
 				h1
-					| 添加资产
+					| 添加借贷
 					small
 						i.ace-icon.fa.fa-angle-double-right
 						| 	请填写以下信息：
 			.row
 				.col-xs-12
-					form#assets_form.form-horizontal(role='form',method="POST",action="/assets/action/save")
-						if assets._id
-							input(type="hidden",name="assets[_id]",value=assets._id)
+					form#borrowing_form.form-horizontal(role='form',method="POST",action="/borrowing/action/save")
+						if borrowing._id
+							input(type="hidden",name="borrowing[_id]",value=borrowing._id)
 						.form-group
-							label.col-sm-4.control-label.no-padding-right 资产名字 
+							label.col-sm-4.control-label.no-padding-right 对方名字 
 							.col-sm-8
-								input#assets_name.col-xs-10.col-sm-4(type='text', placeholder='资产名字',name="assets[name]",value=assets.name)
+								input#borrowing_other.col-xs-10.col-sm-4(type='text', placeholder='对方名字',name="borrowing[other]",value=borrowing.other)
 						.form-group
-							label.col-sm-4.control-label.no-padding-right  资产类型 
+							label.col-sm-4.control-label.no-padding-right 对方电话
 							.col-sm-8
-								select#assets_type.col-xs-10.col-sm-4(name="assets[type]",value=assets.type)
-									option(value="流动资产") 流动资产
-									option(value="固定资产") 固定资产
-									option(value="有形资产") 有形资产
-									option(value="无形资产") 无形资产
-									option(value="不动产")	不动产
+								input#borrowing_telephone.col-xs-10.col-sm-4(type='text', placeholder='对方电话',name="borrowing[telephone]",value=borrowing.telephone)
 						.form-group
-							label.col-sm-4.control-label.no-padding-righ 资产价格
+							label.col-sm-4.control-label.no-padding-right  借贷类型 
 							.col-sm-8
-								input#assets_price.col-xs-10.col-sm-4(type='text', placeholder='资产价格',name="assets[price]",value=assets.price)
+								select#borrowing_type.col-xs-10.col-sm-4(name="borrowing[type]",value=borrowing.type)
+									option(value="0") 借入
+									option(value="1") 借出
+						.form-group
+							label.col-sm-4.control-label.no-padding-righ 金额
+							.col-sm-8
+								input#borrowing_price.col-xs-10.col-sm-4(type='text', placeholder='借贷价格',name="borrowing[price]",value=borrowing.price)
 						.form-group
 							label.col-sm-4.control-label.no-padding-right  备注
 							.col-sm-8
-								textarea#assets_remark.col-xs-10.col-sm-4(name="assets[remark]") #{assets.remark}						
+								textarea#borrowing_remark.col-xs-10.col-sm-4(name="borrowing[remark]") #{borrowing.remark}						
 						.clearfix.form-actions
 							.col-md-offset-4.col-md-4
 								button#form_submit.btn.btn-info(type='button')
@@ -58,7 +59,8 @@ block content
 								button.btn(type='reset')
 									i.ace-icon.fa.fa-undo.bigger-110
 									| 	重置
-	script(src="/javascript/asserts_add.js")
+	include ../../includes/foot
+	script(src="/javascript/borrowing_add.js")
 
 								
 						

@@ -20,8 +20,13 @@ block content
 		.page-content-area
 			.row
 				.col-xs-12
-					.table-header
-						| 资产列表
+					.table-header(style="position:relative;")
+						span 资产列表
+						.nav-search(style="top: 5px;")
+							form.form-search
+								span.input-icon
+									input.nav-search-input(type="text" placeholder="Search ..." autocomplete="off")
+									i.ace-icon.fa.fa-search.nav-search-icon
 					div
 						table#sample-table-2.table.table-striped.table-bordered.table-hover
 							thead
@@ -33,13 +38,15 @@ block content
 									th 名字
 									th 类型
 									th.hidden-480 价格
-									th 备注
 									th 创建日期
 									th 修改日期
 									th 操作
 							tbody
-								each item in assets
+								if assets.length == 0
 									tr
+										td.center(colspan="10") 无记录
+								each item in assets
+									tr(id="i-#{item._id}")
 										td.center
 											label.position-relative
 												input.ace(type='checkbox')
@@ -47,36 +54,77 @@ block content
 										td #{item.name}
 										td #{item.type}
 										td #{item.price}
-										td #{item.remark}
 										td #{moment(item.meta.createAt).format('YYYY-MM-DD')}
 										td #{moment(item.meta.updateAt).format('YYYY-MM-DD')}
 										td
-											a.btn.btn-xs.btn-success(href="/assets/detail/#{item._id}") 详情
-											
-											a.btn.btn-xs.btn-success(href="/assets/edit/#{item._id}") 编辑
-											button.btn.btn-xs.btn-danger(type="button") 删除
+											.hidden-sm.hidden-xs.action-buttons
+												a.blue(href='/assets/detail/#{item._id}')
+													i.ace-icon.fa.fa-search-plus.bigger-130
+												a.green(href='/assets/edit/#{item._id}')
+													i.ace-icon.fa.fa-pencil.bigger-130
+												a.delete_btn.red(href="javascript:void(0);",data-id="#{item._id}")
+													i.ace-icon.fa.fa-trash-o.bigger-130
+											.hidden-md.hidden-lg
+												.inline.position-relative
+													button.btn.btn-minier.btn-yellow.dropdown-toggle(data-toggle='dropdown', data-position='auto')
+														i.ace-icon.fa.fa-caret-down.icon-only.bigger-120
+													ul.dropdown-menu.dropdown-only-icon.dropdown-yellow.dropdown-menu-right.dropdown-caret.dropdown-close
+														li
+															a.tooltip-info(href='/assets/detail/#{item._id}', data-rel='tooltip', title='', data-original-title='详情')
+																span.blue
+																	i.ace-icon.fa.fa-search-plus.bigger-120
+														li
+															a.tooltip-success(href='/assets/edit/#{item._id}', data-rel='tooltip', title='', data-original-title='编辑')
+																span.green
+																	i.ace-icon.fa.fa-pencil-square-o.bigger-120
+														li
+															a.delete_btn.tooltip-error(data-rel='tooltip', title='', data-original-title='Delete',data-id="#{item._id}")
+																span.red
+																	i.ace-icon.fa.fa-trash-o.bigger-120
 						.row
 							.col-xs-6
 								button.btn.btn-xs.btn-danger(type="button") 删除
 							.col-xs-6
-								#sample-table-2_paginate.dataTables_paginate.paging_simple_numbers
-									ul.pagination
-										if currentPage != 1
-											li.paginate_button.previous
-												a(href='/assets/list?p=1') 首页
-										- for (var i = 0; i < totalPage; i++) {
-											- if (currentPage == (i + 1)) {
-												li.paginate_button.active
-													a(href='#') #{currentPage}
-											- }
-											- else {
-												li.paginate_button
-													a(href='/assets/list?p=#{i+1}') #{i + 1}
-											- }
-										- }
+								.message-footer.clearfix(style="background-color:#ffffff;border:none;padding:0px;")
+									.pull-right
+										.inline.middle  
+											| #{currentPage}/
+											span#total_page #{totalPage}
+											| (共#{totalCount}条)&nbsp; &nbsp;
+											ul.pagination.middle
+												if currentPage == 1
+													li.disabled
+														span
+															i.ace-icon.fa.fa-step-backward.middle
+													li.disabled
+														span
+															i.ace-icon.fa.fa-caret-left.bigger-140.middle
+												else 
+													li
+														a(href="/assets/list?p=1")
+															i.ace-icon.fa.fa-step-backward.middle
+													li
+														a(href="/assets/list?p=#{currentPage-1}")
+															i.ace-icon.fa.fa-caret-left.bigger-140.middle
 
-										li.paginate_button.next
-											if currentPage != totalPage
-												a(href='/admin/list?p=#{currentPage+1}' ) 下一页
+												li
+													span
+														input#page(value="#{currentPage}" maxlength="3" type="text")
+												if currentPage != totalPage
+													li
+														a(href="/assets/list?p=#{currentPage+1}")
+															i.ace-icon.fa.fa-caret-right.bigger-140.middle
+
+													li
+														a(href="/assets/list?p=#{totalPage}")
+															i.ace-icon.fa.fa-step-forward.middle
+												else 
+													li.disabled
+														span
+															i.ace-icon.fa.fa-caret-right.bigger-140.middle
+
+													li.disabled
+														span
+															i.ace-icon.fa.fa-step-forward.middle
 	script(src="/javascript/table.js")
 

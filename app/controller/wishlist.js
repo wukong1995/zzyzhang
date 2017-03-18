@@ -21,6 +21,7 @@ exports.list = function(req, res) {
 	var page = req.query.p ? parseInt(req.query.p) : 1;
 	var count = 10;
 	var totalPage = 1;
+	var totalCount = 0;
 	var user = req.session.user;
 
 	User.findOne({
@@ -33,7 +34,10 @@ exports.list = function(req, res) {
 				console.log(err)
 			}
 			var index = (page - 1) * count;
-			totalPage = Math.ceil(user.wishlist.length / count);
+			totalCount = user.wishlist.length;
+			if (totalCount != 0) {
+				totalPage = Math.ceil(totalCount / count);
+			}
 			var results = user.wishlist.slice(index, index + count);
 			console.log(results)
 
@@ -43,6 +47,7 @@ exports.list = function(req, res) {
 				wishlist: results || [],
 				currentPage: page,
 				totalPage: totalPage,
+				totalCount: totalCount,
 				user: user
 			})
 		});
@@ -123,13 +128,16 @@ exports.del = function(req, res) {
 			_id: id
 		}, function(err, wishlist) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					success: 0
+				});
 			} else {
 				res.json({
 					success: 1
-				})
+				});
 			}
-		})
+		});
 	}
 }
 
@@ -156,13 +164,19 @@ exports.buy = function(req, res) {
 						user.payment.push(payment._id);
 						user.save(function(err, user) {
 							if (err) {
-								console.log(err)
+								console.log(err);
+								res.json({
+									success: 0
+								});
+							} else {
+								res.json({
+									success: 1
+								});
 							}
-							res.redirect('/payment/detail/' + payment._id);
 						});
 					});
 				});
 			}
-		})
+		});
 	}
 }
