@@ -62,9 +62,9 @@ var AccountSchema = new mongoose.Schema({
 		type: ObjectId,
 		ref: 'Borrowing'
 	}],
-	withlist: [{
+	wishlist: [{
 		type: ObjectId,
-		ref: 'Withlist'
+		ref: 'Wishlist'
 	}],
 	assets: [{
 		type: ObjectId,

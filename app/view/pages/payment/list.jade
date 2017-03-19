@@ -34,9 +34,7 @@ block content
 									th 名字
 									th.hidden-480 价格
 									th 类型
-									th 备注
 									th 创建日期
-									th 修改日期
 									th 操作
 							tbody
 								if payment.length == 0
@@ -52,12 +50,10 @@ block content
 										td #{item.name}
 										td #{item.price}
 										td #{item.product_type}
-										td #{item.remark}
 										td #{moment(item.meta.createAt).format('YYYY-MM-DD')}
-										td #{moment(item.meta.updateAt).format('YYYY-MM-DD')}
 										td
 											.hidden-sm.hidden-xs.action-buttons
-												a.blue(href='/borrowing/detail/#{item._id}')
+												a.blue(href='/payment/detail/#{item._id}')
 													i.ace-icon.fa.fa-search-plus.bigger-130
 												a.delete_btn.red(href="javascript:void(0);",data-id="#{item._id}")
 													i.ace-icon.fa.fa-trash-o.bigger-130
@@ -67,7 +63,7 @@ block content
 														i.ace-icon.fa.fa-caret-down.icon-only.bigger-120
 													ul.dropdown-menu.dropdown-only-icon.dropdown-yellow.dropdown-menu-right.dropdown-caret.dropdown-close
 														li
-															a.tooltip-info(href='/borrowing/detail/#{item._id}', data-rel='tooltip', title='', data-original-title='View')
+															a.tooltip-info(href='/payment/detail/#{item._id}', data-rel='tooltip', title='', data-original-title='View')
 																span.blue
 																	i.ace-icon.fa.fa-search-plus.bigger-120
 														li

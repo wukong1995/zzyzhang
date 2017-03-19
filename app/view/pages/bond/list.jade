@@ -35,9 +35,7 @@ block content
 									th.hidden-480 买入价格
 									th.hidden-480 收益率
 									th.hidden-480 收入
-									th 备注
 									th 创建日期
-									th 修改日期
 									th 操作
 							tbody
 								if bond.length == 0
@@ -53,13 +51,11 @@ block content
 										td #{item.code}
 										td #{item.purchase}
 										td #{item.yield}
-										td #{item.income}
 										td #{item.remark}
 										td #{moment(item.meta.createAt).format('YYYY-MM-DD')}
-										td #{moment(item.meta.updateAt).format('YYYY-MM-DD')}
 										td
 											.hidden-sm.hidden-xs.action-buttons
-												a.blue(href='/borrowing/detail/#{item._id}')
+												a.blue(href='/bond/detail/#{item._id}')
 													i.ace-icon.fa.fa-search-plus.bigger-130
 												a.delete_btn.red(href="javascript:void(0);",data-id="#{item._id}")
 													i.ace-icon.fa.fa-trash-o.bigger-130
@@ -69,7 +65,7 @@ block content
 														i.ace-icon.fa.fa-caret-down.icon-only.bigger-120
 													ul.dropdown-menu.dropdown-only-icon.dropdown-yellow.dropdown-menu-right.dropdown-caret.dropdown-close
 														li
-															a.tooltip-info(href='/borrowing/detail/#{item._id}', data-rel='tooltip', title='', data-original-title='View')
+															a.tooltip-info(href='/bond/detail/#{item._id}', data-rel='tooltip', title='', data-original-title='View')
 																span.blue
 																	i.ace-icon.fa.fa-search-plus.bigger-120
 																span.green

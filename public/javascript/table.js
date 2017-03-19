@@ -24,6 +24,7 @@ jQuery(function($) {
 	$('.delete_btn').on('click', function(e) {
 		bootbox.confirm("确定要删除吗?", function(result) {
 			if (result) {
+				e = e || window.event;
 				var target = $(e.target.parentNode);
 				var id = target.data('id');
 				var tr = $('#i-' + id);

@@ -97,7 +97,7 @@ exports.save = function(req, res) {
 	} else {
 		var user_id = req.session.user._id;
 		wishlistObj.account = user_id;
-		_wishlist = new wishlist(wishlistObj);
+		_wishlist = new Wishlist(wishlistObj);
 
 		_wishlist.save(function(err, wishlist) {
 			if (err) {
@@ -113,7 +113,7 @@ exports.save = function(req, res) {
 					if (err) {
 						console.log(err)
 					}
-					res.redirect('/wishlist/detail/' + food._id);
+					res.redirect('/wishlist/detail/' + wishlist._id);
 				});
 			});
 
@@ -143,6 +143,7 @@ exports.del = function(req, res) {
 
 exports.buy = function(req, res) {
 	var id = req.query.id;
+	var user_id = req.session.user._id;
 	if (id) {
 		Wishlist.remove({
 			_id: id
@@ -151,7 +152,7 @@ exports.buy = function(req, res) {
 				console.log(err)
 			} else {
 				wishlist.type = 1;
-				var _payment = new payment(wishlist);
+				var _payment = new Payment(wishlist);
 				_payment.save(function(err, payment) {
 					if (err) {
 						console.log(err);
