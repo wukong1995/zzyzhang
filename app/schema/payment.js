@@ -12,7 +12,7 @@ var PaymentSchema = new mongoose.Schema({
 	// 0 奖金 工资 其他
 	// 1 饮食 服装 交通 水电 通讯 日用品 旅游 保险 其他
 	product_type: String,
-	remrk: String,
+	remark: String,
 	meta: {
 		createAt: {
 			type: Date,

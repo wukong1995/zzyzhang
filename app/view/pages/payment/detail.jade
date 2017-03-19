@@ -29,9 +29,9 @@ block content
 							label.col-sm-4.control-label.no-padding-right 类型 
 							.col-sm-8
 								if payment.type == 0
-									| 收入
+									input#payment_name.col-xs-10.col-sm-4(type='text', placeholder='收支名字',value="收入",disabled="disabled")
 								else 
-									| 支出
+									input#payment_name.col-xs-10.col-sm-4(type='text', placeholder='收支名字',value="支出",disabled="disabled")
 						.form-group
 							label.col-sm-4.control-label.no-padding-right 收支名字 
 							.col-sm-8
@@ -47,7 +47,12 @@ block content
 						.form-group
 							label.col-sm-4.control-label.no-padding-right(for='form-field-1')  备注
 							.col-sm-8
-								input#payment_remark.col-xs-10.col-sm-4(type='text', placeholder='备注',name="payment[remark]",value=payment.remark,disabled="disabled")
+								textarea#bond_remark.col-xs-10.col-sm-4(name="bond[remark]",readonly="readonly") #{payment.remark}			
+						.form-group
+							label.col-sm-4.control-label.no-padding-righ 创建日期
+							.col-sm-8
+								input#bond_price.col-xs-10.col-sm-4(type='text', placeholder='收益率',disabled="disabled",value="#{moment(payment.meta.createAt).format('YYYY-MM-DD')}")
+
 
 
 								

@@ -80,6 +80,7 @@ exports.edit = function(req, res) {
 exports.save = function(req, res) {
 	var id = req.body.share._id;
 	var shareObj = req.body.share;
+	shareObj.income = parseInt(shareObj.count) * (parseInt(shareObj.last_price) - parseInt(shareObj.first_price));
 	var _share;
 
 	if (id) {
@@ -99,7 +100,7 @@ exports.save = function(req, res) {
 	} else {
 		var user_id = req.session.user._id;
 		shareObj.account = user_id;
-		_share = new share(shareObj);
+		_share = new Share(shareObj);
 
 		_share.save(function(err, share) {
 			if (err) {
@@ -115,7 +116,7 @@ exports.save = function(req, res) {
 					if (err) {
 						console.log(err)
 					}
-					res.redirect('/share/detail/' + food._id);
+					res.redirect('/share/detail/' + share._id);
 				});
 			});
 

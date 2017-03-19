@@ -34,9 +34,7 @@ block content
 									th 对方电话
 									th.hidden-480 金额
 									th 类型
-									th 备注
 									th 创建日期
-									th 修改日期
 									th 操作
 							tbody
 								if borrowing.length == 0
@@ -55,9 +53,7 @@ block content
 											td 借入
 										else
 											td 借出
-										td #{item.remark}
 										td #{moment(item.meta.createAt).format('YYYY-MM-DD')}
-										td #{moment(item.meta.updateAt).format('YYYY-MM-DD')}
 										td
 											.hidden-sm.hidden-xs.action-buttons
 												a.blue(href='/borrowing/detail/#{item._id}')

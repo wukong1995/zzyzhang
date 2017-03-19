@@ -83,7 +83,7 @@ exports.save = function(req, res) {
 
 	var user_id = req.session.user._id;
 	paymentObj.account = user_id;
-	_payment = new payment(paymentObj);
+	_payment = new Payment(paymentObj);
 
 	_payment.save(function(err, payment) {
 		if (err) {
