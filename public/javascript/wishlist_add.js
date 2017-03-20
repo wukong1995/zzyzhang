@@ -6,7 +6,7 @@ $(function() {
 		// 	$('#assets_name').tips({
 		// 		msg: '请输入资产名字',
 		// 		side: 3,
-		// 		bg: '#438eb9',
+		// 		bg: '#AE81FF',
 		// 		time: 1,
 		// 	});
 		// 	$('#assets_name').focus();

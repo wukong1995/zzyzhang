@@ -6,7 +6,7 @@ $(function() {
 			$('#assets_name').tips({
 				msg: '请输入资产名字',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#assets_name').focus();
@@ -16,7 +16,7 @@ $(function() {
 			$('#assets_type').tips({
 				msg: '请选择资产类型',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#assets_type').focus();
@@ -26,7 +26,7 @@ $(function() {
 			$('#assets_price').tips({
 				msg: '请输入资产价格',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#assets_price').focus();
@@ -36,7 +36,7 @@ $(function() {
 			$('#assets_remark').tips({
 				msg: '请输入备注',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#assets_remark').focus();

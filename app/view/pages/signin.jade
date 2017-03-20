@@ -25,9 +25,14 @@ body.login-layout.light-login
 											| 登录
 										if error
 											.alert.alert-danger(style="padding:5px;")
-												button(type="button" class="close")
+												button(type="button" class="close",data-dismiss="alert")
 													i.ace-icon.fa.fa-times
 												| #{error}
+										if signupmsg
+											.alert.alert-success(style="padding:5px;")
+												button(type="button" class="close",data-dismiss="alert")
+													i.ace-icon.fa.fa-times
+												| #{signupmsg}
 										form#signin_form(method="POST",action="/user/signin")
 											fieldset
 												label.block.clearfix
@@ -75,7 +80,7 @@ body.login-layout.light-login
 												label.block.clearfix
 													span.block.input-icon.input-icon-right
 														input.form-control(type="text", placeholder="电话",name="forgetuser[telphone]",id="forget_tel")
-														i.ace-icon.fa.fa-telphone
+														i.ace-icon.fa.fa-phone
 												.clearfix
 													button.width-30.pull-left.btn.btn-sm(type="reset")
 														i.ace-icon.fa.fa-refresh
@@ -107,7 +112,7 @@ body.login-layout.light-login
 												label.block.clearfix
 													span.block.input-icon.input-icon-right
 														input.form-control(type="text", placeholder="电话",name="newuser[telphone]",id="new_tel")
-														i.ace-icon.fa.fa-telphone
+														i.ace-icon.fa.fa-phone
 												label.block.clearfix
 													span.block.input-icon.input-icon-right
 														input.form-control(type="password", placeholder="密码",name="newuser[password]",id="new_pwd")
