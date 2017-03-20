@@ -17,6 +17,7 @@ module.exports = function(app) {
 
 	// User
 	app.get('/', User.showSignin);
+	app.post('/user/isExit', User.isExit);
 	app.post('/user/signup', User.signup);
 	app.post('/user/signin', User.signin);
 	app.get('/logout', User.logout);

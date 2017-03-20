@@ -5,8 +5,9 @@ var _ = require('underscore');
 exports.showSignin = function(req, res) {
 	res.render('signin', {
 		title: '登录页面',
-		error: req.session.error
-	})
+		error: req.session.error,
+		signupmsg: req.session.signupmsg
+	});
 }
 
 
@@ -21,14 +22,21 @@ exports.signup = function(req, res) {
 			console.log(err)
 		}
 		if (user) {
+			req.session.error = '用户名已存在';
+			delete req.session.signupmsg;
 			return res.redirect('/')
 		} else {
-			var user = new User(_user)
+			var user = new User(_user);
 			user.save(function(err, user) {
 				if (err) {
 					console.log(err)
+					req.session.error = '保存失败，请重试';
+					delete req.session.signupmsg;
 				}
-				res.redirect('/')
+				delete req.session.error;
+				req.session.signupmsg = '恭喜你，注册成功';
+				console.log(req.session.signupmsg)
+				res.redirect('/');
 			})
 		}
 	})
@@ -70,7 +78,16 @@ exports.forgetpwd = function(req, res) {
 
 // signin
 exports.signin = function(req, res) {
-	var _user = req.body.user
+	delete req.session.signupmsg;
+	var _user = req.body.user;
+	if (_user.name.length > 16) {
+		req.session.error = '用户名太长';
+		return res.redirect('/');
+	}
+	if (!/^[a-zA-Z0-9]{6,16}$/.test(_user.password)) {
+		req.session.error = '密码格式不正确';
+		return res.redirect('/');
+	}
 
 	User.findOne({
 		name: _user.name
@@ -96,6 +113,7 @@ exports.signin = function(req, res) {
 			if (isMatch) {
 				req.session.user = user;
 				delete req.session.error;
+				delete req.session.signupmsg;
 				console.log(user.name, "success");
 				return res.redirect('/index');
 			} else {
@@ -104,6 +122,39 @@ exports.signin = function(req, res) {
 				return res.redirect('/')
 			}
 		})
+
+	})
+}
+
+// 判断是否重名
+exports.isExit = function(req, res) {
+	var name = req.query.name;
+	User.findOne({
+		name: name
+	}, function(err, user) {
+		if (err) {
+			console.log(err);
+			res.json({
+				success: 0,
+				isExit: true,
+				message: '失败'
+			});
+
+		}
+		if (!user) {
+			res.json({
+				success: 1, // 成功
+				isExit: false,
+				message: '成功'
+			});
+		} else {
+			res.json({
+				success: 1,
+				isExit: true,
+				message: '成功'
+			});
+		}
+
 
 	})
 }

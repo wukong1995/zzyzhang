@@ -5,12 +5,7 @@ jQuery(function($) {
 		$('.widget-box.visible').removeClass('visible'); //hide others
 		$(target).addClass('visible'); //show target
 	});
-});
 
-
-
-//you don't need this, just used for changing background
-jQuery(function($) {
 	$('#btn-login-dark').on('click', function(e) {
 		$('body').attr('class', 'login-layout');
 		$('#id-text2').attr('class', 'white');
@@ -38,7 +33,17 @@ jQuery(function($) {
 			$('#name').tips({
 				msg: '请输入用户名',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#name').focus();
+			return false;
+		}
+		if ($('#name').val().length > 16) {
+			$('#name').tips({
+				msg: '用户名太长',
+				side: 3,
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#name').focus();
@@ -48,7 +53,17 @@ jQuery(function($) {
 			$('#password').tips({
 				msg: '请输入密码',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#password').focus();
+			return false;
+		}
+		if (!/^[a-zA-Z0-9]{6,16}$/.test($('#password').val())) {
+			$('#password').tips({
+				msg: '密码由6-16位的字母、数字组成',
+				side: 3,
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#password').focus();
@@ -57,42 +72,114 @@ jQuery(function($) {
 		$('#signin_form').submit();
 	});
 
+	function isExit() {
+		$.ajax({
+				async: false,
+				type: 'POST',
+			url: '/user/isExit?name=' + $('#new_name').val(),
+			})
+			.success(function(res) {
+				if (res.isExit) {
+					$('#new_name').tips({
+						msg: '用户名已经存在',
+						side: 3,
+						bg: '#AE81FF',
+						time: 1,
+					});
+					$('#new_name').focus();
+					return false;
+				} else {
+					return true;
+				}
+			})
+			.error(function(err) {
+				bootbox.alert(err);
+				return false;
+			});
+	}
+
 	$('#signup_submit').on('click', function() {
 		if ($('#new_name').val() == "") {
 			$('#new_name').tips({
 				msg: '请输入用户名',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#new_name').focus();
 			return false;
 		}
+		if ($('#new_name').val().length > 16) {
+			$('#new_name').tips({
+				msg: '用户名太长',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#new_name').focus();
+			return false;
+		}
+		// 判断用户名是否注册
+		isExit();
+
 		if ($('#new_email').val() == "") {
 			$('#new_email').tips({
-				msg: '请输入密码',
+				msg: '请输入邮箱',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#new_email').focus();
 			return false;
 		}
+		if (!/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test($('#new_email').val())) {
+			$('#new_email').tips({
+				msg: '请正确输入邮箱',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#new_email').focus();
+			return false;
+		}
+
 		if ($('#new_tel').val() == "") {
 			$('#new_tel').tips({
 				msg: '请输入手机号码',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#new_tel').focus();
 			return false;
 		}
+		if (!/^1(3|4|5|7|8)[0-9]\d{8}$/.test($('#new_tel').val())) {
+			$('#new_tel').tips({
+				msg: '请输入正确的手机号码',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#new_tel').focus();
+			return false;
+		}
+
 		if ($('#new_pwd').val() == "") {
 			$('#new_pwd').tips({
 				msg: '请输入密码',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#new_pwd').focus();
+			return false;
+		}
+
+		if (!/^[a-zA-Z0-9]{6,16}$/.test($('#new_pwd').val())) {
+			$('#new_pwd').tips({
+				msg: '密码由6-16位的字母、数字组成',
+				side: 3,
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#new_pwd').focus();
@@ -102,7 +189,7 @@ jQuery(function($) {
 			$('#new_pwd_confirm').tips({
 				msg: '请再次输入密码',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#new_pwd_confirm').focus();
@@ -112,7 +199,7 @@ jQuery(function($) {
 			$('#new_pwd_confirm').tips({
 				msg: '两次输入密码一致',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#new_pwd_confirm').focus();
@@ -126,7 +213,17 @@ jQuery(function($) {
 			$('#forget_name').tips({
 				msg: '请输入用户名',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#forget_name').focus();
+			return false;
+		}
+		if ($('#forget_name').val().length > 16) {
+			$('#forget_name').tips({
+				msg: '用户名太长',
+				side: 3,
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#forget_name').focus();
@@ -134,19 +231,41 @@ jQuery(function($) {
 		}
 		if ($('#forget_email').val() == "") {
 			$('#forget_email').tips({
-				msg: '请输入密码',
+				msg: '请输入注册时填写的邮箱',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#forget_email').focus();
 			return false;
 		}
+		if (!/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test($('#forget_email').val())) {
+			$('#forget_email').tips({
+				msg: '请正确输入邮箱',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#forget_email').focus();
+			return false;
+		}
+
+
 		if ($('#forget_tel').val() == "") {
 			$('#forget_tel').tips({
-				msg: '请输入密码',
+				msg: '请输入注册时填写的手机号',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#forget_tel').focus();
+			return false;
+		}
+		if (!/^1(3|4|5|7|8)[0-9]\d{8}$/.test($('#forget_tel').val())) {
+			$('#forget_tel').tips({
+				msg: '请输入正确的手机号码',
+				side: 3,
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#forget_tel').focus();

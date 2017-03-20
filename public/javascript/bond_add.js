@@ -7,7 +7,7 @@ $(function() {
 			$('#bond_name').tips({
 				msg: '请输入债券名字',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#bond_name').focus();
@@ -17,7 +17,7 @@ $(function() {
 			$('#bond_code').tips({
 				msg: '请选择债券代码',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#bond_code').focus();
@@ -27,7 +27,7 @@ $(function() {
 			$('#bond_purchase').tips({
 				msg: '请输入债券买入价格',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#bond_purchase').focus();
@@ -37,7 +37,7 @@ $(function() {
 			$('#bond_yield').tips({
 				msg: '请输入债券收益率',
 				side: 3,
-				bg: '#438eb9',
+				bg: '#AE81FF',
 				time: 1,
 			});
 			$('#bond_yield').focus();
