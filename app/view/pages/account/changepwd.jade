@@ -15,7 +15,7 @@ block content
 		.page-content-area
 			.row
 				.col-xs-12
-					form.form-horizontal
+					form#form.form-horizontal(method="POST",action="/user/changepwd")
 						.tabbable
 							ul.nav.nav-tabs
 								li.active
@@ -26,26 +26,27 @@ block content
 								#edit-password.tab-pane(style="display:block;")
 									.space-10
 									.form-group
-										label.col-sm-3.control-label.no-padding-right(for='form-field-pass1') 旧密码
+										label.col-sm-3.control-label.no-padding-right(for='pwd') 旧密码
 										.col-sm-9
-											input#form-field-pass1(type='password',name="user[pwd]")
+											input#pwd(type='password',name="user[pwd]")
 									.space-4
 									.form-group
-										label.col-sm-3.control-label.no-padding-right(for='form-field-pass1') 新密码
+										label.col-sm-3.control-label.no-padding-right(for='newpwd') 新密码
 										.col-sm-9
-											input#form-field-pass1(type='password',name="user[newpwd]")
+											input#newpwd(type='password',name="user[newpwd]")
 									.space-4
 									.form-group
-										label.col-sm-3.control-label.no-padding-right(for='form-field-pass2') 确认密码
+										label.col-sm-3.control-label.no-padding-right(for='confirmpwd') 确认密码
 										.col-sm-9
-											input#form-field-pass2(type='password',name="confirmpwd")
+											input#confirmpwd(type='password',name="confirmpwd")
 						.clearfix.form-actions
 							.col-md-offset-3.col-md-9
 								button.btn(type='reset')
 									i.ace-icon.fa.fa-undo.bigger-110
 									| 		重置
-								button.btn.btn-info(type='button')
+								button#form_submit.btn.btn-info(type='button')
 									i.ace-icon.fa.fa-check.bigger-110
 									| 		确认
+	script(src="/javascript/account_pwd.js")
 							
 

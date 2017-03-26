@@ -26,6 +26,7 @@ module.exports = function(app) {
 	app.get('/user/changepassword', User.signinRequired, User.showChangepwd);
 	app.post('/user/changeprofile', User.changeprofile);
 	app.post('/user/forgetpwd', User.forgetpwd);
+	app.post('/user/verifypwd', User.signinRequired, User.verifypwd);
 	app.post('/user/changepwd', User.changepwd);
 
 	app.get('/index', User.signinRequired, function(req, res) {
