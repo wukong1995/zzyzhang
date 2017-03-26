@@ -9,45 +9,48 @@ exports.detail = function(req, res) {
 	// res.sendFile()直接输出html文件
 	Borrowing.findById(id, function(err, borrowing) {
 		res.render('borrowing/detail', {
-			title: '详情页',
+			title: '借贷详情页',
 			borrowing: borrowing
 		})
 	});
 };
 
 exports.list = function(req, res) {
+	var user = req.session.user;
+	res.render('borrowing/list', {
+		title: '借贷列表页',
+		user: user
+	});
+};
+exports.result = function(req, res) {
+
 	//判断是否是第一页，并把请求的页数转换成 number 类型
-	var page = req.query.p ? parseInt(req.query.p) : 1;
-	var count = 10;
-	var totalPage = 1;
+	var page = req.body.page ? parseInt(req.body.page) : 1;
+	var start = req.body.start ? parseInt(req.body.start) : 0;
+	var limit = req.body.limit ? parseInt(req.body.limit) : 15;
+	var keyword = req.body.keyword ? req.body.keyword : '';
+
 	var totalCount = 0;
 	var user = req.session.user;
 
 	User.findOne({
 			_id: user._id
 		}).populate({
-			path: 'borrowing'
+			path: 'borrowing',
+			select: 'other telephone price type meta',
+			match: {
+				other: new RegExp(keyword, "i")
+			}
 		})
 		.exec(function(err, user) {
 			if (err) {
 				console.log(err)
 			}
-			var index = (page - 1) * count;
 			totalCount = user.borrowing.length;
-			if (totalCount != 0) {
-				totalPage = Math.ceil(totalCount / count);
-			}
-			var results = user.borrowing.slice(index, index + count);
-			console.log(results)
-
-			// 渲染视图模板
-			res.render('borrowing/list', {
-				title: '列表页',
+			var results = user.borrowing.slice(start, start + limit);
+			res.json({
 				borrowing: results || [],
-				currentPage: page,
-				totalPage: totalPage,
-				totalCount: totalCount,
-				user: user
+				totalCount: totalCount
 			})
 		});
 };
@@ -55,7 +58,7 @@ exports.list = function(req, res) {
 exports.add = function(req, res) {
 	// res.sendFile()直接输出html文件
 	res.render('borrowing/add', {
-		title: '新增页',
+		title: '借贷新增页',
 		borrowing: {
 			name: '',
 			price: ''
@@ -68,7 +71,7 @@ exports.edit = function(req, res) {
 
 	Borrowing.findById(id, function(err, borrowing) {
 		res.render('borrowing/add', {
-			title: '编辑页',
+			title: '借贷编辑页',
 			borrowing: borrowing
 		})
 	});
@@ -96,7 +99,7 @@ exports.save = function(req, res) {
 	} else {
 		var user_id = req.session.user._id;
 		borrowingObj.account = user_id;
-		_borrowing = new borrowing(borrowingObj);
+		_borrowing = new Borrowing(borrowingObj);
 
 		_borrowing.save(function(err, borrowing) {
 			if (err) {
@@ -112,7 +115,7 @@ exports.save = function(req, res) {
 					if (err) {
 						console.log(err)
 					}
-					res.redirect('/borrowing/detail/' + food._id);
+					res.redirect('/borrowing/detail/' + borrowing._id);
 				});
 			});
 

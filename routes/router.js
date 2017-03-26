@@ -37,11 +37,13 @@ module.exports = function(app) {
 
 	// Admin -- 超级管理员权限
 	app.get('/admin/list', User.adminRequired, Admin.list);
+	app.post('/admin/result', User.signinRequired, Admin.result);
 	app.get('/admin/detail/:id', User.adminRequired, Admin.detail);
 	app.post('/admin/edit', User.adminRequired, Admin.edit);
 
 	// Assets-- 资产
 	app.get('/assets/list', User.signinRequired, Assets.list);
+	app.post('/assets/result', User.signinRequired, Assets.result);
 	app.get('/assets/detail/:id', User.signinRequired, Assets.detail);
 	app.get('/assets/add', User.signinRequired, Assets.add);
 	app.get('/assets/edit/:id', User.signinRequired, Assets.edit);
@@ -50,6 +52,7 @@ module.exports = function(app) {
 
 	// bond -- 债券
 	app.get('/bond/list', User.signinRequired, Bond.list);
+	app.post('/bond/result', User.signinRequired, Bond.result);
 	app.get('/bond/detail/:id', User.signinRequired, Bond.detail);
 	app.get('/bond/add', User.signinRequired, Bond.add);
 	app.get('/bond/edit/:id', User.signinRequired, Bond.edit);
@@ -58,6 +61,7 @@ module.exports = function(app) {
 
 	// borrowing -- 借贷
 	app.get('/borrowing/list', User.signinRequired, Borrowing.list);
+	app.post('/borrowing/result', User.signinRequired, Borrowing.result);
 	app.get('/borrowing/detail/:id', User.signinRequired, Borrowing.detail);
 	app.get('/borrowing/add', User.signinRequired, Borrowing.add);
 	app.get('/borrowing/edit/:id', User.signinRequired, Borrowing.edit);
@@ -66,6 +70,7 @@ module.exports = function(app) {
 
 	// payment -- 收支
 	app.get('/payment/list', User.signinRequired, Payment.list);
+	app.post('/payment/result', User.signinRequired, Payment.result);
 	app.get('/payment/detail/:id', User.signinRequired, Payment.detail);
 	app.get('/payment/add', User.signinRequired, Payment.add);
 	app.get('/payment/edit/:id', User.signinRequired, Payment.edit);
@@ -74,6 +79,7 @@ module.exports = function(app) {
 
 	// share -- 股票
 	app.get('/share/list', User.signinRequired, Share.list);
+	app.post('/share/result', User.signinRequired, Share.result);
 	app.get('/share/detail/:id', User.signinRequired, Share.detail);
 	app.get('/share/add', User.signinRequired, Share.add);
 	app.get('/share/edit/:id', User.signinRequired, Share.edit);
@@ -82,6 +88,7 @@ module.exports = function(app) {
 
 	// wishlist -- 心愿单
 	app.get('/wishlist/list', User.signinRequired, Wishlist.list);
+	app.post('/wishlist/result', User.signinRequired, Wishlist.result);
 	app.get('/wishlist/detail/:id', User.signinRequired, Wishlist.detail);
 	app.get('/wishlist/add', User.signinRequired, Wishlist.add);
 	app.get('/wishlist/edit/:id', User.signinRequired, Wishlist.edit);

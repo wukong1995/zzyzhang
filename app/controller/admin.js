@@ -2,46 +2,53 @@ var User = require('../model/account');
 
 // list
 exports.list = function(req, res) {
+	var user = req.session.user;
+	res.render('admin/list', {
+		title: '用户列表页',
+		user: req.session.user,
+	});
+}
+
+// result
+exports.result = function(req, res) {
+
 	//判断是否是第一页，并把请求的页数转换成 number 类型
-	var page = req.query.p ? parseInt(req.query.p) : 1;
-	var count = 10;
-	var totalPage = 1;
-	var totalCount = 0;
+	var page = req.body.page ? parseInt(req.body.page) : 1;
+	var start = req.body.start ? parseInt(req.body.start) : 0;
+	var limit = req.body.limit ? parseInt(req.body.limit) : 15;
+	var keyword = req.body.keyword ? req.body.keyword : '';
+	var role = req.session.user.role;
+	console.log(req.session.user)
+
 	User.count({
 			role: {
-				$lte: 10
+				$lt: role
 			}
 		})
 		.exec(function(err, length) {
 			if (err) {
 				console.log(err)
 			}
-			totalCount = length;
-			if (totalCount != 0) {
-				totalPage = Math.ceil(totalCount / count);
-			}
 			User.find({
 					role: {
-						$lte: 10
-					}
-				})
-				.limit(count)
-				.skip((page - 1) * count)
+						$lt: role
+					},
+					name: new RegExp(keyword, "i")
+				}, ['name', 'telphone', 'email', 'role', 'state'])
+				.limit(limit)
+				.skip(start)
 				.exec(function(err, users) {
 					if (err) {
 						console.log(err)
 					}
-					res.render('admin/list', {
-						title: '用户列表',
-						users: users,
-						user: req.session.user,
-						currentPage: page,
-						totalCount: totalCount,
-						totalPage: totalPage
-					})
+					res.json({
+						users: users || [],
+						totalCount: length || 0
+					});
 				});
 		});
-}
+};
+
 
 // detail
 exports.detail = function(req, res) {

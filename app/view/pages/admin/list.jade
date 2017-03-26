@@ -10,11 +10,6 @@ block content
 				a(href="/index") 主页
 			li.active 
 				a(href="#") 用户列表
-		#nav-search.nav-search
-			form.form-search
-				span.input-icon
-					input#nav-search-input.nav-search-input(type="text", placeholder="Search ...", autocomplete="off")
-					i.ace-icon.fa.fa-search.nav-search-icon
 	.page-content
 		include ../page
 		.page-content-area
@@ -23,106 +18,150 @@ block content
 					.table-header
 						| 用户列表
 					div
-						table#sample-table-2.table.table-striped.table-bordered.table-hover
+						table#sample.table.table-striped.table-bordered.table-hover
 							thead
 								tr
 									th 用户名
 									th 电话
-									th.hidden-480 邮箱
+									th 邮箱
 									th
 										i.ace-icon.fa.fa-clock-o.bigger-110.hidden-480
-										| 			角色
+										| 角色
 									th.hidden-480 状态
 									th 操作
-							tbody
-								if users.length == 0
-									tr
-										td.center(colspan="10") 无记录
-								each item in users
-									tr(id="i-#{item._id}")
-										td #{item.name}
-										td #{item.telphone}
-										td #{item.email}
-										td 
-											if item.role == 0
-												span 普通用户
-											else
-												span 超级管理员
-										td
-											if item.state == 0
-												span.state.label.label-sm.label-success 正常
-											else
-												span.state.label.label-sm.label-warning 冻结
-										td
-											.hidden-sm.hidden-xs.action-buttons
-												a.blue(href='/admin/detail/#{item._id}')
-													i.ace-icon.fa.fa-search-plus.bigger-130
-												a.change_btn.blue(href="javascript:void(0);",data-id="#{item._id}")
-													i.ace-icon.fa.fa-pencil.bigger-130
-											.hidden-md.hidden-lg
-												.inline.position-relative
-													button.btn.btn-minier.btn-yellow.dropdown-toggle(data-toggle='dropdown', data-position='auto')
-														i.ace-icon.fa.fa-caret-down.icon-only.bigger-120
-													ul.dropdown-menu.dropdown-only-icon.dropdown-yellow.dropdown-menu-right.dropdown-caret.dropdown-close
-														li
-															a.tooltip-info(href='/admin/detail/#{item._id}', data-rel='tooltip', title='', data-original-title='View')
-																span.blue
-																	i.ace-icon.fa.fa-search-plus.bigger-120
-														li
-															a.change_btn.tooltip-error(data-rel='tooltip', title='', data-original-title='Change',data-id="#{item._id}")
-																span.red
-																	i.ace-icon.fa.fa-pencil.bigger-120
-						.row
-							.col-xs-6
-								.dataTables_info(role='status', aria-live='polite') 每页显示10条
-							.col-xs-6
-								.message-footer.clearfix(style="background-color:#ffffff;border:none;padding:0px;")
-									.pull-right
-										.inline.middle  
-											| #{currentPage}/
-											span#total_page #{totalPage}
-											| (共#{totalCount}条)&nbsp; &nbsp;
-											ul.pagination.middle
-												if currentPage == 1
-													li.disabled
-														span
-															i.ace-icon.fa.fa-step-backward.middle
-													li.disabled
-														span
-															i.ace-icon.fa.fa-caret-left.bigger-140.middle
-												else 
-													li
-														a(href="/admin/list?p=1")
-															i.ace-icon.fa.fa-step-backward.middle
-													li
-														a(href="/admin/list?p=#{currentPage-1}")
-															i.ace-icon.fa.fa-caret-left.bigger-140.middle
-
-												li
-													span
-														input#page(value="#{currentPage}" maxlength="3" type="text")
-												if currentPage != totalPage
-													li
-														a(href="/admin/list?p=#{currentPage+1}")
-															i.ace-icon.fa.fa-caret-right.bigger-140.middle
-
-													li
-														a(href="/admin/list?p=#{totalPage}")
-															i.ace-icon.fa.fa-step-forward.middle
-												else 
-													li.disabled
-														span
-															i.ace-icon.fa.fa-caret-right.bigger-140.middle
-
-													li.disabled
-														span
-															i.ace-icon.fa.fa-step-forward.middle
 	script(src="/javascript/table.js")
 	script(type="text/javascript").
 		$(function() {
-			$('.change_btn').on('click',function() {
+			var lang = {
+				"sProcessing": "处理中...",
+				"sLengthMenu": "每页 _MENU_ 项",
+				"sZeroRecords": "没有匹配结果",
+				"sInfo": "当前显示第 _START_ 至 _END_ 项，共 _TOTAL_ 项。",
+				"sInfoEmpty": "当前显示第 0 至 0 项，共 0 项",
+				"sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+				"sInfoPostFix": "",
+				"sSearch": "搜索:",
+				"sUrl": "",
+				"sEmptyTable": "表中数据为空",
+				"sLoadingRecords": "载入中...",
+				"sInfoThousands": ",",
+				"oPaginate": {
+					"sFirst": "首页",
+					"sPrevious": "上页",
+					"sNext": "下页",
+					"sLast": "末页",
+					"sJump": "跳转"
+				},
+				"oAria": {
+					"sSortAscending": ": 以升序排列此列",
+					"sSortDescending": ": 以降序排列此列"
+				}
+			};
+			var table = $("#sample").dataTable({
+					language:lang,  //提示信息
+					autoWidth: false,  //禁用自动调整列宽
+					processing: true,  //隐藏加载提示,自行处理
+					serverSide: true,  //启用服务器端分页
+					searching: true,  //禁用原生搜索
+					search: {
+				    "search": ""
+				  },
+					ordering:false,
+					renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
+					lengthChange: false,
+					pageLength:15,
+					rowId: '_id',
+					pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
+					columnDefs: [{
+						"targets": 'nosort',  //列的样式名
+						"orderable": false    //包含上样式名‘nosort’的禁止排序
+					}],
+					ajax: function (data, callback, settings) {
+						//封装请求参数
+						var param = {};
+						param.keyword = data.search.value;
+						param.limit = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
+						param.start = data.start;//开始的记录序号
+						param.page = (data.start / data.length)+1;//当前页码
+						//console.log(param);
+						//ajax请求数据
+						$.ajax({
+							type: "POST",
+							url: "/admin/result",
+							cache: false,  //禁用缓存
+							data: param,  //传入组装的参数
+							dataType: "json",
+							success: function (result) {
+								//console.log(result);
+
+								//封装返回数据
+								var returnData = {};
+								returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
+								returnData.recordsTotal = result.totalCount;//返回数据全部记录
+								returnData.recordsFiltered = result.totalCount;//后台不实现过滤功能，每次查询均视作全部结果
+								returnData.data = result.users;//返回的数据列表
+								//调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
+								//此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
+								callback(returnData);
+							}
+						});
+					},
+					//列表表头字段
+					columns: [ 
+						{ "data": "name" },
+						{ "data": "telphone" },
+						{ "data": "email" },
+						{ "data": "role",
+							render:function(date,type,full) {
+								var content = null;
+								if(date == 0) {
+									content = '<span class="state label label-sm label-success">正常</span>';
+								} else{
+									content = '<span class="state label label-sm label-warning">冻结</span>';
+								}
+								return content;
+							}
+						},
+						{ "data": "state",
+							render:function(date,type,full) {
+								var content = null;
+								if(date > 10) {
+									content = "<span>超级管理员</span>";
+								} else{
+									content = "<span>普通用户</span>";
+								}
+								return content;
+							}
+						},
+						{	bSortable : false,  
+							visible : true, 
+							data : "_id",     
+							render : function(data, type, full) {  
+								var content = '<div class="hidden-sm hidden-xs action-buttons">'+
+									'<a href="/admin/detail/' + data + '" class="blue">'+
+										'<i class="ace-icon fa fa-search-plus bigger-130"></i>'+
+									' </a>'+
+									'<a href="javascript:void(0);" class="blue change_btn" data-id="' + data + '" >'+
+										'<i class="ace-icon fa fa-pencil bigger-130"></i>'+
+									' </a>'+
+								'</div>'+
+									'<div class="hidden-md hidden-lg">'+
+									'  <div class="inline position-relative">'+
+									'    <button data-toggle="dropdown" data-position="auto" class="btn btn-minier btn-yellow dropdown-toggle"><i class="ace-icon fa fa-caret-down icon-only bigger-120"></i></button>'+
+										'<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">'+
+										' <li><a href="/admin/detail/' + data + '" data-rel="tooltip" title="" data-original-title="View" class="tooltip-info"><span class="blue"><i class="ace-icon fa fa-search-plus bigger-120"></i></span></a>'+
+										'<li><a href="javascript:void(0);" class="tooltip-success change_btn" data-rel="tooltip" title="" data-original-title="Edit" data-id="' + data + '" >'+
+										'<span class="green"><i class="ace-icon fa fa-pencil-square-o bigger-120"></i></span></a></li>'+
+									'</ul></div></div>';
+								return content;  
+							}   
+						} 
+					]
+			}).api();
+
+			$('#sample').on('click','.change_btn',function() {
 				var id = $(this).data('id');
-				var tr = $('#i-' + id);
+				var tr = $(this).closest('tr');
 
 				bootbox.confirm("确定要修改账户状态吗?", function(result) {
 					if (result) {

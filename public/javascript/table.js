@@ -1,4 +1,6 @@
 jQuery(function($) {
+	bootbox.setDefaults("locale", "zh_CN");
+
 	$(document).on('click', 'th input:checkbox', function() {
 		var that = this;
 		$(this).closest('table').find('tr > td:first-child input:checkbox')
@@ -21,13 +23,13 @@ jQuery(function($) {
 			}
 		}
 	});
-	$('.delete_btn').on('click', function(e) {
+	$('#sample').on('click', '.delete_btn', function(e) {
 		bootbox.confirm("确定要删除吗?", function(result) {
 			if (result) {
 				e = e || window.event;
-				var target = $(e.target.parentNode);
+				var target = $(e.target).closest("a");
 				var id = target.data('id');
-				var tr = $('#i-' + id);
+				var tr = $(e.target).closest("tr");
 
 				$.ajax({
 						type: 'DELETE',

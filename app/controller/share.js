@@ -9,45 +9,49 @@ exports.detail = function(req, res) {
 	// res.sendFile()直接输出html文件
 	Share.findById(id, function(err, share) {
 		res.render('share/detail', {
-			title: '详情页',
+			title: '股票详情页',
 			share: share
 		})
 	});
 };
 
 exports.list = function(req, res) {
+	var user = req.session.user;
+	res.render('share/list', {
+		title: '股票列表页',
+		user: user
+	});
+};
+
+exports.result = function(req, res) {
+
 	//判断是否是第一页，并把请求的页数转换成 number 类型
-	var page = req.query.p ? parseInt(req.query.p) : 1;
-	var count = 10;
-	var totalPage = 1;
+	var page = req.body.page ? parseInt(req.body.page) : 1;
+	var start = req.body.start ? parseInt(req.body.start) : 0;
+	var limit = req.body.limit ? parseInt(req.body.limit) : 15;
+	var keyword = req.body.keyword ? req.body.keyword : '';
+
 	var totalCount = 0;
 	var user = req.session.user;
 
 	User.findOne({
 			_id: user._id
 		}).populate({
-			path: 'share'
+			path: 'share',
+			select: 'name count first_price last_price income meta',
+			match: {
+				name: new RegExp(keyword, "i")
+			}
 		})
 		.exec(function(err, user) {
 			if (err) {
 				console.log(err)
 			}
-			var index = (page - 1) * count;
 			totalCount = user.share.length;
-			if (totalCount != 0) {
-				totalPage = Math.ceil(totalCount / count);
-			}
-			var results = user.share.slice(index, index + count);
-			console.log(results)
-
-			// 渲染视图模板
-			res.render('share/list', {
-				title: '列表页',
+			var results = user.share.slice(start, start + limit);
+			res.json({
 				share: results || [],
-				currentPage: page,
-				totalPage: totalPage,
-				totalCount: totalCount,
-				user: user
+				totalCount: totalCount
 			})
 		});
 };
@@ -55,7 +59,7 @@ exports.list = function(req, res) {
 exports.add = function(req, res) {
 	// res.sendFile()直接输出html文件
 	res.render('share/add', {
-		title: '新增页',
+		title: '股票新增页',
 		share: {
 			name: '',
 			count: '',
@@ -71,7 +75,7 @@ exports.edit = function(req, res) {
 
 	Share.findById(id, function(err, share) {
 		res.render('share/add', {
-			title: '编辑页',
+			title: '股票编辑页',
 			share: share
 		})
 	});

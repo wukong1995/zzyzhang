@@ -1,7 +1,5 @@
 jQuery(function($) {
 
-
-	///////////////////////////////////////////
 	$('#header_portrait').ace_file_input({
 		style: 'well',
 		btn_choose: 'Change avatar',
