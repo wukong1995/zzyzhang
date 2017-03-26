@@ -35,7 +35,6 @@ exports.signup = function(req, res) {
 				}
 				delete req.session.error;
 				req.session.signupmsg = '恭喜你，注册成功';
-				console.log(req.session.signupmsg)
 				res.redirect('/');
 			})
 		}
@@ -66,7 +65,7 @@ exports.forgetpwd = function(req, res) {
 				res.json({
 					success: 1 // 成功
 				})
-			})
+			});
 		} else {
 			res.json({
 				success: 0,
@@ -102,7 +101,7 @@ exports.signin = function(req, res) {
 		}
 		if (user.state == 1) {
 			console.log("user freeze");
-			req.session.error = '账户已冻结'
+			req.session.error = '账户已冻结';
 			return res.redirect('/');
 		}
 		user.comparePassword(_user.password, function(err, isMatch) {
@@ -114,6 +113,7 @@ exports.signin = function(req, res) {
 				delete req.session.error;
 				delete req.session.signupmsg;
 				req.session.user = {
+					_id: user._id,
 					name: user.name,
 					role: user.role
 				};
@@ -162,37 +162,80 @@ exports.isExit = function(req, res) {
 	})
 }
 
+// 验证密码
+exports.verifypwd = function(req, res) {
+	var pwd = req.body.pwd;
+
+	User.findById(req.session.user._id, function(err, user) {
+		if (err) {
+			console.log(err);
+			res.json({
+				success: 0,
+				ismatch: false,
+				message: '重置密码出错，请重试！'
+			});
+		}
+
+		if (user) {
+			user.comparePassword(pwd, function(err, isMatch) {
+				if (err) {
+					console.log(err);
+					res.json({
+						success: 0,
+						ismatch: false,
+						message: '重置密码出错，请重试！'
+					});
+				}
+				if (isMatch) {
+					res.json({
+						success: 1,
+						ismatch: true,
+						message: '原密码正确！'
+					});
+				} else {
+					res.json({
+						success: 1,
+						ismatch: false,
+						message: '原密码不正确！'
+					});
+				}
+
+			});
+
+		} else {
+			res.json({
+				success: 0,
+				ismatch: false,
+				message: '请重新登录'
+			});
+		}
+	})
+}
+
 // changepwd
 exports.changepwd = function(req, res) {
-	var user = req.session.user
-	var usernObj;
+	var _user = req.body.user;
 
-	User.findOne({
-		name: _user._id
-	}, function(err, user) {
+	User.findById(req.session.user._id, function(err, user) {
 		if (err) {
 			console.log(err)
 		}
 		if (user) {
-			user.comparePassword(_user.pwd, function(err, isMatch) {
+			user.password = _user.newpwd;
+			user.save(function(err, user) {
 				if (err) {
-					console.log(err)
+					console.log(err);
+					return res.redirect('/user/changepassword');
 				}
-
-				if (isMatch) {
-					console.log("change pwdsuccess");
-					return res.redirect('/');
-				} else {
-					console.log("password is not matched");
-					req.session.error = '密码不匹配'
-					return res.redirect('/user/changepassword')
-				}
+				console.log("changepwd success");
+				delete req.session.user;
+				return res.redirect('/');
 			});
 		} else {
 			console.log("修改密码出错，请重试！");
-			return res.redirect('/signup')
+			return res.redirect('/user/changepassword')
 		}
-	})
+	});
 };
 
 // detail

@@ -9,20 +9,7 @@ jQuery(function($) {
 				$(this).closest('tr').toggleClass('selected');
 			});
 	});
-	var baseUrl = window.location.pathname;
-	$("#page").on('keyup', function(event) {
-		var event = event || window.event;
-		if (event.keyCode == 13) {
-			var p = $(this).val();
-			var totalPage = parseInt($('#total_page').html());
-			if (p > totalPage) {
-				$(this).val(totalPage);
-				return false;
-			} else {
-				window.location.href = baseUrl + "?p=" + p;
-			}
-		}
-	});
+
 	$('#sample').on('click', '.delete_btn', function(e) {
 		bootbox.confirm("确定要删除吗?", function(result) {
 			if (result) {
