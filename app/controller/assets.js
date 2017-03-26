@@ -9,46 +9,50 @@ exports.detail = function(req, res) {
 	// res.sendFile()直接输出html文件
 	Assets.findById(id, function(err, assets) {
 		res.render('assets/detail', {
-			title: '详情页',
+			title: '资产详情页',
 			assets: assets
 		})
 	});
 };
 
 exports.list = function(req, res) {
+	var user = req.session.user;
+	// 渲染视图模板
+	res.render('assets/list', {
+		title: '资产列表页',
+		user: user
+	});
+};
+
+exports.result = function(req, res) {
 
 	//判断是否是第一页，并把请求的页数转换成 number 类型
-	var page = req.query.p ? parseInt(req.query.p) : 1;
-	var count = 15;
-	var totalPage = 1;
+	var page = req.body.page ? parseInt(req.body.page) : 1;
+	var start = req.body.start ? parseInt(req.body.start) : 0;
+	var limit = req.body.limit ? parseInt(req.body.limit) : 15;
+	var keyword = req.body.keyword ? req.body.keyword : '';
+
 	var totalCount = 0;
 	var user = req.session.user;
 
 	User.findOne({
 			_id: user._id
 		}).populate({
-			path: 'assets'
+			path: 'assets',
+			select: 'name type price meta',
+			match: {
+				name: new RegExp(keyword, "i")
+			}
 		})
 		.exec(function(err, user) {
 			if (err) {
 				console.log(err)
 			}
-			var index = (page - 1) * count;
 			totalCount = user.assets.length;
-			if (totalCount != 0) {
-				totalPage = Math.ceil(totalCount / count);
-			}
-			var results = user.assets.slice(index, index + count);
-			console.log(results)
-
-			// 渲染视图模板
-			res.render('assets/list', {
-				title: '列表页',
+			var results = user.assets.slice(start, start + limit);
+			res.json({
 				assets: results || [],
-				currentPage: page,
-				totalPage: totalPage,
-				totalCount: totalCount,
-				user: user
+				totalCount: totalCount
 			})
 		});
 };
@@ -71,7 +75,7 @@ exports.edit = function(req, res) {
 
 	Assets.findById(id, function(err, assets) {
 		res.render('assets/add', {
-			title: '编辑页',
+			title: '资产编辑页',
 			assets: assets
 		})
 	});

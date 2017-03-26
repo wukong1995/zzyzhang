@@ -12,11 +12,6 @@ block content
 				a(href="/assets/list") 资产列表
 			li.active 
 				a(href="#") 资产详情
-		#nav-search.nav-search
-			form.form-search
-				span.input-icon
-					input#nav-search-input.nav-search-input(type="text", placeholder="Search ...", autocomplete="off")
-					i.ace-icon.fa.fa-search.nav-search-icon
 	.page-content
 		include ../page
 		.page-content-area
@@ -40,7 +35,8 @@ block content
 						.form-group
 							label.col-sm-4.control-label.no-padding-right(for='form-field-1')  备注
 							.col-sm-8
-								input#assets_remark.col-xs-10.col-sm-4(type='text', placeholder='备注',name="assets[remark]",value=assets.remark,disabled="disabled")
+								textarea#assets_remark.col-xs-10.col-sm-4(name="assets[remark]",disabled="disabled") #{assets.remark}	
+								
 
 
 								

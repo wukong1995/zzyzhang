@@ -111,9 +111,12 @@ exports.signin = function(req, res) {
 			}
 
 			if (isMatch) {
-				req.session.user = user;
 				delete req.session.error;
 				delete req.session.signupmsg;
+				req.session.user = {
+					name: user.name,
+					role: user.role
+				};
 				console.log(user.name, "success");
 				return res.redirect('/index');
 			} else {
@@ -121,7 +124,7 @@ exports.signin = function(req, res) {
 				req.session.error = '密码不匹配'
 				return res.redirect('/')
 			}
-		})
+		});
 
 	})
 }
@@ -171,16 +174,22 @@ exports.changepwd = function(req, res) {
 			console.log(err)
 		}
 		if (user) {
-			usernObj = _.extend(user, _user);
-			usernObj.save(function(err, user) {
+			user.comparePassword(_user.pwd, function(err, isMatch) {
 				if (err) {
 					console.log(err)
 				}
-				console.log("password change")
-				res.redirect('/signin');
-			})
+
+				if (isMatch) {
+					console.log("change pwdsuccess");
+					return res.redirect('/');
+				} else {
+					console.log("password is not matched");
+					req.session.error = '密码不匹配'
+					return res.redirect('/user/changepassword')
+				}
+			});
 		} else {
-			console.log("没有此用户");
+			console.log("修改密码出错，请重试！");
 			return res.redirect('/signup')
 		}
 	})
