@@ -39,11 +39,11 @@ block content
 						.form-group
 							label.col-sm-4.control-label.no-padding-right  分类 
 							.col-sm-8
-								select#payment_type.col-xs-10.col-sm-4(name="payment[product_type]",value=payment.product_type)
+								select#payment_type_0.col-xs-10.col-sm-4(name="payment[product_type]",value=payment.product_type)
 									option(value="奖金") 奖金
 									option(value="工资") 工资
 									option(value="其他") 其他
-								select#payment_type.col-xs-10.col-sm-4(name="payment[product_type]",value=payment.product_type,disabled="disabled")
+								select#payment_type_1.col-xs-10.col-sm-4(name="payment[product_type]",value=payment.product_type,style="display:none;")
 									option(value="饮食") 饮食
 									option(value="服装") 服装
 									option(value="交通") 交通
@@ -62,7 +62,7 @@ block content
 							.col-sm-8
 								textarea#payment_remark.col-xs-10.col-sm-4(name="payment[remark]") #{payment.remark}						
 						.clearfix.form-actions
-							.col-md-offset-4.col-md-4
+							.col-sm-offset-4.col-sm-4
 								button#form_submit.btn.btn-info(type='button')
 									i.ace-icon.fa.fa-check.bigger-110
 									| 	确定
