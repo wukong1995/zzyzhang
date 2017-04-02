@@ -9,6 +9,7 @@ jQuery(function($) {
 				$(this).closest('tr').toggleClass('selected');
 			});
 	});
+	var baseUrl = window.location.href;
 
 	$('#sample').on('click', '.delete_btn', function(e) {
 		bootbox.confirm("确定要删除吗?", function(result) {
