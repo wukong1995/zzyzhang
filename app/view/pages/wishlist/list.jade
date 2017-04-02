@@ -139,6 +139,9 @@ block content
 									'<a href="/wishlist/detail/' + data + '" class="blue">'+
 										'<i class="ace-icon fa fa-search-plus bigger-130"></i>'+
 									' </a>'+
+									'<a href="/wishlist/edit/' + data + '" class="blue">'+
+										'<i class="ace-icon fa fa-pencil bigger-130"></i>'+
+									' </a>'+
 									'<a href="javascript:void(0);" data-id="' + data + '" class="delete_btn red">'+
 										'<i class="ace-icon fa fa-trash-o bigger-130"></i>'+
 									'</a>'+
@@ -148,6 +151,8 @@ block content
 									'    <button data-toggle="dropdown" data-position="auto" class="btn btn-minier btn-yellow dropdown-toggle"><i class="ace-icon fa fa-caret-down icon-only bigger-120"></i></button>'+
 										'<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">'+
 										' <li><a href="/wishlist/detail/' + data + '" data-rel="tooltip" title="" data-original-title="View" class="tooltip-info"><span class="blue"><i class="ace-icon fa fa-search-plus bigger-120"></i></span></a>'+
+										'<li><a href="/wishlist/edit/' + data + '" class="tooltip-success" data-rel="tooltip" title="" data-original-title="Edit">'+
+										'<span class="green"><i class="ace-icon fa fa-pencil-square-o bigger-120"></i></span></a></li>'+
 										'<li><a data-rel="tooltip" title="" data-original-title="Delete" data-id="' + data + '" class="delete_btn tooltip-error"><span class="red"><i class="ace-icon fa fa-trash-o bigger-120"></i></span></a></li>'+
 									'</ul></div></div>';
 								return content;  
@@ -164,7 +169,7 @@ block content
 					]
 			}).api();
 
-			$('#simple').on('click','.buy-btn',function(e) {
+			$('#sample').on('click','.buy-btn',function(e) {
 				var target = $(e.target);
 				var id = target.data('id');
 				var tr = target.closest('tr');

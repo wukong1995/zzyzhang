@@ -149,39 +149,50 @@ exports.buy = function(req, res) {
 	var id = req.query.id;
 	var user_id = req.session.user._id;
 	if (id) {
-		Wishlist.remove({
-			_id: id
-		}, function(err, wishlist) {
-			if (err) {
-				console.log(err)
-			} else {
-				wishlist.type = 1;
-				var _payment = new Payment(wishlist);
-				_payment.save(function(err, payment) {
-					if (err) {
-						console.log(err);
-					}
+		Wishlist.findById(id, function(err, wishlist) {
+			Wishlist.remove({
+				_id: id
+			}, function(err, result) {
+				if (err) {
+					console.log(err)
+				} else {
 
-					User.findById(user_id, function(err, user) {
+					var payment = {
+						type: 1,
+						name: wishlist.name,
+						price: wishlist.price,
+						product_type: wishlist.product_type,
+						remark: wishlist.remark,
+						account: wishlist.account
+					};
+					console.log(payment)
+
+					var _payment = new Payment(payment);
+					_payment.save(function(err, payment) {
 						if (err) {
 							console.log(err);
 						}
-						user.payment.push(payment._id);
-						user.save(function(err, user) {
+						User.findById(user_id, function(err, user) {
 							if (err) {
 								console.log(err);
-								res.json({
-									success: 0
-								});
-							} else {
-								res.json({
-									success: 1
-								});
 							}
+							user.payment.push(payment._id);
+							user.save(function(err, user) {
+								if (err) {
+									console.log(err);
+									res.json({
+										success: 0
+									});
+								} else {
+									res.json({
+										success: 1
+									});
+								}
+							});
 						});
 					});
-				});
-			}
+				}
+			});
 		});
 	}
 }
