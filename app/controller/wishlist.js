@@ -33,10 +33,14 @@ exports.result = function(req, res) {
 	var keyword = req.body.keyword ? req.body.keyword : '';
 
 	var totalCount = 0;
-	var user = req.session.user;
+	if (req.session.user) {
+		var userId = req.session.user._id;
+	} else {
+		var userId = req.headers['token'];
+	};
 
 	User.findOne({
-			_id: user._id
+			_id: userId
 		}).populate({
 			path: 'wishlist',
 			select: 'name product_type price meta',
@@ -51,6 +55,7 @@ exports.result = function(req, res) {
 			totalCount = user.wishlist.length;
 			var results = user.wishlist.slice(start, start + limit);
 			res.json({
+				page: (page + 1),
 				wishlist: results || [],
 				totalCount: totalCount
 			})

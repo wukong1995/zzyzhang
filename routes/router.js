@@ -10,8 +10,11 @@ var Wishlist = require('../app/controller/wishlist');
 module.exports = function(app) {
 	// pre handle user
 	app.use(function(req, res, next) {
-		app.locals.user = req.session.user
+		res.setHeader('Access-Control-Allow-Origin', '*');
+		res.setHeader('Access-Control-Allow-Methods', 'GET, POST,DELETE');
+		res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, token');
 
+		app.locals.user = req.session.user;
 		next()
 	})
 
@@ -77,6 +80,8 @@ module.exports = function(app) {
 	app.get('/payment/edit/:id', User.signinRequired, Payment.edit);
 	app.post('/payment/action/save', User.signinRequired, Payment.save);
 	app.delete('/payment/list', User.signinRequired, Payment.del);
+
+	app.post('/payment/detail', User.signinRequired, Payment.detailMO);
 
 	// share -- 股票
 	app.get('/share/list', User.signinRequired, Share.list);

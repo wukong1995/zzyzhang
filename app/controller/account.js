@@ -125,7 +125,6 @@ exports.signin = function(req, res) {
 				return res.redirect('/')
 			}
 		});
-
 	})
 }
 
@@ -240,10 +239,7 @@ exports.changepwd = function(req, res) {
 
 // detail
 exports.detail = function(req, res) {
-	var user = req.session.user
-	if (!user) {
-		return res.redirect('/signin')
-	}
+	var user = req.session.user;
 
 	User.findOne({
 		_id: user._id
@@ -315,18 +311,257 @@ exports.logout = function(req, res) {
 
 // midware for user
 exports.signinRequired = function(req, res, next) {
-	var user = req.session.user
-	if (!user) {
-		return res.redirect('/signin')
+	var user = req.session.user;
+	//检查post的信息或者url查询参数或者头信息
+	var token = req.body.token || req.query.token || req.headers['token'];
+	if (!user && !token) {
+		return res.redirect('/signin');
 	}
 	next();
 }
 
 /* 中间件 */
 exports.adminRequired = function(req, res, next) {
-	var user = req.session.user
+	var user = req.session.user;
 	if (user.role < 10) {
 		return res.redirect('/')
 	}
 	next();
+}
+
+// App接口：登录
+exports.signinMO = function(req, res) {
+	var _user = req.body.user;
+
+	if (_user.name.length > 16) {
+		res.json({
+			error_code:0,
+			success: 0,
+			msg:'用户名太长'
+		});
+	}
+	if (!/^[a-zA-Z0-9]{6,16}$/.test(_user.password)) {
+		res.json({
+			error_code:0,
+			success: 0,
+			msg:'密码格式不正确'
+		});
+	}
+
+	User.findOne({
+		name: _user.name
+	}, function(err, user) {
+		if (err) {
+			console.log(err);
+			res.json({
+				error_code:1,
+				success: 0,
+				msg:'数据库查询出错'
+			});
+		}
+		if (!user) {
+			console.log("no user");
+			res.json({
+				error_code:0,
+				success: 0,
+				msg:'找不到该用户'
+			});
+		}
+		if (user.state == 1) {
+			console.log("user freeze");
+			res.json({
+				error_code:0,
+				success: 0,
+				msg:'账户已冻结'
+			});
+		}
+		user.comparePassword(_user.password, function(err, isMatch) {
+			if (err) {
+				console.log(err);
+				res.json({
+					error_code:1,
+					success: 0,
+					msg:'账户已冻结'
+				});
+			}
+
+			if (isMatch) {
+				console.log(user.name, "success");
+				res.json({
+					error_code:0,
+					success: 1,
+					msg:'登录成功',
+					user:user
+				});
+			} else {
+				console.log("password is not matched");
+				res.json({
+					error_code:0,
+					success: 0,
+					msg:'密码不匹配'
+				});
+			}
+		});
+	})
+}
+
+// App接口：注册
+exports.signupMO = function(req, res) {
+	var _user = req.body.user;
+
+	if (_user.name.length > 16) {
+		res.json({
+			error_code:0,
+			success: 0,
+			msg:'用户名太长'
+		});
+	}
+	if (!/^[a-zA-Z0-9]{6,16}$/.test(_user.password)) {
+		res.json({
+			error_code:0,
+			success: 0,
+			msg:'密码格式不正确'
+		});
+	}
+
+	User.findOne({
+		name: _user.name
+	}, function(err, user) {
+		if (err) {
+			console.log(err);
+			res.json({
+				error_code:1,
+				success: 0,
+				msg:'数据库查询出错'
+			});
+		}
+		if (user) {
+			res.json({
+				error_code:0,
+				success: 0,
+				msg:'用户名已存在'
+			});
+		} else {
+			var user = new User(_user);
+			user.save(function(err, user) {
+				if (err) {
+					console.log(err);
+					res.json({
+						error_code:1,
+						success: 0,
+						msg:'保存失败，请重试'
+					});
+				}
+				res.json({
+					error_code:0,
+					success: 1,
+					msg:'恭喜你，注册成功'
+				});
+			})
+		}
+	})
+}
+
+// App接口：忘记密码与PC端相同
+
+// App接口：用户详情页
+exports.detailMO = function(req, res) {
+	var userId = req.headers['token'];
+
+	User.findOne({
+		_id: userId
+	}, function(err, user) {
+		if (err) {
+			console.log(err);
+			res.json({
+				error_code:1,
+				success: 0,
+				msg:'找不到该用户'
+			});
+		}
+		res.json({
+			error_code:0,
+			success: 1,
+			msg:'成功',
+			user: user
+		});
+	});
+}
+
+// App接口：修改密码
+exports.changepwd = function(req, res) {
+	var _user = req.body.user;
+	var userId = req.headers['token'];
+
+
+	User.findById(userId, function(err, user) {
+		if (err) {
+			console.log(err);
+			res.json({
+				error_code:1,
+				success: 0,
+				msg:'找不到该用户'
+			});
+		}
+		if (user) {
+			user.password = _user.newpwd;
+			user.save(function(err, user) {
+				if (err) {
+					console.log(err);
+					res.json({
+						error_code:1,
+						success: 0,
+						msg:'保存出错'
+					});
+				}
+				console.log("changepwd success");
+				res.json({
+					error_code:0,
+					success: 1,
+					msg:'修改成功'
+				});
+			});
+		} else {
+			res.json({
+				error_code:1,
+				success: 0,
+				msg:'找不到该用户'
+			});
+		}
+	});
+};
+
+// App接口：修改个人资料
+exports.changeproMO = function(req, res) {
+	var id = req.headers['token'];
+	var _user = req.body.user;
+	var userObj;
+
+	User.findById(id, function(err, user) {
+		if (err) {
+			console.log(err);
+			res.json({
+				error_code:1,
+				success: 0,
+				msg:'找不到该用户'
+			});
+		}
+		userObj = _.extend(user, _user);
+		userObj.save(function(err, user) {
+			if (err) {
+				console.log(err);
+				res.json({
+					error_code:0,
+					success: 0,
+					msg:'保存出错'
+				});
+			}
+
+			res.json({
+				error_code:0,
+				success: 1,
+				msg:'保存成功'
+			});
+		})
+	})
 }

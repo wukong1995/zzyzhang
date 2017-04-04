@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
+var jwt = require("jsonwebtoken");
 var app = express();
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
