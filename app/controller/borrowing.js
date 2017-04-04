@@ -44,6 +44,9 @@ exports.result = function(req, res) {
 			select: 'other telephone price type meta',
 			match: {
 				other: new RegExp(keyword, "i")
+			},
+			options:{
+				sort: { 'meta.createAt': -1 }
 			}
 		})
 		.exec(function(err, user) {
