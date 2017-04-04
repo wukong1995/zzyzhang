@@ -18,7 +18,6 @@ exports.result = function(req, res) {
 	var limit = req.body.limit ? parseInt(req.body.limit) : 15;
 	var keyword = req.body.keyword ? req.body.keyword : '';
 	var role = req.session.user.role;
-	console.log(req.session.user)
 
 	User.count({
 			role: {
@@ -37,6 +36,7 @@ exports.result = function(req, res) {
 				}, ['name', 'telphone', 'email', 'role', 'state'])
 				.limit(limit)
 				.skip(start)
+				.sort({'meta.updateAt':-1})
 				.exec(function(err, users) {
 					if (err) {
 						console.log(err)

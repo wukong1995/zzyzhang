@@ -46,6 +46,9 @@ exports.result = function(req, res) {
 			select: 'name product_type price meta',
 			match: {
 				name: new RegExp(keyword, "i")
+			},
+			options:{
+				sort: { 'meta.createAt': -1 }
 			}
 		})
 		.exec(function(err, user) {
