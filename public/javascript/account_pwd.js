@@ -1,32 +1,7 @@
 jQuery(function($) {
 	bootbox.setDefaults("locale", "zh_CN");
 
-	function ismatch() {
-		$.ajax({
-				async: false,
-				type: 'POST',
-				url: '/user/verifypwd',
-				data: {
-					pwd: $('#pwd').val()
-				}
-			})
-			.success(function(res) {
-				console.log()
-				if (res.ismatch) {
-					return true;
-				} else {
-					bootbox.alert(res.message);
-					return false;
-				}
-			})
-			.error(function(err) {
-				bootbox.alert(err);
-				return false;
-			});
-	}
-
-
-	$('#form_submit').on('click', function() {
+	function checkForm() {
 		if ($('#pwd').val() == "") {
 			$('#pwd').tips({
 				msg: '请输入原密码',
@@ -89,12 +64,35 @@ jQuery(function($) {
 			$('#confirmpwd').focus();
 			return false;
 		}
-		// 判断用户名是否注册
-		if (!ismatch()) {
-			return false;
-		}
+		return true;
+	}
 
-		$('#form').submit();
+
+	$('#form_submit').on('click', function() {
+		if(checkForm()) {
+			$.ajax({
+          url: '/user/changepwd',
+          type: 'post',
+          dataType: 'json',
+          data: {
+              user:{
+              	pwd:$('#pwd').val(),
+								newpwd:$('#newpwd').val()
+              }
+          },
+          success: function (res) {
+              if(res.success == 0) {
+                  bootbox.alert(res.message);
+              } else {
+              	bootbox.alert("修改密码成功，请重新登录！");
+                window.location.href = '/';
+              }
+          },
+          error: function (err) {
+             alert('请求错误！');
+          }
+      });
+		}
 
 	});
 

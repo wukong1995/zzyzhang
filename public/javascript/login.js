@@ -188,7 +188,7 @@ jQuery(function($) {
           data: {
               user:{
               	name:$('#name').val(),
-								password:$('#password').val()
+								password:$('#pwd').val()
               }
           },
           success: function (res) {
@@ -214,10 +214,10 @@ jQuery(function($) {
           dataType: 'json',
           data: {
               newuser:{
-              	name:$('#name').val(),
-								password:$('#email').val(),
-								name:$('#telphone').val(),
-								password:$('#password').val()
+              	name:$('#new_name').val(),
+								email:$('#new_email').val(),
+								telphone:$('#new_tel').val(),
+								password:$('#new_pwd').val()
               }
           },
           success: function (res) {
