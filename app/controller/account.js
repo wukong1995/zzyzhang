@@ -19,23 +19,35 @@ exports.signup = function(req, res) {
 		name: _user.name
 	}, function(err, user) {
 		if (err) {
-			console.log(err)
+			console.log(err);
+			res.json({
+				error_code:1,
+				success: 0,
+				message: '服务器错误！'
+			});
 		}
 		if (user) {
-			req.session.error = '用户名已存在';
-			delete req.session.signupmsg;
-			return res.redirect('/')
+			res.json({
+				error_code:0,
+				success: 0,
+				message: '用户名已存在！'
+			});
 		} else {
 			var user = new User(_user);
 			user.save(function(err, user) {
 				if (err) {
-					console.log(err)
-					req.session.error = '保存失败，请重试';
-					delete req.session.signupmsg;
+					console.log(err);
+					res.json({
+						error_code:0,
+						success: 0,
+						message: '注册失败，请重试！'
+					});
 				}
-				delete req.session.error;
-				req.session.signupmsg = '恭喜你，注册成功';
-				res.redirect('/');
+				res.json({
+						error_code:0,
+						success: 0,
+						message: '恭喜你，注册成功！'
+					});
 			})
 		}
 	})
@@ -52,163 +64,124 @@ exports.forgetpwd = function(req, res) {
 		telphone: _user.telphone
 	}, function(err, user) {
 		if (err) {
-			console.log(err)
+			console.log(err);
+			res.json({
+				error_code:1,
+				success: 0, // 成功
+				message: '服务器错误'
+			});
 		}
 		if (user) {
 			user.password = '123456';
 
 			user.save(function(err, user) {
 				if (err) {
-					console.log(err)
+					console.log(err);
+					res.json({
+						error_code:1,
+						success: 0, // 成功
+						message: '服务器错误'
+					});
 				}
 				console.log("password change")
 				res.json({
-					success: 1 // 成功
-				})
+					error_code:0,
+					success: 1 ,// 成功
+					message: '重置成功！'
+				});
 			});
 		} else {
 			res.json({
+				error_code:0,
 				success: 0,
 				message: '没有此账户！'
-			})
+			});
 		}
 	})
 }
 
 // signin
 exports.signin = function(req, res) {
-	delete req.session.signupmsg;
+
 	var _user = req.body.user;
 	if (_user.name.length > 16) {
-		req.session.error = '用户名太长';
-		return res.redirect('/');
+		res.json({
+			error_code:0,
+			success: 0,
+			message: '用户名太长！'
+		});
 	}
 	if (!/^[a-zA-Z0-9]{6,16}$/.test(_user.password)) {
-		req.session.error = '密码格式不正确';
-		return res.redirect('/');
+		res.json({
+			error_code:0,
+			success: 0,
+			message: '密码格式不正确！'
+		});
 	}
 
 	User.findOne({
 		name: _user.name
 	}, function(err, user) {
 		if (err) {
-			console.log(err)
+			console.log(err);
+			res.json({
+				error_code:1,
+				success: 0,
+				message: '服务器错误！'
+			});
 		}
 		if (!user) {
 			console.log("no user");
-			req.session.error = '找不到该用户'
-			return res.redirect('/');
-		}
-		if (user.state == 1) {
-			console.log("user freeze");
-			req.session.error = '账户已冻结';
-			return res.redirect('/');
-		}
-		user.comparePassword(_user.password, function(err, isMatch) {
-			if (err) {
-				console.log(err)
-			}
 
-			if (isMatch) {
-				delete req.session.error;
-				delete req.session.signupmsg;
-				req.session.user = {
-					_id: user._id,
-					name: user.name,
-					role: user.role
-				};
-				console.log(user.name, "success");
-				return res.redirect('/index');
-			} else {
-				console.log("password is not matched");
-				req.session.error = '密码不匹配'
-				return res.redirect('/')
-			}
-		});
-	})
-}
-
-// 判断是否重名
-exports.isExit = function(req, res) {
-	var name = req.query.name;
-	User.findOne({
-		name: name
-	}, function(err, user) {
-		if (err) {
-			console.log(err);
 			res.json({
+				error_code:0,
 				success: 0,
-				isExit: true,
-				message: '失败'
+				message: '找不到该用户！'
 			});
-
-		}
-		if (!user) {
-			res.json({
-				success: 1, // 成功
-				isExit: false,
-				message: '成功'
-			});
+			console.log()
 		} else {
-			res.json({
-				success: 1,
-				isExit: true,
-				message: '成功'
-			});
-		}
+			if (user.state == 1) {
+				console.log("user freeze");
 
-
-	})
-}
-
-// 验证密码
-exports.verifypwd = function(req, res) {
-	var pwd = req.body.pwd;
-
-	User.findById(req.session.user._id, function(err, user) {
-		if (err) {
-			console.log(err);
-			res.json({
-				success: 0,
-				ismatch: false,
-				message: '重置密码出错，请重试！'
-			});
-		}
-
-		if (user) {
-			user.comparePassword(pwd, function(err, isMatch) {
+				res.json({
+					error_code:0,
+					success: 0,
+					message: '账户已冻结！'
+				});
+			}
+			user.comparePassword(_user.password, function(err, isMatch) {
 				if (err) {
 					console.log(err);
 					res.json({
+						error_code:1,
 						success: 0,
-						ismatch: false,
-						message: '重置密码出错，请重试！'
+						message: '服务器错误！'
 					});
 				}
+
 				if (isMatch) {
+					req.session.user = {
+						_id: user._id,
+						name: user.name,
+						role: user.role
+					};
+					console.log(user.name, "success");
 					res.json({
+						error_code:0,
 						success: 1,
-						ismatch: true,
-						message: '原密码正确！'
+						message: '登录成功！'
 					});
 				} else {
+					console.log("password is not matched");
 					res.json({
-						success: 1,
-						ismatch: false,
-						message: '原密码不正确！'
+						error_code:0,
+						success: 0,
+						message: '密码不匹配！'
 					});
 				}
-
-			});
-
-		} else {
-			res.json({
-				success: 0,
-				ismatch: false,
-				message: '请重新登录'
 			});
 		}
-	})
+	});
 }
 
 // changepwd
@@ -217,22 +190,56 @@ exports.changepwd = function(req, res) {
 
 	User.findById(req.session.user._id, function(err, user) {
 		if (err) {
-			console.log(err)
+			console.log(err);
+			res.json({
+				error_code:1,
+				success: 0,
+				message: '服务器错误！'
+			});
 		}
 		if (user) {
-			user.password = _user.newpwd;
-			user.save(function(err, user) {
+			user.comparePassword(pwd, function(err, isMatch) {
 				if (err) {
 					console.log(err);
-					return res.redirect('/user/changepassword');
+					res.json({
+						error_code:1,
+						success: 0,
+						message: '服务器错误！'
+					});
 				}
-				console.log("changepwd success");
-				delete req.session.user;
-				return res.redirect('/');
+				if (isMatch) {
+					user.password = _user.newpwd;
+					user.save(function(err, user) {
+						if (err) {
+							console.log(err);
+							res.json({
+								error_code:1,
+								success: 0,
+								message: '服务器错误！'
+							});
+						}
+						res.json({
+							error_code:0,
+							success: 1,
+							message: '修改成功！'
+						});
+					});
+					
+				} else {
+					res.json({
+						error_code:0,
+						success: 0,
+						message: '原密码不正确！'
+					});
+				}
 			});
+
 		} else {
-			console.log("修改密码出错，请重试！");
-			return res.redirect('/user/changepassword')
+			res.json({
+				success: 0,
+				ismatch: false,
+				message: '请重新登录'
+			});
 		}
 	});
 };
@@ -330,137 +337,9 @@ exports.adminRequired = function(req, res, next) {
 }
 
 // App接口：登录
-exports.signinMO = function(req, res) {
-	var _user = req.body.user;
-
-	if (_user.name.length > 16) {
-		res.json({
-			error_code:0,
-			success: 0,
-			msg:'用户名太长'
-		});
-	}
-	if (!/^[a-zA-Z0-9]{6,16}$/.test(_user.password)) {
-		res.json({
-			error_code:0,
-			success: 0,
-			msg:'密码格式不正确'
-		});
-	}
-
-	User.findOne({
-		name: _user.name
-	}, function(err, user) {
-		if (err) {
-			console.log(err);
-			res.json({
-				error_code:1,
-				success: 0,
-				msg:'数据库查询出错'
-			});
-		}
-		if (!user) {
-			console.log("no user");
-			res.json({
-				error_code:0,
-				success: 0,
-				msg:'找不到该用户'
-			});
-		}
-		if (user.state == 1) {
-			console.log("user freeze");
-			res.json({
-				error_code:0,
-				success: 0,
-				msg:'账户已冻结'
-			});
-		}
-		user.comparePassword(_user.password, function(err, isMatch) {
-			if (err) {
-				console.log(err);
-				res.json({
-					error_code:1,
-					success: 0,
-					msg:'账户已冻结'
-				});
-			}
-
-			if (isMatch) {
-				console.log(user.name, "success");
-				res.json({
-					error_code:0,
-					success: 1,
-					msg:'登录成功',
-					user:user
-				});
-			} else {
-				console.log("password is not matched");
-				res.json({
-					error_code:0,
-					success: 0,
-					msg:'密码不匹配'
-				});
-			}
-		});
-	})
-}
 
 // App接口：注册
-exports.signupMO = function(req, res) {
-	var _user = req.body.user;
 
-	if (_user.name.length > 16) {
-		res.json({
-			error_code:0,
-			success: 0,
-			msg:'用户名太长'
-		});
-	}
-	if (!/^[a-zA-Z0-9]{6,16}$/.test(_user.password)) {
-		res.json({
-			error_code:0,
-			success: 0,
-			msg:'密码格式不正确'
-		});
-	}
-
-	User.findOne({
-		name: _user.name
-	}, function(err, user) {
-		if (err) {
-			console.log(err);
-			res.json({
-				error_code:1,
-				success: 0,
-				msg:'数据库查询出错'
-			});
-		}
-		if (user) {
-			res.json({
-				error_code:0,
-				success: 0,
-				msg:'用户名已存在'
-			});
-		} else {
-			var user = new User(_user);
-			user.save(function(err, user) {
-				if (err) {
-					console.log(err);
-					res.json({
-						error_code:1,
-						success: 0,
-						msg:'保存失败，请重试'
-					});
-				}
-				res.json({
-					error_code:0,
-					success: 1,
-					msg:'恭喜你，注册成功'
-				});
-			})
-		}
-	})
-}
 
 // App接口：忘记密码与PC端相同
 
@@ -489,47 +368,6 @@ exports.detailMO = function(req, res) {
 }
 
 // App接口：修改密码
-exports.changepwd = function(req, res) {
-	var _user = req.body.user;
-	var userId = req.headers['token'];
-
-
-	User.findById(userId, function(err, user) {
-		if (err) {
-			console.log(err);
-			res.json({
-				error_code:1,
-				success: 0,
-				msg:'找不到该用户'
-			});
-		}
-		if (user) {
-			user.password = _user.newpwd;
-			user.save(function(err, user) {
-				if (err) {
-					console.log(err);
-					res.json({
-						error_code:1,
-						success: 0,
-						msg:'保存出错'
-					});
-				}
-				console.log("changepwd success");
-				res.json({
-					error_code:0,
-					success: 1,
-					msg:'修改成功'
-				});
-			});
-		} else {
-			res.json({
-				error_code:1,
-				success: 0,
-				msg:'找不到该用户'
-			});
-		}
-	});
-};
 
 // App接口：修改个人资料
 exports.changeproMO = function(req, res) {
