@@ -23,17 +23,7 @@ body.login-layout.light-login
 										h4.header.blue.lighter.bigger
 											i.ace-icon.fa.fa-coffee.green
 											| 登录
-										if error
-											.alert.alert-danger(style="padding:5px;")
-												button(type="button" class="close",data-dismiss="alert")
-													i.ace-icon.fa.fa-times
-												| #{error}
-										if signupmsg
-											.alert.alert-success(style="padding:5px;")
-												button(type="button" class="close",data-dismiss="alert")
-													i.ace-icon.fa.fa-times
-												| #{signupmsg}
-										form#signin_form(method="POST",action="/user/signin")
+										form
 											fieldset
 												label.block.clearfix
 													span.block.input-icon.input-icon-right
@@ -99,7 +89,7 @@ body.login-layout.light-login
 											| 注册
 										.space-6
 										p  请填写以下信息：
-										form#signup_form(method="POST",action="/user/signup")
+										form
 											fieldset
 												label.block.clearfix
 													span.block.input-icon.input-icon-right

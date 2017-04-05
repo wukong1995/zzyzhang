@@ -20,7 +20,6 @@ module.exports = function(app) {
 
 	// User
 	app.get('/', User.showSignin);
-	app.post('/user/isExit', User.isExit);
 	app.post('/user/signup', User.signup);
 	app.post('/user/signin', User.signin);
 	app.get('/logout', User.logout);
@@ -29,7 +28,6 @@ module.exports = function(app) {
 	app.get('/user/changepassword', User.signinRequired, User.showChangepwd);
 	app.post('/user/changeprofile', User.changeprofile);
 	app.post('/user/forgetpwd', User.forgetpwd);
-	app.post('/user/verifypwd', User.signinRequired, User.verifypwd);
 	app.post('/user/changepwd', User.changepwd);
 
 	app.get('/index', User.signinRequired, function(req, res) {

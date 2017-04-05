@@ -28,7 +28,7 @@ jQuery(function($) {
 		e.preventDefault();
 	});
 
-	$('#signin_submit').on('click', function() {
+	function checkSigninForm() {
 		if ($('#name').val() == "") {
 			$('#name').tips({
 				msg: '请输入用户名',
@@ -69,36 +69,9 @@ jQuery(function($) {
 			$('#password').focus();
 			return false;
 		}
-		$('#signin_form').submit();
-	});
-
-	function isExit() {
-		$.ajax({
-				async: false,
-				type: 'POST',
-			url: '/user/isExit?name=' + $('#new_name').val(),
-			})
-			.success(function(res) {
-				if (res.isExit) {
-					$('#new_name').tips({
-						msg: '用户名已经存在',
-						side: 3,
-						bg: '#AE81FF',
-						time: 1,
-					});
-					$('#new_name').focus();
-					return false;
-				} else {
-					return true;
-				}
-			})
-			.error(function(err) {
-				bootbox.alert(err);
-				return false;
-			});
+		return true;
 	}
-
-	$('#signup_submit').on('click', function() {
+	function checkSignupForm() {
 		if ($('#new_name').val() == "") {
 			$('#new_name').tips({
 				msg: '请输入用户名',
@@ -119,8 +92,6 @@ jQuery(function($) {
 			$('#new_name').focus();
 			return false;
 		}
-		// 判断用户名是否注册
-		isExit();
 
 		if ($('#new_email').val() == "") {
 			$('#new_email').tips({
@@ -205,7 +176,59 @@ jQuery(function($) {
 			$('#new_pwd_confirm').focus();
 			return false;
 		}
-		$('#signup_form').submit();
+		return true;
+	}
+
+	$('#signin_submit').on('click', function() {
+		if(checkSigninForm()) {
+			$.ajax({
+          url: '/user/signin',
+          type: 'post',
+          dataType: 'json',
+          data: {
+              user:{
+              	name:$('#name').val(),
+								password:$('#password').val()
+              }
+          },
+          success: function (res) {
+              if(res.success == 0) {
+                  bootbox.alert(res.message);
+              } else {
+                  window.location.href = '/index';
+              }
+          },
+          error: function (err) {
+             alert('请求错误！');
+          }
+      });
+		}
+	});
+
+
+	$('#signup_submit').on('click', function() {
+		if(checkSignupForm()) {
+			$.ajax({
+          url: '/user/signup',
+          type: 'post',
+          dataType: 'json',
+          data: {
+              newuser:{
+              	name:$('#name').val(),
+								password:$('#email').val(),
+								name:$('#telphone').val(),
+								password:$('#password').val()
+              }
+          },
+          success: function (res) {
+              bootbox.alert(res.message);
+          },
+          error: function (err) {
+             alert('请求错误！');
+          }
+      });
+		}
+		
 	});
 
 	$('#forget_submit').on('click', function() {
