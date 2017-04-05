@@ -10,10 +10,9 @@ exports.showSignin = function(req, res) {
 	});
 }
 
-
 // signup
 exports.signup = function(req, res) {
-	var _user = req.body.newuser
+	var _user = req.body.newuser;
 
 	User.findOne({
 		name: _user.name
@@ -186,9 +185,14 @@ exports.signin = function(req, res) {
 
 // changepwd
 exports.changepwd = function(req, res) {
+	if (req.session.user) {
+		var userId = req.session.user._id;
+	} else {
+		var userId = req.headers['token'];
+	}
 	var _user = req.body.user;
 
-	User.findById(req.session.user._id, function(err, user) {
+	User.findById(userId, function(err, user) {
 		if (err) {
 			console.log(err);
 			res.json({
@@ -198,7 +202,7 @@ exports.changepwd = function(req, res) {
 			});
 		}
 		if (user) {
-			user.comparePassword(pwd, function(err, isMatch) {
+			user.comparePassword(_user.pwd, function(err, isMatch) {
 				if (err) {
 					console.log(err);
 					res.json({
@@ -218,6 +222,7 @@ exports.changepwd = function(req, res) {
 								message: '服务器错误！'
 							});
 						}
+						delete req.session.user;
 						res.json({
 							error_code:0,
 							success: 1,
@@ -311,7 +316,7 @@ exports.changeprofile = function(req, res) {
 
 // logout
 exports.logout = function(req, res) {
-	delete req.session.user
+	delete req.session.user;
 		//delete app.locals.user
 	res.redirect('/')
 }
