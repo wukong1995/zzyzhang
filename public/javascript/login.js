@@ -28,6 +28,45 @@ jQuery(function($) {
 		e.preventDefault();
 	});
 
+	// 初始化
+    var username = $.cookie('username');
+    var password = $.cookie('password');
+    if (typeof(username) != "undefined"
+                && typeof(password) != "undefined") {
+        $("#name").val(username);
+        $("#pwd").val(password);
+        $("#rememberPwd").attr("checked", true);
+    }
+
+    // 记住密码
+    function savePaw() {
+       if (!$("#rememberPwd").attr("checked")) {
+           $.cookie('username', '', {
+                 expires : -1
+             });
+           $.cookie('password', '', {
+                expires : -1
+           });
+           $("#name").val('');
+           $("#pwd").val('');
+         }
+    }
+    $('#rememberPwd').on('click',function() {
+        savePaw();
+    });
+
+
+    function saveCookie() {
+      if ($("#rememberPwd").attr("checked")) {
+           $.cookie('username', $("#name").val(), {
+               expires : 7
+           });
+          $.cookie('password', $("#pwd").val(), {
+               expires : 7
+          });
+       }
+    }
+
 	function checkSigninForm() {
 		if ($('#name').val() == "") {
 			$('#name').tips({
@@ -186,16 +225,16 @@ jQuery(function($) {
           type: 'post',
           dataType: 'json',
           data: {
-              user:{
-              	name:$('#name').val(),
-								password:$('#pwd').val()
-              }
+            	name:$('#name').val(),
+							password:$('#pwd').val()
+              
           },
           success: function (res) {
               if(res.success == 0) {
                   bootbox.alert(res.message);
               } else {
-                  window.location.href = '/index';
+              	saveCookie();
+                window.location.href = '/index';
               }
           },
           error: function (err) {
@@ -213,12 +252,10 @@ jQuery(function($) {
           type: 'post',
           dataType: 'json',
           data: {
-              newuser:{
-              	name:$('#new_name').val(),
-								email:$('#new_email').val(),
-								telphone:$('#new_tel').val(),
-								password:$('#new_pwd').val()
-              }
+            	name:$('#new_name').val(),
+							email:$('#new_email').val(),
+							telphone:$('#new_tel').val(),
+							password:$('#new_pwd').val()
           },
           success: function (res) {
               bootbox.alert(res.message);
@@ -295,18 +332,15 @@ jQuery(function($) {
 			return false;
 		}
 
-		var user = {
-			name: $('#forget_name').val(),
-			email: $('#forget_email').val(),
-			telphone: $('#forget_tel').val()
-		};
 
 		$.ajax({
 			url: '/user/forgetpwd',
 			type: 'POST',
 			dataType: 'json',
 			data: {
-				user: user
+				name: $('#forget_name').val(),
+				email: $('#forget_email').val(),
+				telphone: $('#forget_tel').val()
 			},
 			success: function(res) {
 				if (res.success == 1) {

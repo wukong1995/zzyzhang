@@ -1,5 +1,7 @@
 var User = require('../model/account');
+var Commen = require('./commen');
 var _ = require('underscore');
+
 
 // showSignin
 exports.showSignin = function(req, res) {
@@ -12,7 +14,43 @@ exports.showSignin = function(req, res) {
 
 // signup
 exports.signup = function(req, res) {
-	var _user = req.body.newuser;
+	if(!req.body) {
+		return res.json({
+			error_code:0,
+			success: 0,
+			message: '未发送数据！'
+		});
+	}
+	var _user = req.body;
+
+	if(_user.name == undefined || _user.email == undefined 
+		|| _user.telphone  == undefined || _user.password  == undefined) {
+		return res.json({
+			error_code:0,
+			success: 0,
+			message: '填写字段不完整！'
+		});
+	}
+
+	var result = Commen.checkField([
+		[_user.name,'/^[\\S]+$/', '用户名不能为空'],
+		[_user.name,'/^.{4,16}$/',  '用户名长度为4-16位'],
+		[_user.email,'/^[\\S]+$/', '邮箱不能为空'],
+		[_user.telphone,'/^[\\S]+$/', '电话不能为空'],
+		[_user.password,'/^[\\S]+$/', '密码不能为空'],
+		[_user.email,'/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',  '邮箱格式不正确'],
+		[_user.telphone,'/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/', '联系方式格式不正确'],
+		[_user.password,'/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
+	]);
+	if(result.flag === false) {
+		return res.json({
+			error_code:0,
+			success: 0,
+			message: result.msg
+		});
+	} else {
+		result = null;
+	}
 
 	User.findOne({
 		name: _user.name
@@ -54,7 +92,7 @@ exports.signup = function(req, res) {
 
 // forgetpwd
 exports.forgetpwd = function(req, res) {
-	var _user = req.param('user')
+	var _user = req.body;
 	var usernObj;
 
 	User.findOne({
@@ -102,25 +140,36 @@ exports.forgetpwd = function(req, res) {
 // signin
 exports.signin = function(req, res) {
 
-	var _user = req.body.user;
-	if (_user.name.length > 16) {
-		res.json({
+	var _user = req.body;
+
+	if(_user.name == undefined || _user.password == undefined) {
+		return res.json({
 			error_code:0,
 			success: 0,
-			message: '用户名太长！'
+			message: '填写字段不完整！'
 		});
 	}
-	if (!/^[a-zA-Z0-9]{6,16}$/.test(_user.password)) {
+
+	var result = Commen.checkField([
+		[_user.name,'/^[\\S]+$/', '用户名不能为空'],
+		[_user.name,'/^.{4,16}$/',  '用户名长度为4-16位'],
+		[_user.password,'/^[\\S]+$/', '密码不能为空'],
+		[_user.password,'/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
+	]);
+	if(result.flag === false) {
 		res.json({
 			error_code:0,
 			success: 0,
-			message: '密码格式不正确！'
+			message: result.msg
 		});
+		return ;
+	} else {
+		result = null;
 	}
 
 	User.findOne({
 		name: _user.name
-	}, function(err, user) {
+	},['name','password'], function(err, user) {
 		if (err) {
 			console.log(err);
 			res.json({
@@ -128,6 +177,7 @@ exports.signin = function(req, res) {
 				success: 0,
 				message: '服务器错误！'
 			});
+			return ;
 		}
 		if (!user) {
 			console.log("no user");
@@ -137,7 +187,7 @@ exports.signin = function(req, res) {
 				success: 0,
 				message: '找不到该用户！'
 			});
-			console.log()
+			return ;
 		} else {
 			if (user.state == 1) {
 				console.log("user freeze");
@@ -147,6 +197,7 @@ exports.signin = function(req, res) {
 					success: 0,
 					message: '账户已冻结！'
 				});
+				return ;
 			}
 			user.comparePassword(_user.password, function(err, isMatch) {
 				if (err) {
@@ -156,6 +207,7 @@ exports.signin = function(req, res) {
 						success: 0,
 						message: '服务器错误！'
 					});
+					return ;
 				}
 
 				if (isMatch) {
@@ -168,15 +220,19 @@ exports.signin = function(req, res) {
 					res.json({
 						error_code:0,
 						success: 1,
-						message: '登录成功！'
+						message: '登录成功！',
+						user:user
 					});
+					return ;
 				} else {
 					console.log("password is not matched");
+
 					res.json({
 						error_code:0,
 						success: 0,
 						message: '密码不匹配！'
 					});
+					return ;
 				}
 			});
 		}
