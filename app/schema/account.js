@@ -104,9 +104,9 @@ AccountSchema.methods = {
 
 		bcrypt.compare(_password, this.password, function(err, isMatch) {
 			if (err) {
-				return cb(err)
+				return cb(err);
 			}
-			return cb(null, isMatch)
+			return cb(null, isMatch);
 		})
 	},
 }
