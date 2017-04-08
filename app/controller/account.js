@@ -15,21 +15,23 @@ exports.showSignin = function(req, res) {
 // signup
 exports.signup = function(req, res) {
 	if(!req.body) {
-		return res.json({
+		res.json({
 			error_code:0,
 			success: 0,
 			message: '未发送数据！'
 		});
+		return ;
 	}
 	var _user = req.body;
 
 	if(_user.name == undefined || _user.email == undefined 
 		|| _user.telphone  == undefined || _user.password  == undefined) {
-		return res.json({
+		res.json({
 			error_code:0,
 			success: 0,
 			message: '填写字段不完整！'
 		});
+		return ;
 	}
 
 	var result = Commen.checkField([
@@ -38,16 +40,17 @@ exports.signup = function(req, res) {
 		[_user.email,'/^[\\S]+$/', '邮箱不能为空'],
 		[_user.telphone,'/^[\\S]+$/', '电话不能为空'],
 		[_user.password,'/^[\\S]+$/', '密码不能为空'],
-		[_user.email,'/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',  '邮箱格式不正确'],
-		[_user.telphone,'/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/', '联系方式格式不正确'],
+		[_user.email,'/^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$/',  '邮箱格式不正确'],
+		[_user.telphone,'/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '联系方式格式不正确'],
 		[_user.password,'/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
 	]);
 	if(result.flag === false) {
-		return res.json({
+		res.json({
 			error_code:0,
 			success: 0,
 			message: result.msg
 		});
+		return ;
 	} else {
 		result = null;
 	}
@@ -62,6 +65,7 @@ exports.signup = function(req, res) {
 				success: 0,
 				message: '服务器错误！'
 			});
+			return ;
 		}
 		if (user) {
 			res.json({
@@ -69,6 +73,7 @@ exports.signup = function(req, res) {
 				success: 0,
 				message: '用户名已存在！'
 			});
+			return ;
 		} else {
 			var user = new User(_user);
 			user.save(function(err, user) {
@@ -79,12 +84,14 @@ exports.signup = function(req, res) {
 						success: 0,
 						message: '注册失败，请重试！'
 					});
+					return ;
 				}
 				res.json({
-						error_code:0,
-						success: 0,
-						message: '恭喜你，注册成功！'
-					});
+					error_code:0,
+					success: 1,
+					message: '恭喜你，注册成功！'
+				});
+				return ;
 			})
 		}
 	})
@@ -92,8 +99,45 @@ exports.signup = function(req, res) {
 
 // forgetpwd
 exports.forgetpwd = function(req, res) {
+	if(!req.body) {
+		res.json({
+			error_code:0,
+			success: 0,
+			message: '未发送数据！'
+		});
+		return ;
+	}
 	var _user = req.body;
 	var usernObj;
+
+	if(_user.name == undefined || _user.email == undefined 
+		|| _user.telphone  == undefined) {
+		res.json({
+			error_code:0,
+			success: 0,
+			message: '填写字段不完整！'
+		});
+		return ;
+	}
+
+	var result = Commen.checkField([
+		[_user.name,'/^[\\S]+$/', '用户名不能为空'],
+		[_user.name,'/^.{4,16}$/',  '用户名长度为4-16位'],
+		[_user.email,'/^[\\S]+$/', '邮箱不能为空'],
+		[_user.telphone,'/^[\\S]+$/', '电话不能为空'],
+		[_user.email,'/^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$/',  '邮箱格式不正确'],
+		[_user.telphone,'/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '联系方式格式不正确'],
+	]);
+	if(result.flag === false) {
+		res.json({
+			error_code:0,
+			success: 0,
+			message: result.msg
+		});
+		return ;
+	} else {
+		result = null;
+	}
 
 	User.findOne({
 		name: _user.name,
@@ -107,6 +151,7 @@ exports.forgetpwd = function(req, res) {
 				success: 0, // 成功
 				message: '服务器错误'
 			});
+			return ;
 		}
 		if (user) {
 			user.password = '123456';
@@ -119,6 +164,7 @@ exports.forgetpwd = function(req, res) {
 						success: 0, // 成功
 						message: '服务器错误'
 					});
+					return ;
 				}
 				console.log("password change")
 				res.json({
@@ -126,6 +172,7 @@ exports.forgetpwd = function(req, res) {
 					success: 1 ,// 成功
 					message: '重置成功！'
 				});
+				return ;
 			});
 		} else {
 			res.json({
@@ -133,6 +180,7 @@ exports.forgetpwd = function(req, res) {
 				success: 0,
 				message: '没有此账户！'
 			});
+			return ;
 		}
 	})
 }
@@ -246,7 +294,33 @@ exports.changepwd = function(req, res) {
 	} else {
 		var userId = req.headers['token'];
 	}
-	var _user = req.body.user;
+
+	var _user = req.body;
+
+	if(_user.name == undefined || _user.password == undefined) {
+		return res.json({
+			error_code:0,
+			success: 0,
+			message: '填写字段不完整！'
+		});
+	}
+
+	var result = Commen.checkField([
+		[_user.pwd,'/^[\\S]+$/', '原密码不能为空'],
+		[_user.pwd,'/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
+		[_user.newpwd,'/^[\\S]+$/', '新密码不能为空'],
+		[_user.newpwd,'/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
+	]);
+	if(result.flag === false) {
+		res.json({
+			error_code:0,
+			success: 0,
+			message: result.msg
+		});
+		return ;
+	} else {
+		result = null;
+	}
 
 	User.findById(userId, function(err, user) {
 		if (err) {
@@ -256,6 +330,7 @@ exports.changepwd = function(req, res) {
 				success: 0,
 				message: '服务器错误！'
 			});
+			return ;
 		}
 		if (user) {
 			user.comparePassword(_user.pwd, function(err, isMatch) {
@@ -266,6 +341,7 @@ exports.changepwd = function(req, res) {
 						success: 0,
 						message: '服务器错误！'
 					});
+					return ;
 				}
 				if (isMatch) {
 					user.password = _user.newpwd;
@@ -277,6 +353,7 @@ exports.changepwd = function(req, res) {
 								success: 0,
 								message: '服务器错误！'
 							});
+							return ;
 						}
 						delete req.session.user;
 						res.json({
@@ -284,6 +361,7 @@ exports.changepwd = function(req, res) {
 							success: 1,
 							message: '修改成功！'
 						});
+						return ;
 					});
 					
 				} else {
@@ -292,6 +370,7 @@ exports.changepwd = function(req, res) {
 						success: 0,
 						message: '原密码不正确！'
 					});
+					return ;
 				}
 			});
 
@@ -301,6 +380,7 @@ exports.changepwd = function(req, res) {
 				ismatch: false,
 				message: '请重新登录'
 			});
+			return ;
 		}
 	});
 };
@@ -433,7 +513,7 @@ exports.detailMO = function(req, res) {
 // App接口：修改个人资料
 exports.changeproMO = function(req, res) {
 	var id = req.headers['token'];
-	var _user = req.body.user;
+	var _user = req.body;
 	var userObj;
 
 	User.findById(id, function(err, user) {
@@ -444,6 +524,7 @@ exports.changeproMO = function(req, res) {
 				success: 0,
 				msg:'找不到该用户'
 			});
+			return ;
 		}
 		userObj = _.extend(user, _user);
 		userObj.save(function(err, user) {
@@ -454,6 +535,7 @@ exports.changeproMO = function(req, res) {
 					success: 0,
 					msg:'保存出错'
 				});
+				return ;
 			}
 
 			res.json({
@@ -461,6 +543,7 @@ exports.changeproMO = function(req, res) {
 				success: 1,
 				msg:'保存成功'
 			});
+			return ;
 		})
 	})
 }
