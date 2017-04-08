@@ -12,6 +12,7 @@ var AccountSchema = new mongoose.Schema({
 	password: String,
 	telphone: String,
 	email: String,
+	
 	Head_portrait: String,
 	real_name: String,
 	// 1男2女
