@@ -9,7 +9,6 @@ function checkOne(rule) {
 	} 
   var val = rule[0].replace(/^\s+|\s+$/g, "");
 	var regExp = eval(rule[1]);
-
 	if(!regExp.test(val)) {
 		val = null;
 		regExp = null;

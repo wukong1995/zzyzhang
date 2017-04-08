@@ -30,6 +30,10 @@ module.exports = function(app) {
 	app.post('/user/forgetpwd', User.forgetpwd);
 	app.post('/user/changepwd', User.changepwd);
 
+	// mobile 接口
+	app.get('/user/detailmo', User.signinRequired, User.detailMO);
+	app.post('/user/changepromo', User.signinRequired, User.changeproMO);
+
 	app.get('/index', User.signinRequired, function(req, res) {
 		res.render('index', {
 			title: '主页'
