@@ -391,7 +391,8 @@ exports.detail = function(req, res) {
 
 	User.findOne({
 		_id: user._id
-	}, function(err, user) {
+	},['name','password','telphone','email','Head_portrait','real_name','sex','birth',
+	'signature','role','state','meta'], function(err, user) {
 		if (err) {
 			console.log(err)
 		}
@@ -490,7 +491,8 @@ exports.detailMO = function(req, res) {
 
 	User.findOne({
 		_id: userId
-	}, function(err, user) {
+	},['name','password','telphone','email','Head_portrait','real_name','sex','birth',
+	'signature','role'], function(err, user) {
 		if (err) {
 			console.log(err);
 			res.json({
