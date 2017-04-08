@@ -297,7 +297,7 @@ exports.changepwd = function(req, res) {
 
 	var _user = req.body;
 
-	if(_user.name == undefined || _user.password == undefined) {
+	if(_user.newpwd == undefined || _user.pwd == undefined) {
 		return res.json({
 			error_code:0,
 			success: 0,
@@ -307,7 +307,7 @@ exports.changepwd = function(req, res) {
 
 	var result = Commen.checkField([
 		[_user.pwd,'/^[\\S]+$/', '原密码不能为空'],
-		[_user.pwd,'/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
+		[_user.pwd,'/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成'],
 		[_user.newpwd,'/^[\\S]+$/', '新密码不能为空'],
 		[_user.newpwd,'/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
 	]);
