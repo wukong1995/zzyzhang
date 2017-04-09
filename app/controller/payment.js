@@ -121,7 +121,7 @@ exports.save = function(req, res) {
 }
 
 exports.del = function(req, res) {
-	var id = req.query.id;
+	var id = req.body.id;
 	if (id) {
 		Payment.remove({
 			_id: id
@@ -157,7 +157,7 @@ exports.detailMO = function(req, res) {
 
 // App保存
 exports.saveMO = function(req, res) {
-	var paymentObj = req.body.payment;
+	var paymentObj = req.body;
 	var _payment;
 
 	var user_id = req.headers['token'];
@@ -180,7 +180,7 @@ exports.saveMO = function(req, res) {
 				res.json({
 					error_code:1,
 					success: 0,
-					msg:'数据未查询到'
+					msg:'数据未查询到用户'
 				});
 			}
 			user.payment.push(payment._id);
