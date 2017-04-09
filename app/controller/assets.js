@@ -141,7 +141,7 @@ exports.save = function(req, res) {
 }
 
 exports.del = function(req, res) {
-	var id = req.query.id;
+	var id = req.body.id;
 	if (id) {
 		Assets.remove({
 			_id: id
