@@ -4,10 +4,16 @@ $(function() {
 
 		if ($('input[name="payment[type]"]:checked').val() == 0) {
 			$('#payment_type_1').css('display', 'none');
+			$('#payment_type_1').attr('disabled','disabled');
+
 			$('#payment_type_0').css('display', 'block');
+			$('#payment_type_0').attr('disabled',false);
 		} else {
 			$('#payment_type_0').css('display', 'none');
+			$('#payment_type_0').attr('disabled','disabled');
+			
 			$('#payment_type_1').css('display', 'block');
+			$('#payment_type_0').attr('disabled',false);
 		}
 	});
 
