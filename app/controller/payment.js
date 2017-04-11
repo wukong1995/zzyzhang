@@ -26,10 +26,10 @@ exports.list = function(req, res) {
 exports.result = function(req, res) {
 
 	//判断是否是第一页，并把请求的页数转换成 number 类型
-	var page = req.body.page ? parseInt(req.body.page) : 0;
-	var start = req.body.start ? parseInt(req.body.start) : 0;
-	var limit = req.body.limit ? parseInt(req.body.limit) : 15;
-	var keyword = req.body.keyword ? req.body.keyword : '';
+	var page = req.query.page ? parseInt(req.query.page) : 0;
+	var start = req.query.start ? parseInt(req.query.start) : 0;
+	var limit = req.query.limit ? parseInt(req.query.limit) : 15;
+	var keyword = req.query.keyword ? req.query.keyword : '';
 	if (req.session.user) {
 		var userId = req.session.user._id;
 	} else {
@@ -121,7 +121,7 @@ exports.save = function(req, res) {
 }
 
 exports.del = function(req, res) {
-	var id = req.body.id;
+	var id = req.query.id;
 	if (id) {
 		Payment.remove({
 			_id: id
@@ -145,7 +145,7 @@ exports.del = function(req, res) {
 
 // App详情
 exports.detailMO = function(req, res) {
-	var id = req.body.id
+	var id = req.params.id
 
 	// res.sendFile()直接输出html文件
 	Payment.findById(id, function(err, payment) {

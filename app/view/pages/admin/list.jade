@@ -86,7 +86,7 @@ block content
 						//console.log(param);
 						//ajax请求数据
 						$.ajax({
-							type: "POST",
+							type: "GET",
 							url: "/admin/result",
 							cache: false,  //禁用缓存
 							data: param,  //传入组装的参数
@@ -166,7 +166,7 @@ block content
 				bootbox.confirm("确定要修改账户状态吗?", function(result) {
 					if (result) {
 						$.ajax({
-							type: 'POST',
+							type: 'GET',
 							url: '/admin/edit?id=' + id,
 						})
 						.success(function(results) {

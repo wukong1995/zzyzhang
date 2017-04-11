@@ -20,12 +20,8 @@ jQuery(function($) {
 				var tr = $(e.target).closest("tr");
 
 				$.ajax({
-						type: 'POST',
-						url: baseUrl + '/del',
-						dataType:'json',
-						data:{
-							id: id
-						}
+						type: 'GET',
+						url: baseUrl + '/del?id=' + id
 					})
 					.success(function(results) {
 						if (results.success === 1) {
