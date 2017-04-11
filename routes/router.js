@@ -43,68 +43,68 @@ module.exports = function(app) {
 
 	// Admin -- 超级管理员权限
 	app.get('/admin/list', User.adminRequired, Admin.list);
-	app.post('/admin/result', User.signinRequired, Admin.result);
+	app.get('/admin/result', User.signinRequired, Admin.result);
 	app.get('/admin/detail/:id', User.adminRequired, Admin.detail);
-	app.post('/admin/edit', User.adminRequired, Admin.edit);
+	app.get('/admin/edit', User.adminRequired, Admin.edit);
 
 	// Assets-- 资产
 	app.get('/assets/list', User.signinRequired, Assets.list);
-	app.post('/assets/result', User.signinRequired, Assets.result);
+	app.get('/assets/result', User.signinRequired, Assets.result);
 	app.get('/assets/detail/:id', User.signinRequired, Assets.detail);
 	app.get('/assets/add', User.signinRequired, Assets.add);
 	app.get('/assets/edit/:id', User.signinRequired, Assets.edit);
 	app.post('/assets/action/save', User.signinRequired, Assets.save);
-	app.post('/assets/list/del', User.signinRequired, Assets.del);
+	app.delete('/assets/list/del', User.signinRequired, Assets.del);
 
 	// bond -- 债券
 	app.get('/bond/list', User.signinRequired, Bond.list);
-	app.post('/bond/result', User.signinRequired, Bond.result);
+	app.get('/bond/result', User.signinRequired, Bond.result);
 	app.get('/bond/detail/:id', User.signinRequired, Bond.detail);
 	app.get('/bond/add', User.signinRequired, Bond.add);
 	app.get('/bond/edit/:id', User.signinRequired, Bond.edit);
 	app.post('/bond/action/save', User.signinRequired, Bond.save);
-	app.post('/bond/list/del', User.signinRequired, Bond.del);
+	app.delete('/bond/list/del', User.signinRequired, Bond.del);
 
 	// borrowing -- 借贷
 	app.get('/borrowing/list', User.signinRequired, Borrowing.list);
-	app.post('/borrowing/result', User.signinRequired, Borrowing.result);
+	app.get('/borrowing/result', User.signinRequired, Borrowing.result);
 	app.get('/borrowing/detail/:id', User.signinRequired, Borrowing.detail);
 	app.get('/borrowing/add', User.signinRequired, Borrowing.add);
 	app.get('/borrowing/edit/:id', User.signinRequired, Borrowing.edit);
 	app.post('/borrowing/action/save', User.signinRequired, Borrowing.save);
-	app.post('/borrowing/list/del', User.signinRequired, Borrowing.del);
+	app.delete('/borrowing/list/del', User.signinRequired, Borrowing.del);
 
 	// payment -- 收支
 	app.get('/payment/list', User.signinRequired, Payment.list);
-	app.post('/payment/result', User.signinRequired, Payment.result);
+	app.get('/payment/result', User.signinRequired, Payment.result);
 	app.get('/payment/detail/:id', User.signinRequired, Payment.detail);
 	app.get('/payment/add', User.signinRequired, Payment.add);
 	app.get('/payment/edit/:id', User.signinRequired, Payment.edit);
 	app.post('/payment/action/save', User.signinRequired, Payment.save);
-	app.post('/payment/list/del', User.signinRequired, Payment.del);
+	app.delete('/payment/list/del', User.signinRequired, Payment.del);
 
 	// payment -- app接口
-	app.post('/payment/detailmo', User.signinRequired, Payment.detailMO);
+	app.get('/payment/detailmo/:id', User.signinRequired, Payment.detailMO);
 	app.post('/payment/savemo', User.signinRequired, Payment.saveMO);
 
 	// share -- 股票
 	app.get('/share/list', User.signinRequired, Share.list);
-	app.post('/share/result', User.signinRequired, Share.result);
+	app.get('/share/result', User.signinRequired, Share.result);
 	app.get('/share/detail/:id', User.signinRequired, Share.detail);
 	app.get('/share/add', User.signinRequired, Share.add);
 	app.get('/share/edit/:id', User.signinRequired, Share.edit);
 	app.post('/share/action/save', User.signinRequired, Share.save);
-	app.post('/share/list/del', User.signinRequired, Share.del);
+	app.delete('/share/list/del', User.signinRequired, Share.del);
 
 	// wishlist -- 心愿单
 	app.get('/wishlist/list', User.signinRequired, Wishlist.list);
-	app.post('/wishlist/result', User.signinRequired, Wishlist.result);
+	app.get('/wishlist/result', User.signinRequired, Wishlist.result);
 	app.get('/wishlist/detail/:id', User.signinRequired, Wishlist.detail);
 	app.get('/wishlist/add', User.signinRequired, Wishlist.add);
 	app.get('/wishlist/edit/:id', User.signinRequired, Wishlist.edit);
 	app.post('/wishlist/action/save', User.signinRequired, Wishlist.save);
 	app.post('/wishlist/action/buy', User.signinRequired, Wishlist.buy);
-	app.post('/wishlist/list/del', User.signinRequired, Wishlist.del);
+	app.delete('/wishlist/list/del', User.signinRequired, Wishlist.del);
 
 
 	app.get('*', function(req, res) {
