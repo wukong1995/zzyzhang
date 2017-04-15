@@ -45,8 +45,10 @@ exports.result = function(req, res) {
 			match: {
 				other: new RegExp(keyword, "i")
 			},
-			options:{
-				sort: { 'meta.createAt': -1 }
+			options: {
+				sort: {
+					'meta.createAt': -1
+				}
 			}
 		})
 		.exec(function(err, user) {
@@ -132,21 +134,120 @@ exports.save = function(req, res) {
 }
 
 exports.del = function(req, res) {
+	if (!req.query || !req.query.id) {
+		res.json({
+			success: 0,
+			msg: '无传递参数id'
+		});
+		return;
+	}
+
 	var id = req.query.id;
-	if (id) {
-		Borrowing.remove({
-			_id: id
-		}, function(err, borrowing) {
+
+	if (req.session.user) {
+		var user_id = req.session.user._id;
+	} else {
+		var user_id = req.headers['token'];
+	}
+
+	Borrowing.remove({
+		_id: id
+	}, function(err, borrowing) {
+		if (err) {
+			console.log(err);
+			res.json({
+				success: 0
+			});
+		} else {
+			User.update({
+					_id: user_id
+				}, {
+					"$pull": {
+						payment: id
+					}
+				})
+				.exec(function(err, user) {
+					if (err) {
+						console.log(err);
+						res.json({
+							error_code: 1,
+							success: 0,
+							msg: '数据未查询到用户'
+						});
+						return;
+					}
+					res.json({
+						error_code: 0,
+						success: 1
+					});
+				});
+		}
+	})
+}
+
+// App详情
+exports.detailMO = function(req, res) {
+	if (!req.params || !req.params.id) {
+		res.json({
+			success: 0,
+			msg: '无传递参数id'
+		});
+	}
+	Borrowing.findById(req.params.id, function(err, borrowing) {
+		res.json({
+			borrowing: borrowing,
+			success: 1
+		});
+	});
+};
+
+// App保存
+exports.saveMO = function(req, res) {
+	var borrowingObj = req.body;
+	var _borrowing;
+
+	var user_id = req.headers['token'];
+	borrowingObj.account = user_id;
+	_borrowing = new Borrowing(borrowingObj);
+
+	_borrowing.save(function(err, borrowing) {
+		if (err) {
+			console.log(err);
+			res.json({
+				error_code: 1,
+				success: 0,
+				msg: '数据库保存出错'
+			});
+		}
+
+		User.findById(user_id, function(err, user) {
 			if (err) {
 				console.log(err);
 				res.json({
-					success: 0
-				});
-			} else {
-				res.json({
-					success: 1
+					error_code: 1,
+					success: 0,
+					msg: '数据未查询到用户'
 				});
 			}
-		})
-	}
+			user.borrowing.push(borrowing._id);
+			user.save(function(err, user) {
+				if (err) {
+					console.log(err);
+					res.json({
+						error_code: 0,
+						success: 0,
+						msg: '数据库保存出错'
+					});
+				}
+				res.json({
+					error_code: 0,
+					success: 1,
+					msg: '保存成功',
+					id: borrowing._id
+				});
+			});
+		});
+	});
 }
+
+// App端删除与PC端相同

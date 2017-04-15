@@ -56,6 +56,10 @@ module.exports = function(app) {
 	app.post('/assets/action/save', User.signinRequired, Assets.save);
 	app.delete('/assets/list/del', User.signinRequired, Assets.del);
 
+	// Assets  -- app接口
+	app.get('/assets/detailmo/:id', User.signinRequired, Assets.detailMO);
+	app.post('/assets/savemo', User.signinRequired, Assets.saveMO);
+
 	// bond -- 债券
 	app.get('/bond/list', User.signinRequired, Bond.list);
 	app.get('/bond/result', User.signinRequired, Bond.result);
@@ -65,6 +69,10 @@ module.exports = function(app) {
 	app.post('/bond/action/save', User.signinRequired, Bond.save);
 	app.delete('/bond/list/del', User.signinRequired, Bond.del);
 
+	// bond  -- app接口
+	app.get('/bond/detailmo/:id', User.signinRequired, Bond.detailMO);
+	app.post('/bond/savemo', User.signinRequired, Bond.saveMO);
+
 	// borrowing -- 借贷
 	app.get('/borrowing/list', User.signinRequired, Borrowing.list);
 	app.get('/borrowing/result', User.signinRequired, Borrowing.result);
@@ -73,6 +81,10 @@ module.exports = function(app) {
 	app.get('/borrowing/edit/:id', User.signinRequired, Borrowing.edit);
 	app.post('/borrowing/action/save', User.signinRequired, Borrowing.save);
 	app.delete('/borrowing/list/del', User.signinRequired, Borrowing.del);
+
+	// borrowing  -- app接口
+	app.get('/borrowing/detailmo/:id', User.signinRequired, Borrowing.detailMO);
+	app.post('/borrowing/savemo', User.signinRequired, Borrowing.saveMO);
 
 	// payment -- 收支
 	app.get('/payment/list', User.signinRequired, Payment.list);
@@ -96,6 +108,10 @@ module.exports = function(app) {
 	app.post('/share/action/save', User.signinRequired, Share.save);
 	app.delete('/share/list/del', User.signinRequired, Share.del);
 
+	// share  -- app接口
+	app.get('/share/detailmo/:id', User.signinRequired, Share.detailMO);
+	app.post('/share/savemo', User.signinRequired, Share.saveMO);
+
 	// wishlist -- 心愿单
 	app.get('/wishlist/list', User.signinRequired, Wishlist.list);
 	app.get('/wishlist/result', User.signinRequired, Wishlist.result);
@@ -105,6 +121,10 @@ module.exports = function(app) {
 	app.post('/wishlist/action/save', User.signinRequired, Wishlist.save);
 	app.post('/wishlist/action/buy', User.signinRequired, Wishlist.buy);
 	app.delete('/wishlist/list/del', User.signinRequired, Wishlist.del);
+
+	// wishlist  -- app接口
+	app.get('/wishlist/detailmo/:id', User.signinRequired, Wishlist.detailMO);
+	app.post('/wishlist/savemo', User.signinRequired, Wishlist.saveMO);
 
 
 	app.get('*', function(req, res) {
