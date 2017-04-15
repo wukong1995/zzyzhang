@@ -59,7 +59,7 @@ exports.result = function(req, res) {
 			var results = user.bond.slice(start, start + limit);
 			res.json({
 				page: (page + 1),
-				bond: results || [],
+				data: results || [],
 				totalCount: totalCount
 			})
 		});
@@ -198,7 +198,7 @@ exports.detailMO = function(req, res) {
 	}
 	Bond.findById(req.params.id, function(err, bond) {
 		res.json({
-			bond: bond,
+			data: bond,
 			success: 1
 		});
 	});

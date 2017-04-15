@@ -60,7 +60,7 @@ exports.result = function(req, res) {
 			var results = user.share.slice(start, start + limit);
 			res.json({
 				page: (page + 1),
-				share: results || [],
+				data: results || [],
 				totalCount: totalCount
 			})
 		});
@@ -200,7 +200,7 @@ exports.detailMO = function(req, res) {
 	}
 	Share.findById(req.params.id, function(err, share) {
 		res.json({
-			share: share,
+			data: share,
 			success: 1
 		});
 	});

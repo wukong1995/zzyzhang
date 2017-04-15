@@ -62,7 +62,7 @@ exports.result = function(req, res) {
 
 			res.json({
 				page: (page + 1),
-				payment: results || [],
+				data: results || [],
 				totalCount: totalCount
 			})
 		});
@@ -190,7 +190,7 @@ exports.detailMO = function(req, res) {
 
 	Payment.findById(req.params.id, function(err, payment) {
 		res.json({
-			payment: payment,
+			data: payment,
 			success: 1
 		});
 		return;
