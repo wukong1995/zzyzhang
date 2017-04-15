@@ -61,7 +61,7 @@ exports.result = function(req, res) {
 			var results = user.wishlist.slice(start, start + limit);
 			res.json({
 				page: (page + 1),
-				wishlist: results || [],
+				data: results || [],
 				totalCount: totalCount
 			})
 		});
@@ -249,7 +249,7 @@ exports.detailMO = function(req, res) {
 	}
 	Wishlist.findById(req.params.id, function(err, wishlist) {
 		res.json({
-			wishlist: wishlist,
+			data: wishlist,
 			success: 1
 		});
 	});

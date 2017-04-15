@@ -61,7 +61,7 @@ exports.result = function(req, res) {
 			var results = user.assets.slice(start, start + limit);
 			res.json({
 				page: (page + 1),
-				assets: results || [],
+				data: results || [],
 				totalCount: totalCount
 			})
 		});
@@ -206,7 +206,7 @@ exports.detailMO = function(req, res) {
 	}
 	Assets.findById(req.params.id, function(err, assets) {
 		res.json({
-			assets: assets,
+			data: assets,
 			success: 1
 		});
 	});

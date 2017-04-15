@@ -59,7 +59,7 @@ exports.result = function(req, res) {
 			var results = user.borrowing.slice(start, start + limit);
 			res.json({
 				page: (page + 1),
-				borrowing: results || [],
+				data: results || [],
 				totalCount: totalCount
 			})
 		});
@@ -195,7 +195,7 @@ exports.detailMO = function(req, res) {
 	}
 	Borrowing.findById(req.params.id, function(err, borrowing) {
 		res.json({
-			borrowing: borrowing,
+			data: borrowing,
 			success: 1
 		});
 	});
