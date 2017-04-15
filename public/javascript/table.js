@@ -20,7 +20,7 @@ jQuery(function($) {
 				var tr = $(e.target).closest("tr");
 
 				$.ajax({
-						type: 'GET',
+						type: 'DELETE',
 						url: baseUrl + '/del?id=' + id
 					})
 					.success(function(results) {

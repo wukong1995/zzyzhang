@@ -46,8 +46,10 @@ exports.result = function(req, res) {
 			match: {
 				name: new RegExp(keyword, "i")
 			},
-			options:{
-				sort: { 'meta.createAt': -1 }
+			options: {
+				sort: {
+					'meta.createAt': -1
+				}
 			}
 		})
 		.exec(function(err, user) {
@@ -121,37 +123,77 @@ exports.save = function(req, res) {
 }
 
 exports.del = function(req, res) {
-	var id = req.query.id;
-	if (id) {
-		Payment.remove({
-			_id: id
-		}, function(err, payment) {
-			if (err) {
-				console.log(err);
-				res.json({
-					error_code:1,
-					success: 0
-				});
-			} else {
-				res.json({
-					error_code:0,
-					success: 1
-				});
-			}
-		})
+	if (!req.query || !req.query.id) {
+		res.json({
+			success: 0,
+			msg: '无传递参数id'
+		});
+		return;
 	}
+
+	var id = req.query.id;
+
+	if (req.session.user) {
+		var user_id = req.session.user._id;
+	} else {
+		var user_id = req.headers['token'];
+	}
+
+	Payment.remove({
+		_id: id
+	}, function(err, payment) {
+		if (err) {
+			console.log(err);
+			res.json({
+				error_code: 1,
+				success: 0
+			});
+			return;
+		} else {
+			User.update({
+					_id: user_id
+				}, {
+					"$pull": {
+						payment: id
+					}
+				})
+				.exec(function(err, user) {
+					if (err) {
+						console.log(err);
+						res.json({
+							error_code: 1,
+							success: 0,
+							msg: '数据未查询到用户'
+						});
+						return;
+					}
+					res.json({
+						error_code: 0,
+						success: 1
+					});
+				});
+		}
+	})
+
 };
 
 
 // App详情
 exports.detailMO = function(req, res) {
-	var id = req.params.id
-
-	// res.sendFile()直接输出html文件
-	Payment.findById(id, function(err, payment) {
+	if (!req.params || !req.params.id) {
 		res.json({
-			payment: payment
+			success: 0,
+			msg: '无传递参数id'
 		});
+		return;
+	}
+
+	Payment.findById(req.params.id, function(err, payment) {
+		res.json({
+			payment: payment,
+			success: 1
+		});
+		return;
 	});
 };
 
@@ -168,37 +210,41 @@ exports.saveMO = function(req, res) {
 		if (err) {
 			console.log(err);
 			res.json({
-				error_code:1,
+				error_code: 1,
 				success: 0,
-				msg:'数据库保存出错'
+				msg: '数据库保存出错'
 			});
+			return;
 		}
 
 		User.findById(user_id, function(err, user) {
 			if (err) {
 				console.log(err);
 				res.json({
-					error_code:1,
+					error_code: 1,
 					success: 0,
-					msg:'数据未查询到用户'
+					msg: '数据未查询到用户'
 				});
+				return;
 			}
 			user.payment.push(payment._id);
 			user.save(function(err, user) {
 				if (err) {
 					console.log(err);
 					res.json({
-						error_code:0,
+						error_code: 0,
 						success: 0,
-						msg:'数据库保存出错'
+						msg: '数据库保存出错'
 					});
+					return;
 				}
 				res.json({
-					error_code:0,
+					error_code: 0,
 					success: 1,
-					msg:'保存成功',
-					id:payment._id
+					msg: '保存成功',
+					id: payment._id
 				});
+				return;
 			});
 		});
 	});
