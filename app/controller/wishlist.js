@@ -188,8 +188,21 @@ exports.del = function(req, res) {
 }
 
 exports.buy = function(req, res) {
+	if (!req.query || !req.query.id) {
+		res.json({
+			success: 0,
+			msg: '无传递参数id'
+		});
+		return;
+	}
 	var id = req.query.id;
-	var user_id = req.session.user._id;
+
+	if (req.session.user) {
+		var user_id = req.session.user._id;
+	} else {
+		var user_id = req.headers['token'];
+	}
+
 	if (id) {
 		Wishlist.findById(id, function(err, wishlist) {
 			Wishlist.remove({
