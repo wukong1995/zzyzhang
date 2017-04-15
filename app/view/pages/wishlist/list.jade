@@ -169,7 +169,7 @@ block content
 				var id = target.data('id');
 				var tr = target.closest('tr');
 				$.ajax({
-						type: 'POST',
+						type: 'GET',
 						url: '/wishlist/action/buy?id=' + id,
 					})
 					.success(function(results) {

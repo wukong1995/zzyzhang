@@ -195,8 +195,12 @@ exports.detailMO = function(req, res) {
 			success: 0,
 			msg: '无传递参数id'
 		});
+		return;
 	}
+
 	Bond.findById(req.params.id, function(err, bond) {
+		console.log(bond)
+
 		res.json({
 			data: bond,
 			success: 1

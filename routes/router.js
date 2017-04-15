@@ -119,7 +119,7 @@ module.exports = function(app) {
 	app.get('/wishlist/add', User.signinRequired, Wishlist.add);
 	app.get('/wishlist/edit/:id', User.signinRequired, Wishlist.edit);
 	app.post('/wishlist/action/save', User.signinRequired, Wishlist.save);
-	app.post('/wishlist/action/buy', User.signinRequired, Wishlist.buy);
+	app.get('/wishlist/action/buy', User.signinRequired, Wishlist.buy);
 	app.delete('/wishlist/list/del', User.signinRequired, Wishlist.del);
 
 	// wishlist  -- app接口

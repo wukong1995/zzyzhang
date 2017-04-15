@@ -102,9 +102,6 @@ exports.save = function(req, res) {
 				console.log(err)
 			}
 
-			console.log(assets)
-			console.log(assetsObj)
-
 			_assets = _.extend(assets, assetsObj);
 			_assets.save(function(err, assets) {
 				if (err) {
@@ -217,48 +214,85 @@ exports.saveMO = function(req, res) {
 	var assetsObj = req.body;
 	var _assets;
 
-	var user_id = req.headers['token'];
-	assetsObj.account = user_id;
-	_assets = new Assets(assetsObj);
+	var id = assetsObj._id;
 
-	_assets.save(function(err, assets) {
-		if (err) {
-			console.log(err);
-			res.json({
-				error_code: 1,
-				success: 0,
-				msg: '数据库保存出错'
-			});
-		}
-
-		User.findById(user_id, function(err, user) {
+	if (id) {
+		Assets.findById(id, function(err, assets) {
 			if (err) {
 				console.log(err);
 				res.json({
 					error_code: 1,
 					success: 0,
-					msg: '数据未查询到用户'
+					msg: '数据未查询到数据'
 				});
+				return;
 			}
-			user.assets.push(assets._id);
-			user.save(function(err, user) {
+
+			_assets = _.extend(assets, assetsObj);
+			_assets.save(function(err, assets) {
 				if (err) {
 					console.log(err);
 					res.json({
-						error_code: 0,
+						error_code: 1,
 						success: 0,
-						msg: '数据库保存出错'
+						msg: '数据保存'
 					});
+					return;
 				}
 				res.json({
 					error_code: 0,
 					success: 1,
-					msg: '保存成功',
+					msg: '修改成功',
 					id: assets._id
+				});
+				return;
+			})
+		})
+	} else {
+
+		var user_id = req.headers['token'];
+		assetsObj.account = user_id;
+		_assets = new Assets(assetsObj);
+
+		_assets.save(function(err, assets) {
+			if (err) {
+				console.log(err);
+				res.json({
+					error_code: 1,
+					success: 0,
+					msg: '数据库保存出错'
+				});
+			}
+
+			User.findById(user_id, function(err, user) {
+				if (err) {
+					console.log(err);
+					res.json({
+						error_code: 1,
+						success: 0,
+						msg: '数据未查询到用户'
+					});
+				}
+				user.assets.push(assets._id);
+				user.save(function(err, user) {
+					if (err) {
+						console.log(err);
+						res.json({
+							error_code: 0,
+							success: 0,
+							msg: '数据库保存出错'
+						});
+					}
+					res.json({
+						error_code: 0,
+						success: 1,
+						msg: '保存成功',
+						id: assets._id
+					});
 				});
 			});
 		});
-	});
+	}
 }
 
 // App端删除与PC端相同
