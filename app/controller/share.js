@@ -213,6 +213,7 @@ exports.saveMO = function(req, res) {
 
 	var user_id = req.headers['token'];
 	shareObj.account = user_id;
+	shareObj.income = parseInt(shareObj.count) * (parseInt(shareObj.last_price) - parseInt(shareObj.first_price));
 	_share = new Share(shareObj);
 
 	_share.save(function(err, share) {
