@@ -6,7 +6,7 @@ var SALT_WORK_FACTOR = 10;
 
 var BorrowingSchema = new mongoose.Schema({
 	other: String,
-	telephone: Number,
+	telphone: Number,
 	price: String,
 	// 0 借出
 	// 1 借入

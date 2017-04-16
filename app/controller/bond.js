@@ -215,6 +215,8 @@ exports.saveMO = function(req, res) {
 
 	var user_id = req.headers['token'];
 	bondObj.account = user_id;
+	bondObj.income = parseFloat(bondObj.purchase) * parseFloat(bondObj.yield);
+
 	_bond = new Bond(bondObj);
 
 	_bond.save(function(err, bond) {

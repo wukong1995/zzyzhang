@@ -12,7 +12,7 @@ var AccountSchema = new mongoose.Schema({
 	password: String,
 	telphone: String,
 	email: String,
-	
+
 	Head_portrait: String,
 	real_name: String,
 	// 1男2女
@@ -75,7 +75,7 @@ var AccountSchema = new mongoose.Schema({
 
 
 AccountSchema.pre('save', function(next) {
-	var _account = this
+	var _account = this;
 	if (this.isNew) {
 		this.meta.createAt = this.meta.updateAt = Date.now()
 	} else {
@@ -95,7 +95,7 @@ AccountSchema.pre('save', function(next) {
 				return next(err);
 			}
 			_account.password = hash;
-			next();
+			return next();
 		}, null);
 	})
 })
@@ -104,6 +104,7 @@ AccountSchema.methods = {
 	comparePassword: function(_password, cb) {
 
 		bcrypt.compare(_password, this.password, function(err, isMatch) {
+
 			if (err) {
 				return cb(err);
 			}
