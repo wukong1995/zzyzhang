@@ -120,13 +120,14 @@ exports.save = function(req, res) {
 		_assets.save(function(err, assets) {
 			if (err) {
 				console.log(err);
+				res.redirect('/assets/add');
 			}
 			User.findById(user_id, function(err, user) {
 				if (err) {
 					console.log(err);
 				}
 
-				user.assets.push(assets._id)
+				user.assets.push(assets._id);
 				user.save(function(err, user) {
 					if (err) {
 						console.log(err)
@@ -134,7 +135,6 @@ exports.save = function(req, res) {
 					res.redirect('/assets/detail/' + assets._id);
 				});
 			});
-
 		});
 	}
 }

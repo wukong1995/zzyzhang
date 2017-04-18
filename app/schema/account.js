@@ -83,13 +83,11 @@ AccountSchema.pre('save', function(next) {
 	}
 
 	// 加盐
-	// var salt = bcrypt.genSaltSync(SALT_WORK_FACTOR)
-	// this.password = bcrypt.hashSync(this.password, salt)
-
 	bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
 		if (err) {
 			return next(err);
 		}
+
 		bcrypt.hash(_account.password, salt, function(err, hash) {
 			if (err) {
 				return next(err);
