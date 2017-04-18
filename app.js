@@ -57,3 +57,6 @@ if ('development' === app.get('env')) {
 app.listen(port, function() {
 	console.log("listen on port " + port);
 });
+
+
+// forever start -l forever.log -o out.log -e err.log app.js
