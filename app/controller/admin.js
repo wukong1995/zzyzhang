@@ -26,7 +26,13 @@ exports.result = function(req, res) {
 		})
 		.exec(function(err, length) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					error_code: 1,
+					success: 0,
+					message: '服务器错误！'
+				});
+				return;
 			}
 			User.find({
 					role: {
@@ -36,10 +42,18 @@ exports.result = function(req, res) {
 				}, ['name', 'telphone', 'email', 'role', 'state'])
 				.limit(limit)
 				.skip(start)
-				.sort({'meta.updateAt':-1})
+				.sort({
+					'meta.updateAt': -1
+				})
 				.exec(function(err, users) {
 					if (err) {
-						console.log(err)
+						console.log(err);
+						res.json({
+							error_code: 1,
+							success: 0,
+							message: '服务器错误！'
+						});
+						return;
 					}
 					res.json({
 						users: users || [],
@@ -52,7 +66,11 @@ exports.result = function(req, res) {
 
 // detail
 exports.detail = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		return res.redirect('/admin/list');
+		return;
+	}
+	var id = req.params.id;
 
 	// res.sendFile()直接输出html文件
 	User.findById(id, function(err, user) {
@@ -67,10 +85,22 @@ exports.detail = function(req, res) {
 // 冻结/正常
 // detail
 exports.edit = function(req, res) {
+	if (!req.query || !req.query.id) {
+		res.json({
+			success: 0,
+			message: '缺少参数'
+		});
+		return;
+	}
+
 	var id = req.query.id
 	User.findById(id, function(err, user) {
 		if (err) {
-			console.log(err)
+			console.log(err);
+			res.json({
+				success: 0,
+				message: '服务器错误'
+			});
 		}
 
 		if (user) {
@@ -81,14 +111,14 @@ exports.edit = function(req, res) {
 			}
 			user.save(function(err, user) {
 				if (err) {
-					console.log(err)
+					console.log(err);
 					res.json({
-						success: 0, // 成功
+						success: 0,
 						state: user.state,
 						message: '失败'
 					});
 				}
-				console.log("type change")
+				console.log("type change");
 				res.json({
 					success: 1, // 成功
 					state: user.state,

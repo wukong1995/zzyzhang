@@ -4,7 +4,11 @@ var Payment = require('../model/payment');
 var User = require('../model/account');
 
 exports.detail = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		res.redirect('/payment/list');
+		return;
+	}
+	var id = req.params.id;
 
 	// res.sendFile()直接输出html文件
 	Payment.findById(id, function(err, payment) {
@@ -54,12 +58,16 @@ exports.result = function(req, res) {
 		})
 		.exec(function(err, user) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					success: 0,
+					message: '服务器错误'
+				});
+				return;
 			}
 			totalCount = user.payment.length;
 
 			var results = user.payment.slice(start, start + limit);
-
 			res.json({
 				page: (page + 1),
 				data: results || [],
@@ -83,7 +91,11 @@ exports.add = function(req, res) {
 };
 
 exports.edit = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		res.redirect('/payment/list');
+		return;
+	}
+	var id = req.params.id;
 
 	Payment.findById(id, function(err, payment) {
 		res.render('payment/add', {
@@ -94,7 +106,37 @@ exports.edit = function(req, res) {
 };
 
 exports.save = function(req, res) {
+	if (!req.body || !req.body.payment) {
+		res.redirect('/payment/add');
+		return;
+	}
 	var paymentObj = req.body.payment;
+
+	if (paymentObj.type == undefined || paymentObj.name == undefined || paymentObj.product_type == undefined || paymentObj.price == undefined) {
+		res.redirect('/payment/add');
+		return;
+	}
+
+	var result = Commen.checkField([
+		[paymentObj.type, '/^[\\S]+$/', '类型不能为空'],
+		[paymentObj.name, '/^[\\S]+$/', '对方名字不能为空'],
+		[paymentObj.name, '/^.{4,32}$/', '对方名字为4-32位'],
+		[paymentObj.product_type, '/^[\\S]+$/', '类型电话不能为空'],
+		[paymentObj.price, '/^[\\S]+$/', '价格不能为空'],
+		[paymentObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		if (id) {
+			res.redirect('/payment/edit/' + id);
+		} else {
+			res.redirect('/payment/add');
+		}
+		return;
+	} else {
+		result = null;
+	}
+
 	var _payment;
 
 	var user_id = req.session.user._id;
@@ -199,7 +241,44 @@ exports.detailMO = function(req, res) {
 
 // App保存
 exports.saveMO = function(req, res) {
+	if (!req.body) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
 	var paymentObj = req.body;
+
+	if (paymentObj.type == undefined || paymentObj.name == undefined || paymentObj.product_type == undefined || paymentObj.price == undefined) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
+
+	var result = Commen.checkField([
+		[paymentObj.type, '/^[\\S]+$/', '类型不能为空'],
+		[paymentObj.name, '/^[\\S]+$/', '对方名字不能为空'],
+		[paymentObj.name, '/^.{4,32}$/', '对方名字为4-32位'],
+		[paymentObj.product_type, '/^[\\S]+$/', '类型电话不能为空'],
+		[paymentObj.price, '/^[\\S]+$/', '价格不能为空'],
+		[paymentObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: result.msg
+		});
+		return;
+	} else {
+		result = null;
+	}
 	var _payment;
 
 	var user_id = req.headers['token'];
