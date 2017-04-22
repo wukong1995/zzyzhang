@@ -4,7 +4,11 @@ var Assets = require('../model/assets');
 var User = require('../model/account');
 
 exports.detail = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		res.redirect('/assets/list');
+		return;
+	}
+	var id = req.params.id;
 
 	// res.sendFile()直接输出html文件
 	Assets.findById(id, function(err, assets) {
@@ -55,11 +59,17 @@ exports.result = function(req, res) {
 		})
 		.exec(function(err, user) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					success: 0,
+					message: '服务器错误'
+				});
+				return;
 			}
 			totalCount = user.assets.length;
 			var results = user.assets.slice(start, start + limit);
 			res.json({
+				success: 1,
 				page: (page + 1),
 				data: results || [],
 				totalCount: totalCount
@@ -81,8 +91,11 @@ exports.add = function(req, res) {
 };
 
 exports.edit = function(req, res) {
-	var id = req.params.id
-
+	if (!req.params || !req.params.id) {
+		res.redirect('/assets/list');
+		return;
+	}
+	var id = req.params.id;
 	Assets.findById(id, function(err, assets) {
 		res.render('assets/add', {
 			title: '资产编辑页',
@@ -92,20 +105,54 @@ exports.edit = function(req, res) {
 };
 
 exports.save = function(req, res) {
-	var id = req.body.assets._id;
+	if (!req.body || !req.body.assets) {
+		res.redirect('/assets/add');
+		return;
+	}
 	var assetsObj = req.body.assets;
+	var id = assetsObj.id;
+
+	if (assetsObj.name == undefined || assetsObj.type == undefined || assetsObj.price == undefined) {
+		if (id) {
+			res.redirect('/assets/edit/' + id);
+		} else {
+			res.redirect('/assets/add');
+		}
+		return;
+	}
+
+	var result = Commen.checkField([
+		[assetsObj.name, '/^[\\S]+$/', '资产不能为空'],
+		[assetsObj.name, '/^.{4,32}$/', '资产长度为4-32位'],
+		[assetsObj.type, '/^[\\S]+$/', '类型不能为空'],
+		[assetsObj.price, '/^[\\S]+$/', '价格不能为空'],
+		[assetsObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		if (id) {
+			res.redirect('/assets/edit/' + id);
+		} else {
+			res.redirect('/assets/add');
+		}
+		return;
+	} else {
+		result = null;
+	}
 	var _assets;
 
 	if (id) {
 		Assets.findById(id, function(err, assets) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.redirect('/assets/edit/' + id);
 			}
 
 			_assets = _.extend(assets, assetsObj);
 			_assets.save(function(err, assets) {
 				if (err) {
-					console.log(err)
+					console.log(err);
+					res.redirect('/assets/edit/' + id);
 				}
 				// 重定向请求
 				res.redirect('/assets/detail/' + assets._id)
@@ -125,12 +172,14 @@ exports.save = function(req, res) {
 			User.findById(user_id, function(err, user) {
 				if (err) {
 					console.log(err);
+					res.redirect('/assets/add');
 				}
 
 				user.assets.push(assets._id);
 				user.save(function(err, user) {
 					if (err) {
-						console.log(err)
+						console.log(err);
+						res.redirect('/assets/add');
 					}
 					res.redirect('/assets/detail/' + assets._id);
 				});
@@ -169,7 +218,7 @@ exports.del = function(req, res) {
 					_id: user_id
 				}, {
 					"$pull": {
-						payment: id
+						assets: id
 					}
 				})
 				.exec(function(err, user) {
@@ -211,9 +260,44 @@ exports.detailMO = function(req, res) {
 
 // App保存
 exports.saveMO = function(req, res) {
+	if (!req.body) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
 	var assetsObj = req.body;
-	var _assets;
 
+	if (assetsObj.name == undefined || assetsObj.type == undefined || assetsObj.price == undefined) {
+		if (id) {
+			res.redirect('/assets/edit/' + id);
+		} else {
+			res.redirect('/assets/add');
+		}
+		return;
+	}
+
+	var result = Commen.checkField([
+		[assetsObj.name, '/^[\\S]+$/', '资产不能为空'],
+		[assetsObj.name, '/^.{4,16}$/', '资产长度为4-32位'],
+		[assetsObj.type, '/^[\\S]+$/', '类型不能为空'],
+		[assetsObj.price, '/^[\\S]+$/', '价格不能为空'],
+		[assetsObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		res.json({
+			error_code: 1,
+			success: 0,
+			msg: result.msg
+		});
+		return;
+	} else {
+		result = null;
+	}
+	var _assets;
 	var id = assetsObj._id;
 
 	if (id) {

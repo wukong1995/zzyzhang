@@ -4,8 +4,11 @@ var Bond = require('../model/bond');
 var User = require('../model/account');
 
 exports.detail = function(req, res) {
-	var id = req.params.id
-
+	if (!req.params || !req.params.id) {
+		res.redirect('/bond/list');
+		return;
+	}
+	var id = req.params.id;
 	Bond.findById(id, function(err, bond) {
 		res.render('bond/detail', {
 			title: '债券详情页',
@@ -53,11 +56,17 @@ exports.result = function(req, res) {
 		})
 		.exec(function(err, user) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					success: 0,
+					message: '服务器错误'
+				});
+				return;
 			}
 			totalCount = user.bond.length;
 			var results = user.bond.slice(start, start + limit);
 			res.json({
+				success: 1,
 				page: (page + 1),
 				data: results || [],
 				totalCount: totalCount
@@ -79,7 +88,11 @@ exports.add = function(req, res) {
 };
 
 exports.edit = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		res.redirect('/bond/list');
+		return;
+	}
+	var id = req.params.id;
 
 	Bond.findById(id, function(err, bond) {
 		res.render('bond/add', {
@@ -90,20 +103,58 @@ exports.edit = function(req, res) {
 };
 
 exports.save = function(req, res) {
+	if (!req.body || !req.body.bond) {
+		res.redirect('/bond/add');
+		return;
+	}
 	var id = req.body.bond._id;
 	var bondObj = req.body.bond;
+
+	if (bondObj.name == undefined || bondObj.code == undefined || bondObj.purchase == undefined || bondObj.yield == undefined) {
+		if (id) {
+			res.redirect('/bond/edit/' + id);
+		} else {
+			res.redirect('/bond/add');
+		}
+		return;
+	}
+
+	var result = Commen.checkField([
+		[bondObj.name, '/^[\\S]+$/', '名字不能为空'],
+		[bondObj.name, '/^.{4,16}$/', '名字长度为4-32位'],
+		[bondObj.code, '/^[\\S]+$/', '代码不能为空'],
+		[bondObj.code, '/^[\\d]{6}$/', '代码长度为6位'],
+		[bondObj.purchase, '/^[\\S]+$/', '价格不能为空'],
+		[bondObj.purchase, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+		[bondObj.yield, '/^[\\S]+$/', '收益率不能为空'],
+		[bondObj.yield, '^(\\-)?\\d+(\\.\\d+)?$/', '收益率只能为数字']
+	]);
+
+	if (result.flag === false) {
+		if (id) {
+			res.redirect('/bond/edit/' + id);
+		} else {
+			res.redirect('/bond/add');
+		}
+		return;
+	} else {
+		result = null;
+	}
+
 	bondObj.income = parseFloat(bondObj.purchase) * parseFloat(bondObj.yield);
 	var _bond;
 
 	if (id) {
 		Bond.findById(id, function(err, bond) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.redirect('/bond/edit/' + id);
 			}
 			_bond = _.extend(bond, bondObj);
 			_bond.save(function(err, bond) {
 				if (err) {
-					console.log(err)
+					console.log(err);
+					res.redirect('/bond/edit/' + id);
 				}
 				// 重定向请求
 				res.redirect('/bond/detail/' + bond._id)
@@ -117,16 +168,19 @@ exports.save = function(req, res) {
 		_bond.save(function(err, bond) {
 			if (err) {
 				console.log(err);
+				res.redirect('/bond/add');
 			}
 
 			User.findById(user_id, function(err, user) {
 				if (err) {
 					console.log(err);
+					res.redirect('/bond/add');
 				}
 				user.bond.push(bond._id)
 				user.save(function(err, user) {
 					if (err) {
-						console.log(err)
+						console.log(err);
+						res.redirect('/bond/add');
 					}
 					res.redirect('/bond/detail/' + bond._id);
 				});
@@ -166,7 +220,7 @@ exports.del = function(req, res) {
 					_id: user_id
 				}, {
 					"$pull": {
-						payment: id
+						bond: id
 					}
 				})
 				.exec(function(err, user) {

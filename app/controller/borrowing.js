@@ -4,6 +4,10 @@ var Borrowing = require('../model/borrowing');
 var User = require('../model/account');
 
 exports.detail = function(req, res) {
+	if (!req.params || !req.params.id) {
+		res.redirect('/borrowing/list');
+		return;
+	}
 	var id = req.params.id
 
 	// res.sendFile()直接输出html文件
@@ -53,11 +57,17 @@ exports.result = function(req, res) {
 		})
 		.exec(function(err, user) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					success: 0,
+					message: '服务器错误'
+				});
+				return;
 			}
 			totalCount = user.borrowing.length;
 			var results = user.borrowing.slice(start, start + limit);
 			res.json({
+				success: 1,
 				page: (page + 1),
 				data: results || [],
 				totalCount: totalCount
@@ -77,7 +87,11 @@ exports.add = function(req, res) {
 };
 
 exports.edit = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		res.redirect('/borrowing/list');
+		return;
+	}
+	var id = req.params.id;
 
 	Borrowing.findById(id, function(err, borrowing) {
 		res.render('borrowing/add', {
@@ -88,19 +102,56 @@ exports.edit = function(req, res) {
 };
 
 exports.save = function(req, res) {
-	var id = req.body.borrowing._id;
+	if (!req.body || !req.body.borrowing) {
+		res.redirect('/borrowing/add');
+		return;
+	}
 	var borrowingObj = req.body.borrowing;
+	var id = borrowingObj._id;
+
+	if (borrowingObj.other == undefined || borrowingObj.telephone == undefined || borrowingObj.type == undefined || borrowingObj.price == undefined) {
+		if (id) {
+			res.redirect('/borrowing/edit/' + id);
+		} else {
+			res.redirect('/borrowing/add');
+		}
+		return;
+	}
+
+	var result = Commen.checkField([
+		[borrowingObj.other, '/^[\\S]+$/', '对方名字不能为空'],
+		[borrowingObj.other, '/^.{4,32}$/', '对方名字为4-32位'],
+		[borrowingObj.telephone, '/^[\\S]+$/', '对方电话不能为空'],
+		[borrowingObj.telephone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '电话格式不正确'],
+		[borrowingObj.type, '/^[\\S]+$/', '类型不能为空'],
+		[borrowingObj.price, '/^[\\S]+$/', '价格不能为空'],
+		[borrowingObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		if (id) {
+			res.redirect('/borrowing/edit/' + id);
+		} else {
+			res.redirect('/borrowing/add');
+		}
+		return;
+	} else {
+		result = null;
+	}
+
 	var _borrowing;
 
 	if (id) {
 		Borrowing.findById(id, function(err, borrowing) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.redirect('/borrowing/edit/' + id);
 			}
 			_borrowing = _.extend(borrowing, borrowingObj);
 			_borrowing.save(function(err, borrowing) {
 				if (err) {
-					console.log(err)
+					console.log(err);
+					res.redirect('/borrowing/edit/' + id);
 				}
 				// 重定向请求
 				res.redirect('/borrowing/detail/' + borrowing._id)
@@ -114,16 +165,19 @@ exports.save = function(req, res) {
 		_borrowing.save(function(err, borrowing) {
 			if (err) {
 				console.log(err);
+				res.redirect('/borrowing/add');
 			}
 
 			User.findById(user_id, function(err, user) {
 				if (err) {
 					console.log(err);
+					res.redirect('/borrowing/add');
 				}
 				user.borrowing.push(borrowing._id)
 				user.save(function(err, user) {
 					if (err) {
-						console.log(err)
+						console.log(err);
+						res.redirect('/borrowing/add');
 					}
 					res.redirect('/borrowing/detail/' + borrowing._id);
 				});
@@ -163,7 +217,7 @@ exports.del = function(req, res) {
 					_id: user_id
 				}, {
 					"$pull": {
-						payment: id
+						borrowing: id
 					}
 				})
 				.exec(function(err, user) {
@@ -203,7 +257,46 @@ exports.detailMO = function(req, res) {
 
 // App保存
 exports.saveMO = function(req, res) {
+	if (!req.body) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
 	var borrowingObj = req.body;
+
+	if (borrowingObj.other == undefined || borrowingObj.telephone == undefined || borrowingObj.type == undefined || borrowingObj.price == undefined) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
+
+	var result = Commen.checkField([
+		[borrowingObj.other, '/^[\\S]+$/', '对方名字不能为空'],
+		[borrowingObj.other, '/^.{4,32}$/', '对方名字为4-32位'],
+		[borrowingObj.telephone, '/^[\\S]+$/', '对方电话不能为空'],
+		[borrowingObj.telephone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '电话格式不正确'],
+		[borrowingObj.type, '/^[\\S]+$/', '类型不能为空'],
+		[borrowingObj.price, '/^[\\S]+$/', '价格不能为空'],
+		[borrowingObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: result.msg
+		});
+		return;
+	} else {
+		result = null;
+	}
+
 	var _borrowing;
 
 	var user_id = req.headers['token'];

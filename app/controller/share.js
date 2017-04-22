@@ -4,7 +4,11 @@ var Share = require('../model/share');
 var User = require('../model/account');
 
 exports.detail = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		res.redirect('/share/list');
+		return;
+	}
+	var id = req.params.id;
 
 	// res.sendFile()直接输出html文件
 	Share.findById(id, function(err, share) {
@@ -54,11 +58,17 @@ exports.result = function(req, res) {
 		})
 		.exec(function(err, user) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					success: 0,
+					message: '服务器错误'
+				});
+				return;
 			}
 			totalCount = user.share.length;
 			var results = user.share.slice(start, start + limit);
 			res.json({
+				success: 1,
 				page: (page + 1),
 				data: results || [],
 				totalCount: totalCount
@@ -81,8 +91,12 @@ exports.add = function(req, res) {
 };
 
 exports.edit = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		res.redirect('/share/list');
+		return;
+	}
 
+	var id = req.params.id;
 	Share.findById(id, function(err, share) {
 		res.render('share/add', {
 			title: '股票编辑页',
@@ -92,8 +106,44 @@ exports.edit = function(req, res) {
 };
 
 exports.save = function(req, res) {
-	var id = req.body.share._id;
+	if (!req.body || !req.body.share) {
+		res.redirect('/share/add');
+		return;
+	}
 	var shareObj = req.body.share;
+	var id = shareObj._id;
+
+	if (shareObj.name == undefined || shareObj.count == undefined || shareObj.first_price == undefined || shareObj.last_price == undefined) {
+		if (id) {
+			res.redirect('/share/edit/' + id);
+		} else {
+			res.redirect('/share/add');
+		}
+		return;
+	}
+
+	var result = Commen.checkField([
+		[shareObj.name, '/^[\\S]+$/', '名字不能为空'],
+		[shareObj.name, '/^.{4,32}$/', '名字长度为4-32位'],
+		[shareObj.count, '/^[\\S]+$/', '股数不能为空'],
+		[shareObj.count, '/^\\d+$/', '股数不能为空'],
+		[shareObj.first_price, '/^[\\S]+$/', '价格不能为空'],
+		[shareObj.first_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+		[shareObj.last_price, '/^[\\S]+$/', '价格不能为空'],
+		[shareObj.last_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		if (id) {
+			res.redirect('/share/edit/' + id);
+		} else {
+			res.redirect('/share/add');
+		}
+		return;
+	} else {
+		result = null;
+	}
+
 	shareObj.income = parseInt(shareObj.count) * (parseInt(shareObj.last_price) - parseInt(shareObj.first_price));
 	var _share;
 
@@ -168,7 +218,7 @@ exports.del = function(req, res) {
 					_id: user_id
 				}, {
 					"$pull": {
-						payment: id
+						share: id
 					}
 				})
 				.exec(function(err, user) {
@@ -208,7 +258,47 @@ exports.detailMO = function(req, res) {
 
 // App保存
 exports.saveMO = function(req, res) {
+	if (!req.body) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
 	var shareObj = req.body;
+
+	if (shareObj.name == undefined || shareObj.count == undefined || shareObj.first_price == undefined || shareObj.last_price == undefined) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
+
+	var result = Commen.checkField([
+		[shareObj.name, '/^[\\S]+$/', '名字不能为空'],
+		[shareObj.name, '/^.{4,32}$/', '名字长度为4-32位'],
+		[shareObj.count, '/^[\\S]+$/', '股数不能为空'],
+		[shareObj.count, '/^\\d+$/', '股数不能为空'],
+		[shareObj.first_price, '/^[\\S]+$/', '价格不能为空'],
+		[shareObj.first_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+		[shareObj.last_price, '/^[\\S]+$/', '价格不能为空'],
+		[shareObj.last_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: result.msg
+		});
+		return;
+	} else {
+		result = null;
+	}
+
 	var _share;
 
 	var user_id = req.headers['token'];

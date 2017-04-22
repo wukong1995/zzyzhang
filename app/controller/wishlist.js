@@ -5,7 +5,11 @@ var User = require('../model/account');
 var Payment = require('../model/payment');
 
 exports.detail = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		res.redirect('/wishlist/list');
+		return;
+	}
+	var id = req.params.id;
 
 	// res.sendFile()直接输出html文件
 	Wishlist.findById(id, function(err, wishlist) {
@@ -55,11 +59,16 @@ exports.result = function(req, res) {
 		})
 		.exec(function(err, user) {
 			if (err) {
-				console.log(err)
+				console.log(err);
+				res.json({
+					success: 0,
+					message: '服务器错误'
+				});
 			}
 			totalCount = user.wishlist.length;
 			var results = user.wishlist.slice(start, start + limit);
 			res.json({
+				success: 1,
 				page: (page + 1),
 				data: results || [],
 				totalCount: totalCount
@@ -79,7 +88,11 @@ exports.add = function(req, res) {
 };
 
 exports.edit = function(req, res) {
-	var id = req.params.id
+	if (!req.params || !req.params.id) {
+		res.redirect('/wishlist/list');
+		return;
+	}
+	var id = req.params.id;
 
 	Wishlist.findById(id, function(err, wishlist) {
 		res.render('wishlist/add', {
@@ -90,8 +103,41 @@ exports.edit = function(req, res) {
 };
 
 exports.save = function(req, res) {
-	var id = req.body.wishlist._id;
+	if (!req.body || !req.body.wishlist) {
+		res.redirect('/wishlist/add');
+		return;
+	}
 	var wishlistObj = req.body.wishlist;
+	var id = wishlistObj._id;
+
+	if (wishlistObj.name == undefined || wishlistObj.price == undefined ||
+		wishlistObj.product_type == undefined) {
+		if (id) {
+			res.redirect('/wishlist/edit/' + id);
+		} else {
+			res.redirect('/wishlist/add');
+		}
+		return;
+	}
+
+	var result = Commen.checkField([
+		[wishlistObj.name, '/^[\\S]+$/', '资产不能为空'],
+		[wishlistObj.name, '/^.{4,32}$/', '资产长度为4-32位'],
+		[wishlistObj.product_type, '/^[\\S]+$/', '类型不能为空'],
+		[wishlistObj.price, '/^[\\S]+$/', '价格不能为空'],
+		[wishlistObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		if (id) {
+			res.redirect('/wishlist/edit/' + id);
+		} else {
+			res.redirect('/wishlist/add');
+		}
+		return;
+	} else {
+		result = null;
+	}
 	var _wishlist;
 
 	if (id) {
@@ -165,7 +211,7 @@ exports.del = function(req, res) {
 					_id: user_id
 				}, {
 					"$pull": {
-						payment: id
+						wishlist: id
 					}
 				})
 				.exec(function(err, user) {
@@ -212,6 +258,14 @@ exports.buy = function(req, res) {
 					console.log(err)
 				} else {
 
+					User.update({
+						_id: user_id
+					}, {
+						"$pull": {
+							wishlist: id
+						}
+					});
+
 					var payment = {
 						type: 1,
 						name: wishlist.name,
@@ -220,7 +274,6 @@ exports.buy = function(req, res) {
 						remark: wishlist.remark,
 						account: wishlist.account
 					};
-					console.log(payment)
 
 					var _payment = new Payment(payment);
 					_payment.save(function(err, payment) {
@@ -270,7 +323,45 @@ exports.detailMO = function(req, res) {
 
 // App保存
 exports.saveMO = function(req, res) {
+	if (!req.body) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
 	var wishlistObj = req.body;
+
+	if (wishlistObj.name == undefined || wishlistObj.price == undefined ||
+		wishlistObj.product_type == undefined) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
+
+	var result = Commen.checkField([
+		[wishlistObj.name, '/^[\\S]+$/', '资产不能为空'],
+		[wishlistObj.name, '/^.{4,32}$/', '资产长度为4-32位'],
+		[wishlistObj.product_type, '/^[\\S]+$/', '类型不能为空'],
+		[wishlistObj.price, '/^[\\S]+$/', '价格不能为空'],
+		[wishlistObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+	]);
+
+	if (result.flag === false) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: result.msg
+		});
+		return;
+	} else {
+		result = null;
+	}
+
 	var _wishlist;
 
 	var user_id = req.headers['token'];
