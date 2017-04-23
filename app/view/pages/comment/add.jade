@@ -1,0 +1,57 @@
+extends ../../layout
+
+block content
+	#breadcrumbs.breadcrumbs
+		script(type="text/javascript").
+			try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+		ul.breadcrumb
+			li
+				i.ace-icon.fa.fa-home.home-icon
+				a(href="/index") 主页
+			li.active 
+				a(href="#") 添加股票
+	.page-content
+		include ../page
+		.page-content-area
+			.page-header
+				h1
+					| 添加股票
+					small
+						i.ace-icon.fa.fa-angle-double-right
+						| 	请填写以下信息：
+			.row
+				.col-xs-12
+					form#share_form.form-horizontal(role='form',method="POST",action="/share/action/save")
+
+						.form-group
+							label.col-sm-4.control-label.no-padding-right 股票名字 
+							.col-sm-8
+								input#share_name.col-xs-10.col-sm-4(type='text', placeholder='股票名字',name="share[name]",value=share.name)
+						.form-group
+							label.col-sm-4.control-label.no-padding-right 股数
+							.col-sm-8
+								input#share_count.col-xs-10.col-sm-4(type='text', placeholder='股数',name="share[count]",value=share.count)
+						.form-group
+							label.col-sm-4.control-label.no-padding-righ 买入价格
+							.col-sm-8
+								input#share_first_price.col-xs-10.col-sm-4(type='text', placeholder='股票价格',name="share[first_price]",value=share.first_price)
+						.form-group
+							label.col-sm-4.control-label.no-padding-righ 卖出价格
+							.col-sm-8
+								input#share_last_price.col-xs-10.col-sm-4(type='text', placeholder='股票价格',name="share[last_price]",value=share.last_price)
+						.form-group
+							label.col-sm-4.control-label.no-padding-right  备注
+							.col-sm-8
+								textarea#share_remark.col-xs-10.col-sm-4(name="share[remark]") #{share.remark}						
+						.clearfix.form-actions
+							.col-md-offset-4.col-md-4
+								button#form_submit.btn.btn-info(type='button')
+									i.ace-icon.fa.fa-check.bigger-110
+									| 	确定
+								button.btn(type='reset')
+									i.ace-icon.fa.fa-undo.bigger-110
+									| 	重置
+	script(src="/javascript/share_add.js")
+
+								
+						
