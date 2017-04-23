@@ -18,7 +18,7 @@
           a.dropdown-toggle(data-toggle="dropdown", href="#")
             img.nav-user-photo(src="/libs/ace/avatars/profile-pic.jpg", alt="Jason's Photo")
             span.user-info
-              small Welcome,
+              small Welcome,#{user.role}
               | #{user.name}
             i.ace-icon.fa.fa-caret-down
           ul.user-menu.dropdown-menu-right.dropdown-menu.dropdown-yellow.dropdown-caret.dropdown-close
@@ -177,6 +177,13 @@
               i.menu-icon.fa.fa-caret-right
               | 查看记录
             b.arrow
+      if user.role >= 10
+        li.hover
+          a(href="/comment/list")
+            i.menu-icon.fa.fa-tachometer
+            span.menu-text  反馈列表
+            b.arrow
+          b.arrow
       
     #sidebar-collapse.sidebar-toggle.sidebar-collapse
       i.ace-icon.fa.fa-angle-double-left(data-icon1="ace-icon fa fa-angle-double-left", data-icon2="ace-icon fa fa-angle-double-right")

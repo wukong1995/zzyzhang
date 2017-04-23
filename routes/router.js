@@ -6,6 +6,7 @@ var Borrowing = require('../app/controller/borrowing');
 var Payment = require('../app/controller/payment');
 var Share = require('../app/controller/share');
 var Wishlist = require('../app/controller/wishlist');
+var Comment = require('../app/controller/comment');
 
 module.exports = function(app) {
 	// pre handle user
@@ -43,7 +44,7 @@ module.exports = function(app) {
 
 	// Admin -- 超级管理员权限
 	app.get('/admin/list', User.adminRequired, Admin.list);
-	app.get('/admin/result', User.signinRequired, Admin.result);
+	app.get('/admin/result', User.adminRequired, Admin.result);
 	app.get('/admin/detail/:id', User.adminRequired, Admin.detail);
 	app.get('/admin/edit', User.adminRequired, Admin.edit);
 
@@ -126,6 +127,11 @@ module.exports = function(app) {
 	app.get('/wishlist/detailmo/:id', User.signinRequired, Wishlist.detailMO);
 	app.post('/wishlist/savemo', User.signinRequired, Wishlist.saveMO);
 
+	// comment
+	app.get('/comment/list', User.adminRequired, Comment.list);
+	app.get('/comment/result', User.adminRequired, Comment.result);
+	app.get('/comment/detail/:id', User.adminRequired, Comment.detail);
+	app.post('/comment/savemo', User.signinRequired, Comment.saveMO);
 
 	app.get('*', function(req, res) {
 		res.render('404.jade', {

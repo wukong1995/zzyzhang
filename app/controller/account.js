@@ -216,7 +216,7 @@ exports.signin = function(req, res) {
 
 	User.findOne({
 		name: _user.name
-	}, ['name', 'password'], function(err, user) {
+	}, ['name', 'password', 'role'], function(err, user) {
 		if (err) {
 			console.log(err);
 			res.json({
