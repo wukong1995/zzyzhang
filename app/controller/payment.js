@@ -2,6 +2,8 @@ var _ = require('underscore')
 var mongoose = require('mongoose');
 var Payment = require('../model/payment');
 var User = require('../model/account');
+var Commen = require('./commen');
+
 
 exports.detail = function(req, res) {
 	if (!req.params || !req.params.id) {
@@ -119,19 +121,15 @@ exports.save = function(req, res) {
 
 	var result = Commen.checkField([
 		[paymentObj.type, '/^[\\S]+$/', '类型不能为空'],
-		[paymentObj.name, '/^[\\S]+$/', '对方名字不能为空'],
-		[paymentObj.name, '/^.{4,32}$/', '对方名字为4-32位'],
-		[paymentObj.product_type, '/^[\\S]+$/', '类型电话不能为空'],
+		[paymentObj.name, '/^[\\S]+$/', '名字不能为空'],
+		[paymentObj.name, '/^.{2,16}$/', '名字为2-16位'],
+		[paymentObj.product_type, '/^[\\S]+$/', '类型不能为空'],
 		[paymentObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[paymentObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
 	]);
 
 	if (result.flag === false) {
-		if (id) {
-			res.redirect('/payment/edit/' + id);
-		} else {
-			res.redirect('/payment/add');
-		}
+		res.redirect('/payment/add');
 		return;
 	} else {
 		result = null;

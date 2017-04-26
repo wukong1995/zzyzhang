@@ -2,6 +2,7 @@ var _ = require('underscore')
 var mongoose = require('mongoose');
 var Borrowing = require('../model/borrowing');
 var User = require('../model/account');
+var Commen = require('./commen');
 
 exports.detail = function(req, res) {
 	if (!req.params || !req.params.id) {
@@ -120,7 +121,7 @@ exports.save = function(req, res) {
 
 	var result = Commen.checkField([
 		[borrowingObj.other, '/^[\\S]+$/', '对方名字不能为空'],
-		[borrowingObj.other, '/^.{4,32}$/', '对方名字为4-32位'],
+		[borrowingObj.other, '/^.{2,16}$/', '对方名字为2-16位'],
 		[borrowingObj.telephone, '/^[\\S]+$/', '对方电话不能为空'],
 		[borrowingObj.telephone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '电话格式不正确'],
 		[borrowingObj.type, '/^[\\S]+$/', '类型不能为空'],

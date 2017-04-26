@@ -21,7 +21,7 @@ block content
 						| 	请填写以下信息：
 			.row
 				.col-xs-12
-					form#assets_form.form-horizontal(role='form')
+					form#assets_form.form-horizontal(role='form',method="POST",action="/assets/action/save")
 						if assets._id
 							input(type="hidden",name="assets[id]",value=assets._id)
 						.form-group

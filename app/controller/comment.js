@@ -1,7 +1,8 @@
 var _ = require('underscore')
 var mongoose = require('mongoose');
-var Comment = require('../model/comment');
+var Commen = require('./commen');
 var User = require('../model/account');
+var Comment = require('../model/comment');
 
 exports.detail = function(req, res) {
 	if (!req.params || !req.params.id) {
@@ -133,7 +134,7 @@ exports.saveMO = function(req, res) {
 		res.json({
 			error_code: 0,
 			success: 1,
-			msg: '保存成功'
+			msg: '提交成功'
 		});
 	});
 }
