@@ -394,7 +394,7 @@ exports.detail = function(req, res) {
 		'signature', 'role', 'state', 'meta'
 	], function(err, user) {
 		if (err) {
-			console.log(err)
+			console.log(err);
 		}
 		res.render('account/detail', {
 			title: '用户列表',
@@ -531,7 +531,7 @@ exports.detailMO = function(req, res) {
 		res.json({
 			error_code: 0,
 			success: 1,
-			msg: '成功',
+			message: '成功',
 			user: user
 		});
 	});
@@ -580,7 +580,7 @@ exports.changeproMO = function(req, res) {
 			res.json({
 				error_code: 1,
 				success: 0,
-				msg: '找不到该用户'
+				message: '找不到该用户'
 			});
 			return;
 		}
@@ -591,7 +591,7 @@ exports.changeproMO = function(req, res) {
 				res.json({
 					error_code: 0,
 					success: 0,
-					msg: '保存出错'
+					message: '保存出错'
 				});
 				return;
 			}
@@ -599,7 +599,7 @@ exports.changeproMO = function(req, res) {
 			res.json({
 				error_code: 0,
 				success: 1,
-				msg: '保存成功'
+				message: '保存成功'
 			});
 			return;
 		})

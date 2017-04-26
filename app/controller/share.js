@@ -62,7 +62,7 @@ exports.result = function(req, res) {
 				console.log(err);
 				res.json({
 					success: 0,
-					message: '服务器错误'
+					msg: '服务器错误'
 				});
 				return;
 			}
