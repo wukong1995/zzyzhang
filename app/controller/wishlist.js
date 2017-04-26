@@ -346,7 +346,7 @@ exports.saveMO = function(req, res) {
 
 	var result = Commen.checkField([
 		[wishlistObj.name, '/^[\\S]+$/', '资产不能为空'],
-		[wishlistObj.name, '/^.{4,32}$/', '资产长度为4-32位'],
+		[wishlistObj.name, '/^.{2,16}$/', '资产长度为2-16位'],
 		[wishlistObj.product_type, '/^[\\S]+$/', '类型不能为空'],
 		[wishlistObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[wishlistObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']

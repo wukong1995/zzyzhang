@@ -46,7 +46,7 @@ exports.result = function(req, res) {
 			_id: userId
 		}).populate({
 			path: 'borrowing',
-			select: 'other telephone price type meta',
+			select: 'other telphone price type meta',
 			match: {
 				other: new RegExp(keyword, "i")
 			},
@@ -110,7 +110,7 @@ exports.save = function(req, res) {
 	var borrowingObj = req.body.borrowing;
 	var id = borrowingObj._id;
 
-	if (borrowingObj.other == undefined || borrowingObj.telephone == undefined || borrowingObj.type == undefined || borrowingObj.price == undefined) {
+	if (borrowingObj.other == undefined || borrowingObj.telphone == undefined || borrowingObj.type == undefined || borrowingObj.price == undefined) {
 		if (id) {
 			res.redirect('/borrowing/edit/' + id);
 		} else {
@@ -122,8 +122,8 @@ exports.save = function(req, res) {
 	var result = Commen.checkField([
 		[borrowingObj.other, '/^[\\S]+$/', '对方名字不能为空'],
 		[borrowingObj.other, '/^.{2,16}$/', '对方名字为2-16位'],
-		[borrowingObj.telephone, '/^[\\S]+$/', '对方电话不能为空'],
-		[borrowingObj.telephone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '电话格式不正确'],
+		[borrowingObj.telphone, '/^[\\S]+$/', '对方电话不能为空'],
+		[borrowingObj.telphone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '电话格式不正确'],
 		[borrowingObj.type, '/^[\\S]+$/', '类型不能为空'],
 		[borrowingObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[borrowingObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
@@ -268,7 +268,7 @@ exports.saveMO = function(req, res) {
 	}
 	var borrowingObj = req.body;
 
-	if (borrowingObj.other == undefined || borrowingObj.telephone == undefined || borrowingObj.type == undefined || borrowingObj.price == undefined) {
+	if (borrowingObj.other == undefined || borrowingObj.telphone == undefined || borrowingObj.type == undefined || borrowingObj.price == undefined) {
 		res.json({
 			error_code: 0,
 			success: 0,
@@ -279,9 +279,9 @@ exports.saveMO = function(req, res) {
 
 	var result = Commen.checkField([
 		[borrowingObj.other, '/^[\\S]+$/', '对方名字不能为空'],
-		[borrowingObj.other, '/^.{4,32}$/', '对方名字为4-32位'],
-		[borrowingObj.telephone, '/^[\\S]+$/', '对方电话不能为空'],
-		[borrowingObj.telephone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '电话格式不正确'],
+		[borrowingObj.other, '/^.{2,16}$/', '对方名字为2-16位'],
+		[borrowingObj.telphone, '/^[\\S]+$/', '对方电话不能为空'],
+		[borrowingObj.telphone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '电话格式不正确'],
 		[borrowingObj.type, '/^[\\S]+$/', '类型不能为空'],
 		[borrowingObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[borrowingObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
