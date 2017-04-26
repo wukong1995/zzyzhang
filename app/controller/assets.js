@@ -2,6 +2,7 @@ var _ = require('underscore')
 var mongoose = require('mongoose');
 var Assets = require('../model/assets');
 var User = require('../model/account');
+var Commen = require('./commen');
 
 exports.detail = function(req, res) {
 	if (!req.params || !req.params.id) {
@@ -106,6 +107,7 @@ exports.edit = function(req, res) {
 
 exports.save = function(req, res) {
 	if (!req.body || !req.body.assets) {
+		console.log("未为传递参数")
 		res.redirect('/assets/add');
 		return;
 	}
@@ -113,6 +115,7 @@ exports.save = function(req, res) {
 	var id = assetsObj.id;
 
 	if (assetsObj.name == undefined || assetsObj.type == undefined || assetsObj.price == undefined) {
+		console.log("未为传递参数")
 		if (id) {
 			res.redirect('/assets/edit/' + id);
 		} else {
@@ -123,13 +126,14 @@ exports.save = function(req, res) {
 
 	var result = Commen.checkField([
 		[assetsObj.name, '/^[\\S]+$/', '资产不能为空'],
-		[assetsObj.name, '/^.{4,32}$/', '资产长度为4-32位'],
+		[assetsObj.name, '/^.{2,16}$/', '资产长度为2-16位'],
 		[assetsObj.type, '/^[\\S]+$/', '类型不能为空'],
 		[assetsObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[assetsObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
 	]);
 
 	if (result.flag === false) {
+		console.log(result.msg)
 		if (id) {
 			res.redirect('/assets/edit/' + id);
 		} else {

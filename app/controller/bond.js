@@ -2,6 +2,7 @@ var _ = require('underscore')
 var mongoose = require('mongoose');
 var Bond = require('../model/bond');
 var User = require('../model/account');
+var Commen = require('./commen');
 
 exports.detail = function(req, res) {
 	if (!req.params || !req.params.id) {
@@ -121,7 +122,7 @@ exports.save = function(req, res) {
 
 	var result = Commen.checkField([
 		[bondObj.name, '/^[\\S]+$/', '名字不能为空'],
-		[bondObj.name, '/^.{4,16}$/', '名字长度为4-32位'],
+		[bondObj.name, '/^.{2,16}$/', '名字长度为2-16位'],
 		[bondObj.code, '/^[\\S]+$/', '代码不能为空'],
 		[bondObj.code, '/^[\\d]{6}$/', '代码长度为6位'],
 		[bondObj.purchase, '/^[\\S]+$/', '价格不能为空'],

@@ -12,13 +12,29 @@ var MongoStore = require('connect-mongo')(session);
 
 /* 连接数据库 */
 var dbUrl = 'mongodb://localhost:27017/Accounting';
-mongoose.connect(dbUrl);
+mongoose.connect(dbUrl, {
+	server: {
+		auto_reconnect: true
+	}
+});
 var db = mongoose.connection;
 db.on('error', function() {
 	console.log("数据库连接错误");
+	mongoose.connect(dbUrl, {
+		server: {
+			auto_reconnect: true
+		}
+	});
 });
 db.on('open', function() {
 	console.log("数据库连接成功");
+});
+db.on('close', function() {
+	mongoose.connect(dbUrl, {
+		server: {
+			auto_reconnect: true
+		}
+	});
 });
 /* 连接数据库终 */
 
