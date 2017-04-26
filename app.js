@@ -75,4 +75,4 @@ app.listen(port, function() {
 });
 
 
-// forever start -l forever.log -o out.log -e err.log app.js
+// forever start -l forever.log -o out.log -e err.log -a app.js
