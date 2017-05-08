@@ -7,6 +7,7 @@ var Payment = require('../app/controller/payment');
 var Share = require('../app/controller/share');
 var Wishlist = require('../app/controller/wishlist');
 var Comment = require('../app/controller/comment');
+var Index = require('../app/controller/Index');
 
 module.exports = function(app) {
 	// pre handle user
@@ -35,11 +36,8 @@ module.exports = function(app) {
 	app.get('/user/detailmo', User.signinRequired, User.detailMO);
 	app.post('/user/changepromo', User.signinRequired, User.changeproMO);
 
-	app.get('/index', User.signinRequired, function(req, res) {
-		res.render('index', {
-			title: '主页'
-		});
-	});
+	// 用户首页
+	app.get('/index', User.signinRequired, Index.showIndex);
 
 
 	// Admin -- 超级管理员权限

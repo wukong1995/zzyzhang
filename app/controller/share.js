@@ -129,7 +129,7 @@ exports.save = function(req, res) {
 		[shareObj.count, '/^[\\S]+$/', '股数不能为空'],
 		[shareObj.count, '/^\\d+$/', '股数不能为空'],
 		[shareObj.first_price, '/^[\\S]+$/', '价格不能为空'],
-		[shareObj.first_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+		[shareObj.first_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数'],
 		[shareObj.last_price, '/^[\\S]+$/', '价格不能为空'],
 		[shareObj.last_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
 	]);
@@ -284,7 +284,7 @@ exports.saveMO = function(req, res) {
 		[shareObj.count, '/^[\\S]+$/', '股数不能为空'],
 		[shareObj.count, '/^\\d+$/', '股数不能为空'],
 		[shareObj.first_price, '/^[\\S]+$/', '价格不能为空'],
-		[shareObj.first_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+		[shareObj.first_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数'],
 		[shareObj.last_price, '/^[\\S]+$/', '价格不能为空'],
 		[shareObj.last_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
 	]);
