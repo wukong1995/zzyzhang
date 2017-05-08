@@ -9,15 +9,20 @@ exports.detail = function(req, res) {
 		res.redirect('/comment/list');
 		return;
 	}
-	var id = req.params.id;
 
 	// res.sendFile()直接输出html文件
-	Comment.findById(id, function(err, comment) {
-		res.render('comment/detail', {
-			title: '资产详情页',
-			comment: comment
+	Comment.find({
+		_id: req.params.id
+	}).populate({
+			path: 'account',
+			select: 'name',	
 		})
-	});
+		.exec(function(err, comment) {
+			res.render('comment/detail', {
+				title: '反馈详情页',
+				comment: comment
+			})
+		});
 };
 
 exports.list = function(req, res) {
