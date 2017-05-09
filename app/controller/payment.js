@@ -328,3 +328,56 @@ exports.saveMO = function(req, res) {
 }
 
 // App端删除与PC端相同
+
+// 查看月账单
+exports.monthBill = function(req, res) {
+	var year = new Date().getFullYear()
+	var month = new Date().getMonth() + 1;
+	var date = req.query.date;
+	if (date) {
+		year = date.split('-')[0]
+		month = date.split('-')[1]
+	}
+	date = new Date(year, month, 0);
+
+	Payment
+		.aggregate()
+		.match({
+			'meta.createAt': {
+				$gte: new Date(year + '-' + month + '-01'),
+				$lt: new Date(year + '-' + month + '-' + date.getDate())
+			}
+		})
+		.group({
+			_id: "$type",
+			data: {
+				$sum: '$price'
+			}
+		})
+		.exec(function(err, payment) {
+			if (err) {
+				console.log(err);
+				res.json({
+					error_code: 1,
+					success: 0,
+					msg: '数据库查询出错'
+				});
+				return;
+			}
+			payment.forEach(function(item) {
+				if (item._id == 0) {
+					item.label = '收入(' + item.data + ')';
+				} else {
+					item.label = '支出(' + item.data + ')';
+				}
+			});
+
+			res.json({
+				error_code: 0,
+				success: 1,
+				msg: '查询成功',
+				data: payment
+			});
+			return;
+		})
+}
