@@ -14,58 +14,21 @@ block content
 			.row
 				.col-xs-12
 					.page-header
-						h1
-							| 账单汇总
-							small
-								i.ace-icon.fa.fa-angle-double-right
-								| 本月
-
-				.col-sm-5
+						h1 账单汇总
+				.col-sm-6
 					.widget-box
-						.widget-header.widget-header-flat.widget-header-small
+						.widget-header.widget-header-flat.widget-header-small.wheader
 							h5.widget-title
 								i.ace-icon.fa.fa-signal
 								| 收支账单
-							.widget-toolbar.no-border
-								.inline.dropdown-hover
-									button.btn.btn-minier.btn-primary
-										| 本月
-										i.ace-icon.fa.fa-angle-down.icon-on-right.bigger-110
-									ul.dropdown-menu.dropdown-menu-right.dropdown-125.dropdown-lighter.dropdown-close.dropdown-caret
-										li.active
-											a.blue(href='#')
-												i.ace-icon.fa.fa-caret-right.bigger-110  
-												| 本月
-										li
-											a(href='#')
-												i.ace-icon.fa.fa-caret-right.bigger-110.invisible  
-												| 上月
+							.pull-right.col-sm-6.col-xs-6
+									.input-group
+										span.input-group-addon
+											i.fa.fa-calendar.bigger-110
+										input.form-control#picker1(type="text",readonly="readonly")
 						.widget-body
 							.widget-main
 								#piechart-1
-				.col-sm-5.col-sm-offset-2
-					.widget-box
-						.widget-header.widget-header-flat.widget-header-small
-							h5.widget-title
-								i.ace-icon.fa.fa-signal
-								| 收支账单
-							.widget-toolbar.no-border
-								.inline.dropdown-hover
-									button.btn.btn-minier.btn-primary
-										| 本月
-										i.ace-icon.fa.fa-angle-down.icon-on-right.bigger-110
-									ul.dropdown-menu.dropdown-menu-right.dropdown-125.dropdown-lighter.dropdown-close.dropdown-caret
-										li.active
-											a.blue(href='#')
-												i.ace-icon.fa.fa-caret-right.bigger-110  
-												| 本月
-										li
-											a(href='#')
-												i.ace-icon.fa.fa-caret-right.bigger-110.invisible  
-												| 上月
-						.widget-body
-							.widget-main
-								#piechart-2
 								
 	// if lte IE 8
 		script(src="/libs/ace/js/excanvas.min.js")
@@ -74,48 +37,78 @@ block content
 	script(src="/libs/ace/js/flot/jquery.flot.min.js")
 	script(src="/libs/ace/js/flot/jquery.flot.pie.min.js")
 	script(src="/libs/ace/js/flot/jquery.flot.resize.min.js")
+	script(src="/libs/ace/js/date-time/bootstrap-datepicker.min.js")
+	script(src="/libs/ace/js/date-time/bootstrap-datepicker.zh-CN.js")
+
 
 	script(type="text/javascript").
-		var piechart_1 = $('#piechart-1').css({'width':'90%' , 'min-height':'150px'});
-		var piechart_2 = $('#piechart-2').css({'width':'90%' , 'min-height':'150px'});
-		var data = [
-			{ label: "social networks",  data: 38.7, color: "#68BC31"},
-			{ label: "search engines",  data: 24.5, color: "#2091CF"},
-			{ label: "ad campaigns",  data: 8.2, color: "#AF4E96"},
-			{ label: "direct traffic",  data: 18.6, color: "#DA5430"},
-			{ label: "other",  data: 10, color: "#FEE074"}
-		];
+		$(function() {
+			var piechart_1 = $('#piechart-1').css({'width':'90%' , 'min-height':'150px'});
+			var data = [];
 
-		function drawPieChart(placeholder, data, position) {
-			$.plot(placeholder, data, {
-				series: {
-					pie: {
+			function drawPieChart(placeholder, data, position) {
+				$.plot(placeholder, data, {
+					series: {
+						pie: {
+							show: true,
+							tilt:0.8,
+							highlight: {
+								opacity: 0.25
+							},
+							stroke: {
+								color: '#fff',
+								width: 2
+							},
+							startAngle: 2
+						}	
+					},
+					legend: {
 						show: true,
-						tilt:0.8,
-						highlight: {
-							opacity: 0.25
-						},
-						stroke: {
-							color: '#fff',
-							width: 2
-						},
-						startAngle: 2
-					}	
-				},
-				legend: {
-					show: true,
-					position: position || "ne",
-					labelBoxBorderColor: null,
-					margin:[-30,15]
-				},
-				grid: {
-					hoverable: true,
-					clickable: true
-					}
-				})
-			}
+						position: position || "ne",
+						labelBoxBorderColor: null,
+						margin:[-30,15]
+					},
+					grid: {
+						hoverable: true,
+						clickable: true
+						}
+					})
+				}
 
-			drawPieChart(piechart_1, data);
-			drawPieChart(piechart_2, data);
+			$('#picker1')
+			.datepicker({
+				language:'zh-CN',
+				startView:1,
+				minViewMode:1,
+				autoclose: true,
+				endDate:new Date(),
+				format: 'yyyy-mm'
+			})
+			.on('changeDate', function(e) {
+					$.ajax({
+						url: '/payment/monthbill',
+						type: 'GET',
+						dataType: 'json',
+						data: {
+							date:$('#picker1').val()
+						},
+						success: function (res) {
+					 		if(res.success == 1) {
+								data = res.data;
+								if(data.length > 0) {
+									drawPieChart(piechart_1, data);
+								}
+					 		} else {
+
+					 		}
+						},
+						error: function (err) {
+							alert('请求错误！');
+						}
+					});
+			});
+			$('#picker1').datepicker('setDate', new Date());
+
+		})
 
 
