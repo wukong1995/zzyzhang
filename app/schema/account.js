@@ -13,7 +13,7 @@ var AccountSchema = new mongoose.Schema({
 	telphone: String,
 	email: String,
 
-	Head_portrait: String,
+	// head_portrait: String,
 	real_name: String,
 	// 1男2女
 	sex: Number,

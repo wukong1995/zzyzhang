@@ -11,7 +11,7 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
 /* 连接数据库 */
-var dbUrl = 'mongodb://localhost:27017/Accounting';
+var dbUrl = 'mongodb://wangpp:admin888@123.206.124.111:27017/account';
 mongoose.connect(dbUrl, {
 	server: {
 		auto_reconnect: true
