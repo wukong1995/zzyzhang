@@ -105,6 +105,7 @@ exports.edit = function(req, res) {
 
 exports.save = function(req, res) {
 	if (!req.body || !req.body.bond) {
+		console.log("缺少参数	");
 		res.redirect('/bond/add');
 		return;
 	}
@@ -112,6 +113,7 @@ exports.save = function(req, res) {
 	var bondObj = req.body.bond;
 
 	if (bondObj.name == undefined || bondObj.code == undefined || bondObj.purchase == undefined || bondObj.yield == undefined) {
+		console.log("缺少参数	");
 		if (id) {
 			res.redirect('/bond/edit/' + id);
 		} else {
@@ -126,12 +128,13 @@ exports.save = function(req, res) {
 		[bondObj.code, '/^[\\S]+$/', '代码不能为空'],
 		[bondObj.code, '/^[\\d]{6}$/', '代码长度为6位'],
 		[bondObj.purchase, '/^[\\S]+$/', '价格不能为空'],
-		[bondObj.purchase, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+		[bondObj.purchase, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数'],
 		[bondObj.yield, '/^[\\S]+$/', '收益率不能为空'],
-		[bondObj.yield, '^(\\-)?\\d+(\\.\\d+)?$/', '收益率只能为数字']
+		[bondObj.yield, '/^(\\-)?\\d+(\\.\\d+)?$/', '收益率只能为数字']
 	]);
 
 	if (result.flag === false) {
+		console.log(result.msg);
 		if (id) {
 			res.redirect('/bond/edit/' + id);
 		} else {
@@ -267,6 +270,37 @@ exports.detailMO = function(req, res) {
 exports.saveMO = function(req, res) {
 	var bondObj = req.body;
 	var _bond;
+	if (bondObj.name == undefined || bondObj.code == undefined || bondObj.purchase == undefined || bondObj.yield == undefined) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: '缺少参数'
+		});
+		return;
+	}
+
+	var result = Commen.checkField([
+		[bondObj.name, '/^[\\S]+$/', '名字不能为空'],
+		[bondObj.name, '/^.{2,16}$/', '名字长度为2-16位'],
+		[bondObj.code, '/^[\\S]+$/', '代码不能为空'],
+		[bondObj.code, '/^[\\d]{6}$/', '代码长度为6位'],
+		[bondObj.purchase, '/^[\\S]+$/', '价格不能为空'],
+		[bondObj.purchase, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数'],
+		[bondObj.yield, '/^[\\S]+$/', '收益率不能为空'],
+		[bondObj.yield, '/^(\\-)?\\d+(\\.\\d+)?$/', '收益率只能为数字']
+	]);
+
+	if (result.flag === false) {
+		res.json({
+			error_code: 0,
+			success: 0,
+			msg: res.msg
+		});
+		return;
+	} else {
+		result = null;
+	}
+
 
 	var user_id = req.headers['token'];
 	bondObj.account = user_id;

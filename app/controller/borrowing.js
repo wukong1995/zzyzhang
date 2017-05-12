@@ -104,6 +104,7 @@ exports.edit = function(req, res) {
 
 exports.save = function(req, res) {
 	if (!req.body || !req.body.borrowing) {
+		console.log("缺少参数	");
 		res.redirect('/borrowing/add');
 		return;
 	}
@@ -111,6 +112,7 @@ exports.save = function(req, res) {
 	var id = borrowingObj._id;
 
 	if (borrowingObj.other == undefined || borrowingObj.telphone == undefined || borrowingObj.type == undefined || borrowingObj.price == undefined) {
+		console.log("缺少参数	");
 		if (id) {
 			res.redirect('/borrowing/edit/' + id);
 		} else {
@@ -130,6 +132,7 @@ exports.save = function(req, res) {
 	]);
 
 	if (result.flag === false) {
+		console.log(result.msg);
 		if (id) {
 			res.redirect('/borrowing/edit/' + id);
 		} else {
