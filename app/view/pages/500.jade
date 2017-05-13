@@ -1,0 +1,41 @@
+doctype
+html
+	meta(charset='utf-8')
+	include ../includes/head
+	title #{title}
+body.no-skin
+	.main-container
+		.row
+	.col-xs-12
+		.error-container
+			.well
+				h1.grey.lighter.smaller
+					span.blue.bigger-125
+						i.ace-icon.fa.fa-random
+						| 												500
+					| 	发生了一些错误
+				hr
+				h3.lighter.smaller
+					| 我们正在修复
+					i.ace-icon.fa.fa-wrench.icon-animated-wrench.bigger-125
+					| 	它
+				.space
+				div
+					h4.lighter.smaller 尝试以下方法：
+					ul.list-unstyled.spaced.inline.bigger-110.margin-15
+						li
+							i.ace-icon.fa.fa-hand-o-right.blue
+							| 阅读FAQ
+						li
+							i.ace-icon.fa.fa-hand-o-right.blue
+							| 将发生此情况的更多信息反馈给我们
+				hr
+				.space
+				.center
+					a.btn.btn-grey(href="javascript:history.back()")
+						i.ace-icon.fa.fa-arrow-left
+						| 后退
+					| 											
+					a.btn.btn-primary(href="/index")
+						i.ace-icon.fa.fa-tachometer
+						| 访问首页
