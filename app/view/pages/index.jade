@@ -43,7 +43,11 @@ block content
 
 	script(type="text/javascript").
 		$(function() {
-			var piechart_1 = $('#piechart-1').css({'width':'90%' , 'min-height':'150px'});
+			var piechart_1 = $('#piechart-1').css({
+			'width':'90%' ,
+			 'min-height':'150px',
+			 'text-align':'center'
+			 });
 			var data = [];
 
 			function drawPieChart(placeholder, data, position) {
@@ -97,6 +101,8 @@ block content
 								data = res.data;
 								if(data.length > 0) {
 									drawPieChart(piechart_1, data);
+								} else {
+									piechart_1.html('本月暂无记录');
 								}
 					 		} else {
 
