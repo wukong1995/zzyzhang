@@ -12,10 +12,10 @@ exports.detail = function(req, res) {
 
 	// res.sendFile()直接输出html文件
 	Comment.find({
-		_id: req.params.id
-	}).populate({
+			_id: req.params.id
+		}).populate({
 			path: 'account',
-			select: 'name',	
+			select: 'name',
 		})
 		.exec(function(err, comment) {
 			res.render('comment/detail', {
@@ -40,7 +40,6 @@ exports.result = function(req, res) {
 	var page = req.query.page ? parseInt(req.query.page) : 1;
 	var start = req.query.start ? parseInt(req.query.start) : 0;
 	var limit = req.query.limit ? parseInt(req.query.limit) : 15;
-	var keyword = req.query.keyword ? req.query.keyword : '';
 
 	var totalCount = 0;
 	Comment.count()
@@ -62,9 +61,6 @@ exports.result = function(req, res) {
 				.populate({
 					path: 'account',
 					select: 'name',
-					match: {
-						name: new RegExp(keyword, "i")
-					},
 					options: {
 						sort: {
 							'meta.createAt': -1

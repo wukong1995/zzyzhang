@@ -4,19 +4,25 @@ var Assets = require('../model/assets');
 var User = require('../model/account');
 var Commen = require('./commen');
 
-exports.detail = function(req, res) {
+exports.detail = function(req, res, next) {
 	if (!req.params || !req.params.id) {
 		res.redirect('/assets/list');
 		return;
 	}
 	var id = req.params.id;
-
-	// res.sendFile()直接输出html文件
 	Assets.findById(id, function(err, assets) {
+		if (err) {
+			return next(err);
+		}
+		if (assets == null) {
+			var err = new Error('Not Fount');
+			err.status = 404;
+			return next(err);
+		}
 		res.render('assets/detail', {
 			title: '资产详情页',
 			assets: assets
-		})
+		});
 	});
 };
 
@@ -91,13 +97,21 @@ exports.add = function(req, res) {
 	})
 };
 
-exports.edit = function(req, res) {
+exports.edit = function(req, res, next) {
 	if (!req.params || !req.params.id) {
 		res.redirect('/assets/list');
 		return;
 	}
 	var id = req.params.id;
 	Assets.findById(id, function(err, assets) {
+		if (err) {
+			return next(err);
+		}
+		if (assets == null) {
+			var err = new Error('Not Fount');
+			err.status = 404;
+			return next(err)
+		}
 		res.render('assets/add', {
 			title: '资产编辑页',
 			assets: assets

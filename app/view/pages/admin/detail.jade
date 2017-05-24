@@ -65,7 +65,7 @@ block content
 									.profile-info-row
 										.profile-info-name  出生日期 
 										.profile-info-value
-											span #{moment(user.birth).format('YYYY-MM-DD')}
+											span #{moment(account.birth).format('YYYY-MM-DD')}
 									.profile-info-row
 										.profile-info-name  邮箱 
 										.profile-info-value
@@ -77,11 +77,11 @@ block content
 									.profile-info-row
 										.profile-info-name  注册时间 
 										.profile-info-value
-											span #{moment(user.meta.createAt).format('YYYY-MM-DD')}
+											span #{moment(account.meta.createAt).format('YYYY-MM-DD')}
 									.profile-info-row
 										.profile-info-name  更新时间
 										.profile-info-value
-											span #{moment(user.meta.updateAt).format('YYYY-MM-DD')}
+											span #{moment(account.meta.updateAt).format('YYYY-MM-DD')}
 									.profile-info-row
 										.profile-info-name  个性签名 
 										.profile-info-value

@@ -441,8 +441,6 @@ exports.changeprofile = function(req, res) {
 	var _user = req.body.user;
 
 	var result = Commen.checkField([
-		[_user.name, '/^[\\S]+$/', '用户名不能为空'],
-		[_user.name, '/^.{4,16}$/', '用户名长度为4-16位'],
 		[_user.email, '/^[\\S]+$/', '邮箱不能为空'],
 		[_user.email, '/^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$/', '邮箱格式不正确'],
 		[_user.telphone, '/^[\\S]+$/', '电话不能为空'],
@@ -490,6 +488,7 @@ exports.signinRequired = function(req, res, next) {
 	//检查post的信息或者url查询参数或者头信息
 	var token = req.body.token || req.query.token || req.headers['token'];
 	if (!user && !token) {
+		console.log("用户未登录");
 		return res.redirect('/');
 	}
 	next();
@@ -499,7 +498,7 @@ exports.signinRequired = function(req, res, next) {
 exports.adminRequired = function(req, res, next) {
 	var user = req.session.user;
 	if (user.role < 10) {
-		return res.redirect('/')
+		return res.redirect('');
 	}
 	next();
 }

@@ -100,6 +100,7 @@ block content
 					 		if(res.success == 1) {
 								data = res.data;
 								if(data.length > 0) {
+								piechart_1.html('');
 									drawPieChart(piechart_1, data);
 								} else {
 									piechart_1.html('本月暂无记录');

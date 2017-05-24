@@ -5,15 +5,22 @@ var User = require('../model/account');
 var Commen = require('./commen');
 
 
-exports.detail = function(req, res) {
+exports.detail = function(req, res, next) {
 	if (!req.params || !req.params.id) {
 		res.redirect('/payment/list');
 		return;
 	}
-	var id = req.params.id;
 
-	// res.sendFile()直接输出html文件
+	var id = req.params.id;
 	Payment.findById(id, function(err, payment) {
+		if (err) {
+			return next(err);
+		}
+		if (payment == null) {
+			var err = new Error('Not Fount');
+			err.status = 404;
+			return next(err)
+		}
 		res.render('payment/detail', {
 			title: '详情页',
 			payment: payment
@@ -78,18 +85,21 @@ exports.result = function(req, res) {
 		});
 };
 
-exports.add = function(req, res) {
-	// res.sendFile()直接输出html文件
-	res.render('payment/add', {
-		title: '新增页',
-		payment: {
-			name: '',
-			price: '',
-			type: '',
-			product_type: '',
-			remrk: ''
-		}
-	})
+exports.add = function(req, res, next) {
+	try {
+		res.render('payment/add', {
+			title: '新增页',
+			payment: {
+				name: '',
+				price: '',
+				type: '',
+				product_type: '',
+				remrk: ''
+			}
+		});
+	} catch (err) {
+		return next(err);
+	}
 };
 
 exports.edit = function(req, res) {
@@ -100,6 +110,9 @@ exports.edit = function(req, res) {
 	var id = req.params.id;
 
 	Payment.findById(id, function(err, payment) {
+		if (err) {
+			return next(err);
+		}
 		res.render('payment/add', {
 			title: '编辑页',
 			payment: payment
