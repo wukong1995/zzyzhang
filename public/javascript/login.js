@@ -29,48 +29,57 @@ jQuery(function($) {
 	});
 
 	// 初始化
-    var username = $.cookie('username');
-    var password = $.cookie('password');
-    if (typeof(username) != "undefined"
-                && typeof(password) != "undefined") {
-        $("#name").val(username);
-        $("#pwd").val(password);
-        $("#rememberPwd").attr("checked", true);
-    }
+	var username = $.cookie('username');
+	var password = $.cookie('password');
+	if (typeof(username) != "undefined" && typeof(password) != "undefined") {
+		$("#name").val(username);
+		$("#pwd").val(password);
+		$("#rememberPwd").attr("checked", true);
+	}
 
-    // 记住密码
-    function savePaw() {
-       if (!$("#rememberPwd").attr("checked")) {
-           $.cookie('username', '', {
-                 expires : -1
-             });
-           $.cookie('password', '', {
-                expires : -1
-           });
-           $("#name").val('');
-           $("#pwd").val('');
-         }
-    }
-    $('#rememberPwd').on('click',function() {
-        savePaw();
-    });
+	// 记住密码
+	function savePaw() {
+		if (!$("#rememberPwd").attr("checked")) {
+			$.cookie('username', '', {
+				expires: -1
+			});
+			$.cookie('password', '', {
+				expires: -1
+			});
+			$("#name").val('');
+			$("#pwd").val('');
+		}
+	}
+	$('#rememberPwd').on('click', function() {
+		savePaw();
+	});
 
 
-    function saveCookie() {
-      if ($("#rememberPwd").attr("checked")) {
-           $.cookie('username', $("#name").val(), {
-               expires : 7
-           });
-          $.cookie('password', $("#pwd").val(), {
-               expires : 7
-          });
-       }
-    }
+	function saveCookie() {
+		if ($("#rememberPwd").attr("checked")) {
+			$.cookie('username', $("#name").val(), {
+				expires: 7
+			});
+			$.cookie('password', $("#pwd").val(), {
+				expires: 7
+			});
+		}
+	}
 
 	function checkSigninForm() {
 		if ($('#name').val() == "") {
 			$('#name').tips({
 				msg: '请输入用户名',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#name').focus();
+			return false;
+		}
+		if ($('#name').val().length < 4) {
+			$('#name').tips({
+				msg: '用户名最少是四位',
 				side: 3,
 				bg: '#AE81FF',
 				time: 1,
@@ -110,6 +119,7 @@ jQuery(function($) {
 		}
 		return true;
 	}
+
 	function checkSignupForm() {
 		if ($('#new_name').val() == "") {
 			$('#new_name').tips({
@@ -219,59 +229,69 @@ jQuery(function($) {
 	}
 
 	$('#signin_submit').on('click', function() {
-		if(checkSigninForm()) {
+		if (checkSigninForm()) {
 			$.ajax({
-          url: '/user/signin',
-          type: 'post',
-          dataType: 'json',
-          data: {
-            	name:$('#name').val(),
-							password:$('#pwd').val()
-              
-          },
-          success: function (res) {
-              if(res.success == 0) {
-                  bootbox.alert(res.message);
-              } else {
-              	saveCookie();
-                window.location.href = '/index';
-              }
-          },
-          error: function (err) {
-             alert('请求错误！');
-          }
-      });
+				url: '/user/signin',
+				type: 'post',
+				dataType: 'json',
+				data: {
+					name: $('#name').val(),
+					password: $('#pwd').val()
+
+				},
+				success: function(res) {
+					if (res.success == 0) {
+						bootbox.alert(res.message);
+					} else {
+						saveCookie();
+						window.location.href = '/index';
+					}
+				},
+				error: function(err) {
+					alert('请求错误！');
+				}
+			});
 		}
 	});
 
 
 	$('#signup_submit').on('click', function() {
-		if(checkSignupForm()) {
+		if (checkSignupForm()) {
 			$.ajax({
-          url: '/user/signup',
-          type: 'post',
-          dataType: 'json',
-          data: {
-            	name:$('#new_name').val(),
-							email:$('#new_email').val(),
-							telphone:$('#new_tel').val(),
-							password:$('#new_pwd').val()
-          },
-          success: function (res) {
-              bootbox.alert(res.message);
-          },
-          error: function (err) {
-             alert('请求错误！');
-          }
-      });
+				url: '/user/signup',
+				type: 'post',
+				dataType: 'json',
+				data: {
+					name: $('#new_name').val(),
+					email: $('#new_email').val(),
+					telphone: $('#new_tel').val(),
+					password: $('#new_pwd').val()
+				},
+				success: function(res) {
+					bootbox.alert(res.message);
+				},
+				error: function(err) {
+					alert('请求错误！');
+				}
+			});
 		}
-		
+
 	});
 
 	$('#forget_submit').on('click', function() {
 		if ($('#forget_name').val() == "") {
 			$('#forget_name').tips({
 				msg: '请输入用户名',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#forget_name').focus();
+			return false;
+		}
+		if ($('#forget_name').val().length < 4) {
+			$('#forget_name').tips({
+				msg: '用户名最少是4位',
 				side: 3,
 				bg: '#AE81FF',
 				time: 1,

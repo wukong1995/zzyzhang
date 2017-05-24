@@ -9,10 +9,16 @@ exports.detail = function(req, res) {
 		res.redirect('/borrowing/list');
 		return;
 	}
-	var id = req.params.id
-
-	// res.sendFile()直接输出html文件
+	var id = req.params.id;
 	Borrowing.findById(id, function(err, borrowing) {
+		if (err) {
+			return next(err);
+		}
+		if (borrowing == null) {
+			var err = new Error('Not Fount');
+			err.status = 404;
+			return next(err)
+		}
 		res.render('borrowing/detail', {
 			title: '借贷详情页',
 			borrowing: borrowing

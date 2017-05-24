@@ -11,9 +11,15 @@ exports.detail = function(req, res) {
 		return;
 	}
 	var id = req.params.id;
-
-	// res.sendFile()直接输出html文件
 	Wishlist.findById(id, function(err, wishlist) {
+		if (err) {
+			return next(err);
+		}
+		if (wishlist == null) {
+			var err = new Error('Not Fount');
+			err.status = 404;
+			return next(err)
+		}
 		res.render('wishlist/detail', {
 			title: '心愿详情页',
 			wishlist: wishlist
@@ -256,7 +262,10 @@ exports.buy = function(req, res) {
 				_id: id
 			}, function(err, result) {
 				if (err) {
-					console.log(err)
+					console.log(err);
+					res.json({
+						success: 0
+					});
 				} else {
 
 					User.update({
@@ -280,10 +289,16 @@ exports.buy = function(req, res) {
 					_payment.save(function(err, payment) {
 						if (err) {
 							console.log(err);
+							res.json({
+								success: 0
+							});
 						}
 						User.findById(user_id, function(err, user) {
 							if (err) {
 								console.log(err);
+								res.json({
+									success: 0
+								});
 							}
 							user.payment.push(payment._id);
 							user.save(function(err, user) {

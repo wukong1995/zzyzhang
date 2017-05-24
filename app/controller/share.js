@@ -9,10 +9,17 @@ exports.detail = function(req, res) {
 		res.redirect('/share/list');
 		return;
 	}
-	var id = req.params.id;
 
-	// res.sendFile()直接输出html文件
+	var id = req.params.id;
 	Share.findById(id, function(err, share) {
+		if (err) {
+			return next(err);
+		}
+		if (share == null) {
+			var err = new Error('Not Fount');
+			err.status = 404;
+			return next(err)
+		}
 		res.render('share/detail', {
 			title: '股票详情页',
 			share: share
@@ -128,10 +135,10 @@ exports.save = function(req, res) {
 		[shareObj.name, '/^.{2,16}$/', '名字长度为2-16位'],
 		[shareObj.count, '/^[\\S]+$/', '股数不能为空'],
 		[shareObj.count, '/^\\d+$/', '股数不能为空'],
-		[shareObj.first_price, '/^[\\S]+$/', '价格不能为空'],
+		[shareObj.first_price, '/^[\\S]+$/', '买入价格不能为空'],
 		[shareObj.first_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数'],
 		[shareObj.last_price, '/^[\\S]+$/', '价格不能为空'],
-		[shareObj.last_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
+		[shareObj.last_price, '/^\\d+(\\.\\d+)?$/', '卖出价格只能为大于零的数']
 	]);
 
 	if (result.flag === false) {

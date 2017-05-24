@@ -4,13 +4,21 @@ var Bond = require('../model/bond');
 var User = require('../model/account');
 var Commen = require('./commen');
 
-exports.detail = function(req, res) {
+exports.detail = function(req, res, next) {
 	if (!req.params || !req.params.id) {
 		res.redirect('/bond/list');
 		return;
 	}
 	var id = req.params.id;
 	Bond.findById(id, function(err, bond) {
+		if (err) {
+			return next(err);
+		}
+		if (bond == null) {
+			var err = new Error('Not Fount');
+			err.status = 404;
+			return next(err)
+		}
 		res.render('bond/detail', {
 			title: '债券详情页',
 			bond: bond

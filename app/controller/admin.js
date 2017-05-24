@@ -65,20 +65,26 @@ exports.result = function(req, res) {
 
 
 // detail
-exports.detail = function(req, res) {
+exports.detail = function(req, res, next) {
 	if (!req.params || !req.params.id) {
 		return res.redirect('/admin/list');
 		return;
 	}
 	var id = req.params.id;
-
-	// res.sendFile()直接输出html文件
 	User.findById(id, function(err, user) {
+		console.log(user);
+		if (err) {
+			return next(err);
+		}
+		if (user == null) {
+			var err = new Error('Not Fount');
+			err.status = 404;
+			return next(err);
+		}
 		res.render('admin/detail', {
 			title: '用户详情页',
-			account: user,
-			user: req.session.user
-		})
+			account: user
+		});
 	});
 };
 

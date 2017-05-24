@@ -135,29 +135,29 @@ module.exports = function(app) {
 	app.get('/comment/detail/:id', User.adminRequired, Comment.detail);
 	app.post('/comment/savemo', User.signinRequired, Comment.saveMO);
 
-	// catch 404 and forward to error handler
+	// catch 404 and error handler
 	app.use(function(req, res, next) {
-		var err = new Error('Not Found');
+		var err = new Error('404 Not Found');
 		err.status = 404;
 		next(err);
 	});
 
 	// error handler
 	app.use(function(err, req, res, next) {
-		// set locals, only providing error in development
-		res.locals.message = err.message;
-		res.locals.error = req.app.get('env') === 'development' ? err : {};
-
 		// render the error page
 		res.status(err.status || 500);
-		if (err.status === 500) {
+		if (err.status === 404) {
+			res.render('404.jade', {
+				title: '页面不存在'
+			});
+			return;
+		}
+
+		if (err) {
 			res.render('500.jade', {
 				title: '出错了'
 			});
-		} else {
-			res.render('404.jade', {
-				title: '页面不存在'
-			})
+			return;
 		}
 	});
 }
