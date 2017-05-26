@@ -412,7 +412,7 @@ exports.showChangepwd = function(req, res) {
 
 //showChange
 exports.showChange = function(req, res) {
-	var user = req.session.user
+	var user = req.session.user;
 	if (!user) {
 		return res.redirect('/signin');
 	}
