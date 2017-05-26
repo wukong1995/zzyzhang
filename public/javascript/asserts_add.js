@@ -24,7 +24,7 @@ $(function() {
 		}
 		if ($('#assets_price').val() == "") {
 			$('#assets_price').tips({
-				msg: '请输入资产价格',
+				msg: '请输入资产金额',
 				side: 3,
 				bg: '#AE81FF',
 				time: 1,
@@ -34,7 +34,7 @@ $(function() {
 		}
 		if (parseInt($('#assets_price').val()) == 0) {
 			$('#assets_price').tips({
-				msg: '买入需大于零',
+				msg: '资产金额需大于零',
 				side: 3,
 				bg: '#AE81FF',
 				time: 1,
@@ -52,16 +52,17 @@ $(function() {
 			$('#bond_purchase').focus();
 			return false;
 		}
-		if ($('#assets_remark').val() == "") {
-			$('#assets_remark').tips({
-				msg: '请输入备注',
+		if (parseInt($('#assets_price').val()) > 1000000000) {
+			$('#assets_price').tips({
+				msg: '不能超过一亿',
 				side: 3,
 				bg: '#AE81FF',
 				time: 1,
 			});
-			$('#assets_remark').focus();
+			$('#assets_price').focus();
 			return false;
 		}
+
 
 		$('#assets_form').submit();
 	});

@@ -42,6 +42,16 @@ $(function() {
 			$('#share_first_price').focus();
 			return false;
 		}
+		if (parseInt($('#wishlist_price').val()) > 1000000000) {
+			$('#wishlist_price').tips({
+				msg: '不能超过一亿',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#wishlist_price').focus();
+			return false;
+		}
 
 		$('#wishlist_form').submit();
 	});

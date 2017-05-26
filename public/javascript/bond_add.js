@@ -53,6 +53,16 @@ $(function() {
 			$('#bond_purchase').focus();
 			return false;
 		}
+		if (parseInt($('#bond_purchase').val()) > 1000000000) {
+			$('#bond_purchase').tips({
+				msg: '不能超过一亿',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#bond_purchase').focus();
+			return false;
+		}
 
 		if ($('#bond_yield').val() == "") {
 			$('#bond_yield').tips({
@@ -67,6 +77,16 @@ $(function() {
 		if (!/^(\-)?\d+(\.\d+)?$/.test($('#bond_yield').val())) {
 			$('#bond_yield').tips({
 				msg: '债券收益率只能是数字',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#bond_yield').focus();
+			return false;
+		}
+		if (parseInt($('#bond_yield').val()) > 1) {
+			$('#bond_yield').tips({
+				msg: '不能超过一万',
 				side: 3,
 				bg: '#AE81FF',
 				time: 1,
