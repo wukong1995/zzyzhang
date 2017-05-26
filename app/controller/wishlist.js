@@ -379,36 +379,24 @@ exports.saveMO = function(req, res) {
 	}
 
 	var _wishlist;
+	var id = wishlistObj._id;
 
-	var user_id = req.headers['token'];
-	wishlistObj.account = user_id;
-	_wishlist = new Wishlist(wishlistObj);
-
-	_wishlist.save(function(err, wishlist) {
-		if (err) {
-			console.log(err);
-			res.json({
-				error_code: 1,
-				success: 0,
-				msg: '数据库保存出错'
-			});
-		}
-
-		User.findById(user_id, function(err, user) {
+	if (id) {
+		Wishlist.findById(id, function(err, wishlist) {
 			if (err) {
 				console.log(err);
 				res.json({
 					error_code: 1,
 					success: 0,
-					msg: '数据未查询到用户'
+					msg: '数据库保存出错'
 				});
 			}
-			user.wishlist.push(wishlist._id);
-			user.save(function(err, user) {
+			_wishlist = _.extend(wishlist, wishlistObj);
+			_wishlist.save(function(err, wishlist) {
 				if (err) {
 					console.log(err);
 					res.json({
-						error_code: 0,
+						error_code: 1,
 						success: 0,
 						msg: '数据库保存出错'
 					});
@@ -419,9 +407,52 @@ exports.saveMO = function(req, res) {
 					msg: '保存成功',
 					id: wishlist._id
 				});
+			})
+		})
+	} else {
+		var user_id = req.headers['token'];
+		wishlistObj.account = user_id;
+		_wishlist = new Wishlist(wishlistObj);
+		_wishlist.save(function(err, wishlist) {
+			if (err) {
+				console.log(err);
+				res.json({
+					error_code: 1,
+					success: 0,
+					msg: '数据库保存出错'
+				});
+			}
+
+			User.findById(user_id, function(err, user) {
+				if (err) {
+					console.log(err);
+					res.json({
+						error_code: 1,
+						success: 0,
+						msg: '数据未查询到用户'
+					});
+				}
+				user.wishlist.push(wishlist._id);
+				user.save(function(err, user) {
+					if (err) {
+						console.log(err);
+						res.json({
+							error_code: 0,
+							success: 0,
+							msg: '数据库保存出错'
+						});
+					}
+					res.json({
+						error_code: 0,
+						success: 1,
+						msg: '保存成功',
+						id: wishlist._id
+					});
+				});
 			});
 		});
-	});
+	}
 }
+
 
 // App端删除与PC端相同

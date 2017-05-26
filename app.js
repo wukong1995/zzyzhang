@@ -63,6 +63,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.locals.moment = require('moment');
 var routes = require('./routes/router')(app);
 
+// production
 if ('development' === app.get('env')) {
 	app.set('showStackError', true)
 	app.use(morgan(':method :url :status'))
