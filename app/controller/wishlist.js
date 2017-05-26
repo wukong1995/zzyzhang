@@ -129,7 +129,7 @@ exports.save = function(req, res) {
 
 	var result = Commen.checkField([
 		[wishlistObj.name, '/^[\\S]+$/', '名字不能为空'],
-		[wishlistObj.name, '/^.{2,16}$/', '名字长度为2-16位'],
+		[wishlistObj.name, '/^.{1,16}$/', '名字长度为1-16位'],
 		[wishlistObj.product_type, '/^[\\S]+$/', '类型不能为空'],
 		[wishlistObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[wishlistObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
@@ -361,7 +361,7 @@ exports.saveMO = function(req, res) {
 
 	var result = Commen.checkField([
 		[wishlistObj.name, '/^[\\S]+$/', '资产不能为空'],
-		[wishlistObj.name, '/^.{2,16}$/', '资产长度为2-16位'],
+		[wishlistObj.name, '/^.{1,16}$/', '资产长度为1-16位'],
 		[wishlistObj.product_type, '/^[\\S]+$/', '类型不能为空'],
 		[wishlistObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[wishlistObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']

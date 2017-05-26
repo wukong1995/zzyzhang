@@ -129,7 +129,7 @@ exports.save = function(req, res) {
 
 	var result = Commen.checkField([
 		[borrowingObj.other, '/^[\\S]+$/', '对方名字不能为空'],
-		[borrowingObj.other, '/^.{2,16}$/', '对方名字为2-16位'],
+		[borrowingObj.other, '/^.{1,16}$/', '对方名字为1-16位'],
 		[borrowingObj.telphone, '/^[\\S]+$/', '对方电话不能为空'],
 		[borrowingObj.telphone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '电话格式不正确'],
 		[borrowingObj.type, '/^[\\S]+$/', '类型不能为空'],
@@ -288,7 +288,7 @@ exports.saveMO = function(req, res) {
 
 	var result = Commen.checkField([
 		[borrowingObj.other, '/^[\\S]+$/', '对方名字不能为空'],
-		[borrowingObj.other, '/^.{2,16}$/', '对方名字为2-16位'],
+		[borrowingObj.other, '/^.{1,16}$/', '对方名字为1-16位'],
 		[borrowingObj.telphone, '/^[\\S]+$/', '对方电话不能为空'],
 		[borrowingObj.telphone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '电话格式不正确'],
 		[borrowingObj.type, '/^[\\S]+$/', '类型不能为空'],

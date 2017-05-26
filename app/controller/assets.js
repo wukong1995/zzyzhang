@@ -140,7 +140,7 @@ exports.save = function(req, res) {
 
 	var result = Commen.checkField([
 		[assetsObj.name, '/^[\\S]+$/', '资产不能为空'],
-		[assetsObj.name, '/^.{2,16}$/', '资产长度为2-16位'],
+		[assetsObj.name, '/^.{1,16}$/', '资产长度为1-16位'],
 		[assetsObj.type, '/^[\\S]+$/', '类型不能为空'],
 		[assetsObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[assetsObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
@@ -299,7 +299,7 @@ exports.saveMO = function(req, res) {
 
 	var result = Commen.checkField([
 		[assetsObj.name, '/^[\\S]+$/', '资产不能为空'],
-		[assetsObj.name, '/^.{2,16}$/', '资产长度为2-16位'],
+		[assetsObj.name, '/^.{1,16}$/', '资产长度为1-16位'],
 		[assetsObj.type, '/^[\\S]+$/', '类型不能为空'],
 		[assetsObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[assetsObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']

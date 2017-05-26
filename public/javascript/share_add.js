@@ -42,6 +42,16 @@ $(function() {
 			$('#share_count').focus();
 			return false;
 		}
+		if (parseInt($('#share_count').val()) > 1000000) {
+			$('#share_count').tips({
+				msg: '股数需大于零',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#share_count').focus();
+			return false;
+		}
 		if ($('#share_first_price').val() == "") {
 			$('#share_first_price').tips({
 				msg: '请输入买入价格',
@@ -72,6 +82,16 @@ $(function() {
 			$('#share_first_price').focus();
 			return false;
 		}
+		if (parseInt($('#share_first_price').val()) > 1000000000) {
+			$('#share_first_price').tips({
+				msg: '不能超过一亿',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#share_first_price').focus();
+			return false;
+		}
 		if ($('#share_last_price').val() == "") {
 			$('#share_last_price').tips({
 				msg: '请输入卖出价格',
@@ -92,9 +112,20 @@ $(function() {
 			$('#share_last_price').focus();
 			return false;
 		}
+
 		if (!/^\d+(\.\d+)?$/.test($('#share_last_price').val())) {
 			$('#share_last_price').tips({
 				msg: '卖出价格只能为大于零的数',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#share_last_price').focus();
+			return false;
+		}
+		if (parseInt($('#share_last_price').val()) > 1000000000) {
+			$('#share_last_price').tips({
+				msg: '不能超过一亿',
 				side: 3,
 				bg: '#AE81FF',
 				time: 1,

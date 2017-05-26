@@ -131,6 +131,16 @@ jQuery(function($) {
 			$('#new_name').focus();
 			return false;
 		}
+		if ($('#new_name').val().length < 4) {
+			$('#new_name').tips({
+				msg: '用户名最少是四位',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#new_name').focus();
+			return false;
+		}
 		if ($('#new_name').val().length > 16) {
 			$('#new_name').tips({
 				msg: '用户名太长',

@@ -60,6 +60,16 @@ $(function() {
 			$('#payment_price').focus();
 			return false;
 		}
+		if (parseInt($('#payment_price').val()) > 1000000000) {
+			$('#payment_price').tips({
+				msg: '不能超过一亿',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#payment_price').focus();
+			return false;
+		}
 
 
 		$('#payment_form').submit();

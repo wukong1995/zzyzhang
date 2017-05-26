@@ -132,7 +132,7 @@ exports.save = function(req, res) {
 
 	var result = Commen.checkField([
 		[shareObj.name, '/^[\\S]+$/', '名字不能为空'],
-		[shareObj.name, '/^.{2,16}$/', '名字长度为2-16位'],
+		[shareObj.name, '/^.{1,16}$/', '名字长度为1-16位'],
 		[shareObj.count, '/^[\\S]+$/', '股数不能为空'],
 		[shareObj.count, '/^\\d+$/', '股数不能为空'],
 		[shareObj.first_price, '/^[\\S]+$/', '买入价格不能为空'],
@@ -287,7 +287,7 @@ exports.saveMO = function(req, res) {
 
 	var result = Commen.checkField([
 		[shareObj.name, '/^[\\S]+$/', '名字不能为空'],
-		[shareObj.name, '/^.{2,16}$/', '名字长度为2-16位'],
+		[shareObj.name, '/^.{1,16}$/', '名字长度为1-16位'],
 		[shareObj.count, '/^[\\S]+$/', '股数不能为空'],
 		[shareObj.count, '/^\\d+$/', '股数不能为空'],
 		[shareObj.first_price, '/^[\\S]+$/', '价格不能为空'],

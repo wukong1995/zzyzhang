@@ -135,7 +135,7 @@ exports.save = function(req, res) {
 	var result = Commen.checkField([
 		[paymentObj.type, '/^[\\S]+$/', '类型不能为空'],
 		[paymentObj.name, '/^[\\S]+$/', '名字不能为空'],
-		[paymentObj.name, '/^.{2,16}$/', '名字为2-16位'],
+		[paymentObj.name, '/^.{1,16}$/', '名字为4-16位'],
 		[paymentObj.product_type, '/^[\\S]+$/', '类型不能为空'],
 		[paymentObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[paymentObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
@@ -274,7 +274,7 @@ exports.saveMO = function(req, res) {
 	var result = Commen.checkField([
 		[paymentObj.type, '/^[\\S]+$/', '类型不能为空'],
 		[paymentObj.name, '/^[\\S]+$/', '对方名字不能为空'],
-		[paymentObj.name, '/^.{2,16}$/', '对方名字为2-16位'],
+		[paymentObj.name, '/^.{1,16}$/', '对方名字为1-16位'],
 		[paymentObj.product_type, '/^[\\S]+$/', '类型电话不能为空'],
 		[paymentObj.price, '/^[\\S]+$/', '价格不能为空'],
 		[paymentObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']

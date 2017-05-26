@@ -72,6 +72,16 @@ $(function() {
 			$('#borrowing_price').focus();
 			return false;
 		}
+		if (parseInt($('#borrowing_price').val()) > 1000000000) {
+			$('#borrowing_price').tips({
+				msg: '不能超过一亿',
+				side: 3,
+				bg: '#AE81FF',
+				time: 1,
+			});
+			$('#borrowing_price').focus();
+			return false;
+		}
 
 
 		$('#borrowing_form').submit();
