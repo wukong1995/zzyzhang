@@ -25,7 +25,7 @@ block content
 									.space-4
 									.width-80.label.label-info.label-xlg.arrowed-in.arrowed-in-right
 										.inline.position-relative
-											span.white #{user.name}
+											span.white #{account.name}
 								.space-6
 							.col-xs-12.col-sm-9
 								.space-12
@@ -33,18 +33,18 @@ block content
 									.profile-info-row
 										.profile-info-name  用户名 
 										.profile-info-value
-											span #{user.name}
+											span #{account.name}
 									.profile-info-row
 										.profile-info-name  级别 
 										.profile-info-value
-											if user.role == 0
+											if account.role == 0
 												span 普通用户
 											else
 												span 超级管理员
 									.profile-info-row
 										.profile-info-name  状态
 										.profile-info-value
-											if user.state == 0
+											if account.state == 0
 												span.label.label-sm.label-success 正常
 											else
 												span.label.label-sm.label-warning 冻结
@@ -52,38 +52,40 @@ block content
 									.profile-info-row
 										.profile-info-name  真实姓名 
 										.profile-info-value
-											span #{user.real_name}
+											span #{account.real_name}
 									.profile-info-row
 										.profile-info-name  性别 
 										.profile-info-value
-											if user.sex == 1
+											if account.sex == 1
 												span 男
-											else
+											else if account.sex == 2
 												span 女
+											else 
+												span 未知
 									.profile-info-row
 										.profile-info-name  出生日期 
 										.profile-info-value
-											span #{moment(user.birth).format('YYYY-MM-DD')}
+											span #{moment(account.birth).format('YYYY-MM-DD')}
 									.profile-info-row
 										.profile-info-name  邮箱 
 										.profile-info-value
-											span #{user.email}
+											span #{account.email}
 									.profile-info-row
 										.profile-info-name  联系方式 
 										.profile-info-value
-											span #{user.telphone}
+											span #{account.telphone}
 									.profile-info-row
 										.profile-info-name  注册时间 
 										.profile-info-value
-											span #{moment(user.meta.createAt).format('YYYY-MM-DD')}
+											span #{moment(account.meta.createAt).format('YYYY-MM-DD')}
 									.profile-info-row
 										.profile-info-name  更新时间
 										.profile-info-value
-											span #{moment(user.meta.updateAt).format('YYYY-MM-DD')}
+											span #{moment(account.meta.updateAt).format('YYYY-MM-DD')}
 									.profile-info-row
 										.profile-info-name  个性签名 
 										.profile-info-value
-											span #{user.signature}
+											span #{account.signature}
 								.space-20
 								.hr.hr2.hr-double
 								.space-6

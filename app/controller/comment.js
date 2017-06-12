@@ -96,7 +96,7 @@ exports.del = function(req, res) {
 	}
 
 	Comment.remove({
-		_id: id
+		_id: req.query.id
 	}, function(err, comment) {
 		if (err) {
 			console.log(err);

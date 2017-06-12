@@ -60,8 +60,10 @@ block content
 										.profile-info-value
 											if account.sex == 1
 												span 男
-											else
+											else if account.sex == 2
 												span 女
+											else 
+												span 未知
 									.profile-info-row
 										.profile-info-name  出生日期 
 										.profile-info-value
