@@ -133,31 +133,34 @@ module.exports = function(app) {
 	app.get('/comment/list', User.adminRequired, Comment.list);
 	app.get('/comment/result', User.adminRequired, Comment.result);
 	app.get('/comment/detail/:id', User.adminRequired, Comment.detail);
+	app.delete('/comment/list/del', User.signinRequired, Comment.del);
 	app.post('/comment/savemo', User.signinRequired, Comment.saveMO);
 
 	// catch 404 and error handler
-	app.use(function(req, res, next) {
-		var err = new Error('404 Not Found');
-		err.status = 404;
-		next(err);
-	});
+	// app.use(function(req, res, next) {
+	// 	var err = new Error('404 Not Found');
+	// 	err.status = 404;
+	// 	next(err);
+	// });
 
-	// error handler
-	app.use(function(err, req, res, next) {
-		// render the error page
-		res.status(err.status || 500);
-		if (err.status === 404) {
-			res.render('404.jade', {
-				title: '页面不存在'
-			});
-			return;
-		}
+	// // error handler
+	// app.use(function(err, req, res, next) {
+	// 	console.log(err);
 
-		if (err) {
-			res.render('500.jade', {
-				title: '出错了'
-			});
-			return;
-		}
-	});
+	// 	// render the error page
+	// 	res.status(err.status || 500);
+	// 	if (err.status === 404) {
+	// 		res.render('404.jade', {
+	// 			title: '页面不存在'
+	// 		});
+	// 		return;
+	// 	}
+
+	// 	if (err) {
+	// 		res.render('500.jade', {
+	// 			title: '出错了'
+	// 		});
+	// 		return;
+	// 	}
+	// });
 }

@@ -398,7 +398,7 @@ exports.detail = function(req, res) {
 		}
 		res.render('account/detail', {
 			title: '用户列表',
-			user: user
+			account: user
 		});
 	});
 }
