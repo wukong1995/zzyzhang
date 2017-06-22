@@ -6,83 +6,96 @@ var Commen = require('./commen');
 
 
 exports.detail = function(req, res, next) {
-	if (!req.params || !req.params.id) {
-		res.redirect('/payment/list');
-		return;
-	}
+	try {
 
-	var id = req.params.id;
-	Payment.findById(id, function(err, payment) {
-		if (err) {
-			return next(err);
+		if (!req.params || !req.params.id) {
+			res.redirect('/payment/list');
+			return;
 		}
-		if (payment == null) {
-			var err = new Error('Not Fount');
-			err.status = 404;
-			return next(err)
-		}
-		res.render('payment/detail', {
-			title: '详情页',
-			payment: payment
-		})
-	});
+
+		var id = req.params.id;
+		Payment.findById(id, function(err, payment) {
+			if (err) {
+				return next(err);
+			}
+			if (payment == null) {
+				var err = new Error('Not Fount');
+				err.status = 404;
+				return next(err)
+			}
+			res.render('payment/detail', {
+				title: '详情页',
+				payment: payment
+			})
+		});
+	} catch (err) {
+		return next(err);
+	}
 };
 
 exports.list = function(req, res) {
-	var user = req.session.user;
-	res.render('payment/list', {
-		title: '列表页',
-		user: user
-	});
+	try {
+		var user = req.session.user;
+		res.render('payment/list', {
+			title: '列表页',
+			user: user
+		});
+	} catch (err) {
+		return next(err);
+	}
 };
 
 exports.result = function(req, res) {
+	try {
 
-	//判断是否是第一页，并把请求的页数转换成 number 类型
-	var page = req.query.page ? parseInt(req.query.page) : 0;
-	var start = req.query.start ? parseInt(req.query.start) : 0;
-	var limit = req.query.limit ? parseInt(req.query.limit) : 15;
-	var keyword = req.query.keyword ? req.query.keyword : '';
-	if (req.session.user) {
-		var userId = req.session.user._id;
-	} else {
-		var userId = req.headers['token'];
-	}
+		//判断是否是第一页，并把请求的页数转换成 number 类型
+		var page = req.query.page ? parseInt(req.query.page) : 0;
+		var start = req.query.start ? parseInt(req.query.start) : 0;
+		var limit = req.query.limit ? parseInt(req.query.limit) : 15;
+		var keyword = req.query.keyword ? req.query.keyword : '';
+		if (req.session.user) {
+			var userId = req.session.user._id;
+		} else {
+			var userId = req.headers['token'];
+		}
 
-	var totalCount = 0;
+		var totalCount = 0;
 
-	User.findOne({
-			_id: userId
-		}).populate({
-			path: 'payment',
-			select: 'name type price product_type meta',
-			match: {
-				name: new RegExp(keyword, "i")
-			},
-			options: {
-				sort: {
-					'meta.createAt': -1
+		User.findOne({
+				_id: userId
+			}).populate({
+				path: 'payment',
+				select: 'name type price product_type meta',
+				match: {
+					name: new RegExp(keyword, "i")
+				},
+				options: {
+					sort: {
+						'meta.createAt': -1
+					}
 				}
-			}
-		})
-		.exec(function(err, user) {
-			if (err) {
-				console.log(err);
-				res.json({
-					success: 0,
-					msg: '服务器错误'
-				});
-				return;
-			}
-			totalCount = user.payment.length;
-
-			var results = user.payment.slice(start, start + limit);
-			res.json({
-				page: (page + 1),
-				data: results || [],
-				totalCount: totalCount
 			})
-		});
+			.exec(function(err, user) {
+				if (err) {
+					console.log(err);
+					res.json({
+						success: 0,
+						msg: '服务器错误'
+					});
+					return;
+				}
+				totalCount = user.payment.length;
+
+				var results = user.payment.slice(start, start + limit);
+				res.json({
+					page: (page + 1),
+					data: results || [],
+					totalCount: totalCount
+				})
+			});
+	} catch (err) {
+		return next(err);
+	}
 };
 
 exports.add = function(req, res, next) {
@@ -359,7 +372,8 @@ exports.monthBill = function(req, res) {
 			'meta.createAt': {
 				$gte: new Date(year + '-' + month + '-01'),
 				$lt: new Date(year + '-' + month + '-' + date.getDate())
-			}
+			},
+			'account': new mongoose.Types.ObjectId(req.session.user._id)
 		})
 		.group({
 			_id: "$type",
