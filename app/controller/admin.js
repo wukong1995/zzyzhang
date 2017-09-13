@@ -1,4 +1,4 @@
-var User = require('../model/account');
+const User = require('../model/account');
 
 // list
 exports.list = function(req, res) {
@@ -12,10 +12,10 @@ exports.list = function(req, res) {
 exports.result = function(req, res) {
 
   //判断是否是第一页，并把请求的页数转换成 number 类型
-  var start = req.query.start ? parseInt(req.query.start) : 0;
-  var limit = req.query.limit ? parseInt(req.query.limit) : 15;
-  var keyword = req.query.keyword ? req.query.keyword : '';
-  var role = req.session.user.role;
+  const start = req.query.start ? parseInt(req.query.start) : 0;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+  const keyword = req.query.keyword ? req.query.keyword : '';
+  const role = req.session.user.role;
 
   User
     .count({

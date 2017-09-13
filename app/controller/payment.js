@@ -1,7 +1,7 @@
-var mongoose = require('mongoose');
-var Payment = require('../model/payment');
-var User = require('../model/account');
-var Commen = require('./commen');
+const mongoose = require('mongoose');
+const Payment = require('../model/payment');
+const User = require('../model/account');
+const Commen = require('./commen');
 
 
 exports.detail = function(req, res, next) {

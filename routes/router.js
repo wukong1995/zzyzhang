@@ -1,12 +1,12 @@
-var User = require('../app/controller/account');
-var Admin = require('../app/controller/admin');
-var Assets = require('../app/controller/assets');
-var Bond = require('../app/controller/bond');
-var Borrowing = require('../app/controller/borrowing');
-var Payment = require('../app/controller/payment');
-var Share = require('../app/controller/share');
-var Wishlist = require('../app/controller/wishlist');
-var Comment = require('../app/controller/comment');
+const User = require('../app/controller/account');
+const Admin = require('../app/controller/admin');
+const Assets = require('../app/controller/assets');
+const Bond = require('../app/controller/bond');
+const Borrowing = require('../app/controller/borrowing');
+const Payment = require('../app/controller/payment');
+const Share = require('../app/controller/share');
+const Wishlist = require('../app/controller/wishlist');
+const Comment = require('../app/controller/comment');
 
 module.exports = function(app) {
   // pre handle user
@@ -138,7 +138,7 @@ module.exports = function(app) {
 
   // catch 404 and error handler
   app.use(function(req, res, next) {
-    var err = new Error('404 Not Found');
+    const err = new Error('404 Not Found');
     err.status = 404;
     next(err);
   });

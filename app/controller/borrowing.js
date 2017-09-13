@@ -1,7 +1,7 @@
-var _ = require('underscore');
-var Borrowing = require('../model/borrowing');
-var User = require('../model/account');
-var Commen = require('./commen');
+const _ = require('underscore');
+const Borrowing = require('../model/borrowing');
+const User = require('../model/account');
+const Commen = require('./commen');
 
 exports.detail = function(req, res, next) {
   if (!req.params || !req.params.id) {

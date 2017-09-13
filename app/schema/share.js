@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
-var ShareSchema = new mongoose.Schema({
+const ShareSchema = new mongoose.Schema({
   name: String,
   count: Number,
   first_price: Number,

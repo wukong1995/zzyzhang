@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
-var WishlistSchema = new mongoose.Schema({
+const WishlistSchema = new mongoose.Schema({
   name: String,
   price: Number,
   // 1 饮食 服装 交通 水电 通讯 日用品 旅游 保险 其他

@@ -1,10 +1,10 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcryptjs');
-var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
-var SALT_WORK_FACTOR = 10;
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
+const SALT_WORK_FACTOR = 10;
 
-var AccountSchema = new mongoose.Schema({
+const AccountSchema = new mongoose.Schema({
   name: {
     unique: true,
     type: String

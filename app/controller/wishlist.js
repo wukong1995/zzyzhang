@@ -1,8 +1,8 @@
-var _ = require('underscore');
-var Wishlist = require('../model/wishlist');
-var User = require('../model/account');
-var Payment = require('../model/payment');
-var Commen = require('./commen');
+const _ = require('underscore');
+const Wishlist = require('../model/wishlist');
+const User = require('../model/account');
+const Payment = require('../model/payment');
+const Commen = require('./commen');
 
 exports.detail = function(req, res, next) {
   if (!req.params || !req.params.id) {

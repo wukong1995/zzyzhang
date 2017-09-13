@@ -1,3 +1,4 @@
+/* global ace, window, alert */
 jQuery(function($) {
   $('#id-disable-check').on('click', function() {
     var inp = $('#form-input-readonly').get(0);
