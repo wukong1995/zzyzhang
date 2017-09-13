@@ -74,7 +74,7 @@ $(function() {
       $('#bond_yield').focus();
       return false;
     }
-    if (!/^(\-)?\d+(\.\d+)?$/.test($('#bond_yield').val())) {
+    if (!/^(-)?\d+(\.\d+)?$/.test($('#bond_yield').val())) {
       $('#bond_yield').tips({
         msg: '债券收益率只能是数字',
         side: 3,

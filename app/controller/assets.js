@@ -1,7 +1,7 @@
-var _ = require('underscore');
-var Assets = require('../model/assets');
-var User = require('../model/account');
-var Commen = require('./commen');
+const _ = require('underscore');
+const Assets = require('../model/assets');
+const User = require('../model/account');
+const Commen = require('./commen');
 
 exports.detail = function(req, res, next) {
   if (!req.params || !req.params.id) {

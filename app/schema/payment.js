@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
-var PaymentSchema = new mongoose.Schema({
+const PaymentSchema = new mongoose.Schema({
   name: String,
   price: Number,
   // 0 收入

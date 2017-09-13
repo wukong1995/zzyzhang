@@ -1,4 +1,4 @@
-var Comment = require('../model/comment');
+const Comment = require('../model/comment');
 
 exports.detail = function(req, res) {
   if (!req.params || !req.params.id) {

@@ -1,7 +1,7 @@
-var _ = require('underscore');
-var Share = require('../model/share');
-var User = require('../model/account');
-var Commen = require('./commen');
+const _ = require('underscore');
+const Share = require('../model/share');
+const User = require('../model/account');
+const Commen = require('./commen');
 
 exports.detail = function(req, res, next) {
   if (!req.params || !req.params.id) {
@@ -9,7 +9,7 @@ exports.detail = function(req, res, next) {
     return;
   }
 
-  var id = req.params.id;
+  const id = req.params.id;
   Share.findById(id, function(err, share) {
     if (err) {
       return next(err);

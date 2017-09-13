@@ -1,3 +1,4 @@
+/* global bootbox, window, alert */
 jQuery(function($) {
   bootbox.setDefaults('locale', 'zh_CN');
 

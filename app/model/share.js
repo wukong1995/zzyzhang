@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-var ShareSchema = require('../schema/share');
-var Share = mongoose.model('Share', ShareSchema);
+const mongoose = require('mongoose');
+const ShareSchema = require('../schema/share');
+const Share = mongoose.model('Share', ShareSchema);
 
 module.exports = Share;

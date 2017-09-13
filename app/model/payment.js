@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-var PaymentSchema = require('../schema/payment');
-var Payment = mongoose.model('Payment', PaymentSchema);
+const mongoose = require('mongoose');
+const PaymentSchema = require('../schema/payment');
+const Payment = mongoose.model('Payment', PaymentSchema);
 
 module.exports = Payment;

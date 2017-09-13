@@ -1,3 +1,4 @@
+/* global bootbox, window, alert, document */
 jQuery(function($) {
   $(document).on('click', '.toolbar a[data-target]', function(e) {
     e.preventDefault();
@@ -258,7 +259,7 @@ jQuery(function($) {
           }
         },
         error: function(err) {
-          alert('请求错误！');
+          alert('请求错误！' + err);
         }
       });
     }
@@ -281,7 +282,7 @@ jQuery(function($) {
           bootbox.alert(res.message);
         },
         error: function(err) {
-          alert('请求错误！');
+          alert('请求错误！' + err);
         }
       });
     }
@@ -380,7 +381,7 @@ jQuery(function($) {
         }
       },
       error: function(err) {
-        bootbox.alert('重置密码出错，请重试！');
+        bootbox.alert('重置密码出错，请重试！' + err);
       }
     });
   });

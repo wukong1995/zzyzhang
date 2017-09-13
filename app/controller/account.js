@@ -1,6 +1,6 @@
-var User = require('../model/account');
-var Commen = require('./commen');
-var _ = require('underscore');
+const User = require('../model/account');
+const Commen = require('./commen');
+const _ = require('underscore');
 
 
 // showSignin
