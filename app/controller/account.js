@@ -1,5 +1,5 @@
 const User = require('../model/account');
-const Commen = require('./commen');
+const { checkField, errMsg } = require('./commen');
 const _ = require('underscore');
 
 
@@ -15,25 +15,17 @@ exports.showSignin = function(req, res) {
 // signup
 exports.signup = function(req, res) {
   if (!req.body) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: '未发送数据！'
-    });
+    res.json(errMsg('未发送数据！'));
     return;
   }
   var _user = req.body;
 
   if (_user.name == undefined || _user.email == undefined || _user.telphone == undefined || _user.password == undefined) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: '填写字段不完整！'
-    });
+    res.json(errMsg('填写字段不完整！'));
     return;
   }
 
-  var result = Commen.checkField([
+  var result = checkField([
     [_user.name, '/^[\\S]+$/', '用户名不能为空'],
     [_user.name, '/^.{4,16}$/', '用户名长度为4-16位'],
     [_user.email, '/^[\\S]+$/', '邮箱不能为空'],
@@ -45,11 +37,7 @@ exports.signup = function(req, res) {
   ]);
 
   if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: result.msg
-    });
+    res.json(errMsg(result.msg));
     return;
   } else {
     result = null;
@@ -60,37 +48,21 @@ exports.signup = function(req, res) {
   }, function(err, user) {
     if (err) {
       console.log(err);
-      res.json({
-        error_code: 1,
-        success: 0,
-        message: '服务器错误！'
-      });
+      res.json(errMsg('服务器错误！', 1));
       return;
     }
     if (user) {
-      res.json({
-        error_code: 0,
-        success: 0,
-        message: '用户名已存在！'
-      });
+      res.json(errMsg('用户名已存在！'));
       return;
     } else {
       let new_user = new User(_user);
       new_user.save(function(err) {
         if (err) {
           console.log(err);
-          res.json({
-            error_code: 0,
-            success: 0,
-            message: '注册失败，请重试！'
-          });
+          res.json(errMsg('注册失败，请重试！'));
           return;
         }
-        res.json({
-          error_code: 0,
-          success: 1,
-          message: '恭喜你，注册成功！'
-        });
+        res.json(errMsg('恭喜你，注册成功！', 0, 1));
         return;
       });
     }
@@ -100,25 +72,17 @@ exports.signup = function(req, res) {
 // forgetpwd
 exports.forgetpwd = function(req, res) {
   if (!req.body) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: '未发送数据！'
-    });
+    res.json(errMsg('未发送数据！'));
     return;
   }
   var _user = req.body;
 
   if (_user.name == undefined || _user.email == undefined || _user.telphone == undefined) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: '填写字段不完整！'
-    });
+    res.json(errMsg('填写字段不完整！'));
     return;
   }
 
-  var result = Commen.checkField([
+  var result = checkField([
     [_user.name, '/^[\\S]+$/', '用户名不能为空'],
     [_user.name, '/^.{4,16}$/', '用户名长度为4-16位'],
     [_user.email, '/^[\\S]+$/', '邮箱不能为空'],
@@ -127,11 +91,7 @@ exports.forgetpwd = function(req, res) {
     [_user.telphone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '联系方式格式不正确'],
   ]);
   if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: result.msg
-    });
+    res.json(errMsg(result.msg));
     return;
   } else {
     result = null;
@@ -144,11 +104,7 @@ exports.forgetpwd = function(req, res) {
   }, function(err, user) {
     if (err) {
       console.log(err);
-      res.json({
-        error_code: 1,
-        success: 0, // 成功
-        message: '服务器错误'
-      });
+      res.json(errMsg('服务器错误', 1));
       return;
     }
     if (user) {
@@ -157,17 +113,13 @@ exports.forgetpwd = function(req, res) {
       user.save(function(err) {
         if (err) {
           console.log(err);
-          res.json({
-            error_code: 1,
-            success: 0, // 成功
-            message: '服务器错误'
-          });
+          res.json(errMsg('服务器错误', 1));
           return;
         }
         console.log('password change');
         res.json({
           error_code: 0,
-          success: 1, // 成功
+          success: 1,
           message: '重置成功！'
         });
         return;
@@ -196,7 +148,7 @@ exports.signin = function(req, res) {
     });
   }
 
-  var result = Commen.checkField([
+  var result = checkField([
     [_user.name, '/^[\\S]+$/', '用户名不能为空'],
     [_user.name, '/^.{4,16}$/', '用户名长度为4-16位'],
     [_user.password, '/^[\\S]+$/', '密码不能为空'],
@@ -304,7 +256,7 @@ exports.changepwd = function(req, res) {
     });
   }
 
-  var result = Commen.checkField([
+  var result = checkField([
     [_user.pwd, '/^[\\S]+$/', '原密码不能为空'],
     [_user.pwd, '/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成'],
     [_user.newpwd, '/^[\\S]+$/', '新密码不能为空'],
@@ -440,7 +392,7 @@ exports.changeprofile = function(req, res) {
   }
   var _user = req.body.user;
 
-  var result = Commen.checkField([
+  var result = checkField([
     [_user.email, '/^[\\S]+$/', '邮箱不能为空'],
     [_user.email, '/^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$/', '邮箱格式不正确'],
     [_user.telphone, '/^[\\S]+$/', '电话不能为空'],
@@ -552,7 +504,7 @@ exports.changeproMO = function(req, res) {
   }
   var _user = req.body;
 
-  var result = Commen.checkField([
+  var result = checkField([
     [_user.name, '/^[\\S]+$/', '用户名不能为空'],
     [_user.name, '/^.{4,16}$/', '用户名长度为4-16位'],
     [_user.email, '/^[\\S]+$/', '邮箱不能为空'],

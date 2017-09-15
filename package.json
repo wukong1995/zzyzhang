@@ -32,5 +32,6 @@
     "first"
   ],
   "author": "wpp",
-  "license": "ISC"
+  "license": "ISC",
+  "eslintIgnore": []
 }
