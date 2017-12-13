@@ -3,7 +3,7 @@ const Assets = require('../model/assets');
 const User = require('../model/account');
 const Joi = require('joi');
 const schema = Joi.object().keys({
-  name: Joi.string().alphanum().min(1).max(16).required(),
+  name: Joi.string().min(1).max(16).required(),
   type: Joi.string().required(),
   price: Joi.string().required().regex(/^\\d+(\\.\\d+)?$/),
 });

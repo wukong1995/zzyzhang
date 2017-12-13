@@ -5,7 +5,7 @@ const Payment = require('../model/payment');
 const Joi = require('joi');
 
 const schema = Joi.object().keys({
-  name: Joi.string().alphanum().min(1).max(16).required(),
+  name: Joi.string().min(1).max(16).required(),
   product_type: Joi.string().required(),
   price: Joi.string().required().regex(/^\\d+(\\.\\d+)?$/),
 });

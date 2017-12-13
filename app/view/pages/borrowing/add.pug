@@ -21,7 +21,7 @@ block content
 						| 	请填写以下信息：
 			.row
 				.col-xs-12
-					form#borrowing_form.form-horizontal(role='form',method="POST",action="/borrowing/action/save")
+					form#borrowing_form.form-horizontal(role='form',method="POST",action="/borrowing/save")
 						if borrowing._id
 							input(type="hidden",name="borrowing[_id]",value=borrowing._id)
 						.form-group
