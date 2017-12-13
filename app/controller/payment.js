@@ -56,12 +56,7 @@ exports.result = function(req, res, next) {
     var start = req.query.start ? parseInt(req.query.start) : 0;
     var limit = req.query.limit ? parseInt(req.query.limit) : 15;
     var keyword = req.query.keyword ? req.query.keyword : '';
-    var user_id = '';
-    if (req.session.user) {
-      user_id = req.session.user._id;
-    } else {
-      user_id = req.headers['token'];
-    }
+    const user_id = req.session.user._id;
 
     var totalCount = 0;
 
@@ -188,13 +183,7 @@ exports.del = function(req, res) {
   }
 
   var id = req.query.id;
-  var user_id = '';
-
-  if (req.session.user) {
-    user_id = req.session.user._id;
-  } else {
-    user_id = req.headers['token'];
-  }
+  var user_id = req.session.user._id;
 
   Payment.remove({
     _id: id

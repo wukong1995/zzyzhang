@@ -191,12 +191,7 @@ exports.signin = function(req, res) {
 
 // changepwd
 exports.changepwd = function(req, res) {
-  var user_id = '';
-  if (req.session.user) {
-    user_id = req.session.user._id;
-  } else {
-    user_id = req.headers['token'];
-  }
+  var user_id = req.session.user._id;
 
   var _user = req.body;
   const newSchema = Joi.object().keys({
@@ -360,9 +355,7 @@ exports.logout = function(req, res) {
 // midware for user
 exports.signinRequired = function(req, res, next) {
   var user = req.session.user;
-  //检查post的信息或者url查询参数或者头信息
-  var token = req.body.token || req.query.token || req.headers['token'];
-  if (!user && !token) {
+  if (!user) {
     console.log('用户未登录');
     return res.redirect('/');
   }
@@ -376,90 +369,4 @@ exports.adminRequired = function(req, res, next) {
     return res.redirect('');
   }
   next();
-};
-
-// App接口：登录
-
-// App接口：注册
-
-
-// App接口：忘记密码与PC端相同
-
-// App接口：用户详情页
-exports.detailMO = function(req, res) {
-  var user_id = req.headers['token'];
-
-  User.findOne({
-    _id: user_id
-  }, ['name', 'password', 'telephone', 'email', 'Head_portrait', 'real_name', 'sex', 'birth',
-    'signature', 'role'
-  ], function(err, user) {
-    if (err) {
-      console.log(err);
-      res.json({
-        error_code: 1,
-        success: 0,
-        msg: '找不到该用户'
-      });
-    }
-    res.json({
-      error_code: 0,
-      success: 1,
-      message: '成功',
-      user: user
-    });
-  });
-};
-
-// App接口：修改密码
-
-// App接口：修改个人资料
-exports.changeproMO = function(req, res) {
-  const id = req.headers['token'];
-
-  if (req.body == undefined) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: '未发送数据'
-    });
-    return;
-  }
-  const _user = req.body;
-  const { error } = Joi.validate(_user, schema.without('password'));
-  if (error !== null) {
-    return res.json(errMsg(error));
-  }
-
-
-  User.findById(id, function(err, user) {
-    if (err) {
-      console.log(err);
-      res.json({
-        error_code: 1,
-        success: 0,
-        message: '找不到该用户'
-      });
-      return;
-    }
-    const userObj = _.extend(user, _user);
-    userObj.save(function(err) {
-      if (err) {
-        console.log(err);
-        res.json({
-          error_code: 0,
-          success: 0,
-          message: '保存出错'
-        });
-        return;
-      }
-
-      res.json({
-        error_code: 0,
-        success: 1,
-        message: '保存成功'
-      });
-      return;
-    });
-  });
 };

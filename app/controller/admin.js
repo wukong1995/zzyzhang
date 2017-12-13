@@ -63,7 +63,6 @@ exports.result = function(req, res) {
     });
 };
 
-
 // detail
 exports.detail = function(req, res, next) {
   if (!req.params || !req.params.id) {
