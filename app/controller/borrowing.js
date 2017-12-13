@@ -48,12 +48,7 @@ exports.result = function(req, res) {
   var keyword = req.query.keyword ? req.query.keyword : '';
 
   var totalCount = 0;
-  var user_id = '';
-  if (req.session.user) {
-    user_id = req.session.user._id;
-  } else {
-    user_id = req.headers['token'];
-  }
+  const user_id = req.session.user._id;
 
   User
     .findOne({
@@ -194,12 +189,7 @@ exports.del = function(req, res) {
   }
 
   var id = req.query.id;
-  var user_id = '';
-  if (req.session.user) {
-    user_id = req.session.user._id;
-  } else {
-    user_id = req.headers['token'];
-  }
+  var user_id = req.session.user._id;
 
   Borrowing.remove({
     _id: id

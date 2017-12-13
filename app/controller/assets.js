@@ -48,12 +48,7 @@ exports.result = function(req, res) {
   var keyword = req.query.keyword ? req.query.keyword : '';
 
   var totalCount = 0;
-  var user_id = '';
-  if (req.session.user) {
-    user_id = req.session.user._id;
-  } else {
-    user_id = req.headers['token'];
-  }
+  const user_id = req.session.user._id;
 
   User
     .findOne({
@@ -210,12 +205,7 @@ exports.del = function(req, res) {
   }
 
   var id = req.query.id;
-  var user_id = '';
-  if (req.session.user) {
-    user_id = req.session.user._id;
-  } else {
-    user_id = req.headers['token'];
-  }
+  var user_id = req.session.user._id;
 
   Assets.remove({
     _id: id
@@ -252,126 +242,3 @@ exports.del = function(req, res) {
     }
   });
 };
-
-
-// App详情
-exports.detailMO = function(req, res) {
-  if (!req.params || !req.params.id) {
-    res.json({
-      success: 0,
-      msg: '无传递参数id'
-    });
-  }
-  Assets.findById(req.params.id, function(err, assets) {
-    res.json({
-      data: assets,
-      success: 1
-    });
-  });
-};
-
-// App保存
-exports.saveMO = function(req, res) {
-  if (!req.body) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: '缺少参数'
-    });
-    return;
-  }
-  const assetsObj = req.body;
-  const { error } = Joi.validate(assetsObj, schema);
-
-  if (error !== null) {
-    if (id) {
-      res.redirect('/assets/edit/' + id);
-    } else {
-      res.redirect('/assets/add');
-    }
-    return;
-  }
-
-  var _assets;
-  const id = assetsObj._id;
-
-  if (id) {
-    Assets.findById(id, function(err, assets) {
-      if (err) {
-        console.log(err);
-        res.json({
-          error_code: 1,
-          success: 0,
-          msg: '数据未查询到数据'
-        });
-        return;
-      }
-
-      _assets = _.extend(assets, assetsObj);
-      _assets.save(function(err, assets) {
-        if (err) {
-          console.log(err);
-          res.json({
-            error_code: 1,
-            success: 0,
-            msg: '数据保存'
-          });
-          return;
-        }
-        res.json({
-          error_code: 0,
-          success: 1,
-          msg: '修改成功',
-          id: assets._id
-        });
-        return;
-      });
-    });
-  } else {
-
-    var user_id = req.headers['token'];
-    assetsObj.account = user_id;
-    _assets = new Assets(assetsObj);
-
-    _assets.save(function(err, assets) {
-      if (err) {
-        console.log(err);
-        res.json({
-          error_code: 1,
-          success: 0,
-          msg: '数据库保存出错'
-        });
-      }
-
-      User.findById(user_id, function(err, user) {
-        if (err) {
-          console.log(err);
-          res.json({
-            error_code: 1,
-            success: 0,
-            msg: '数据未查询到用户'
-          });
-        }
-        user.assets.push(assets._id);
-        user.save(function(err) {
-          if (err) {
-            console.log(err);
-            res.json({
-              error_code: 0,
-              success: 0,
-              msg: '数据库保存出错'
-            });
-          }
-          res.json({
-            error_code: 0,
-            success: 1,
-            msg: '保存成功',
-            id: assets._id
-          });
-        });
-      });
-    });
-  }
-};
-
-// App端删除与PC端相同

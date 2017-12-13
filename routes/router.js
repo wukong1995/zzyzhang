@@ -11,7 +11,6 @@ const Comment = require('../app/controller/comment');
 module.exports = function(app) {
   // pre handle user
   app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, token');
 

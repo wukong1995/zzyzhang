@@ -108,30 +108,3 @@ exports.del = function(req, res) {
     }
   });
 };
-
-// App保存
-exports.saveMO = function(req, res) {
-  var commentObj = req.body;
-  var _comment;
-
-  var user_id = req.headers['token'];
-  commentObj.account = user_id;
-
-  _comment = new Comment(commentObj);
-
-  _comment.save(function(err) {
-    if (err) {
-      console.log(err);
-      res.json({
-        error_code: 1,
-        success: 0,
-        msg: '数据库保存出错'
-      });
-    }
-    res.json({
-      error_code: 0,
-      success: 1,
-      msg: '提交成功'
-    });
-  });
-};
