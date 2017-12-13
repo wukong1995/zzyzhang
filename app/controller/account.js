@@ -1,7 +1,14 @@
 const User = require('../model/account');
-const { checkField, errMsg } = require('./commen');
+const { errMsg } = require('./commen');
 const _ = require('underscore');
+const Joi = require('joi');
 
+const schema = Joi.object().keys({
+  name: Joi.string().alphanum().min(4).max(16).required(),
+  email: Joi.string().required().email(),
+  password: Joi.string().required().regex(/^[a-zA-Z0-9]{6,16}$/),
+  telephone: Joi.number().required().regex(/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/),
+});
 
 // showSignin
 exports.showSignin = function(req, res) {
@@ -18,29 +25,11 @@ exports.signup = function(req, res) {
     res.json(errMsg('未发送数据！'));
     return;
   }
-  var _user = req.body;
+  const _user = req.body;
+  const { error } = Joi.validate(_user, schema);
 
-  if (_user.name == undefined || _user.email == undefined || _user.telphone == undefined || _user.password == undefined) {
-    res.json(errMsg('填写字段不完整！'));
-    return;
-  }
-
-  var result = checkField([
-    [_user.name, '/^[\\S]+$/', '用户名不能为空'],
-    [_user.name, '/^.{4,16}$/', '用户名长度为4-16位'],
-    [_user.email, '/^[\\S]+$/', '邮箱不能为空'],
-    [_user.telphone, '/^[\\S]+$/', '电话不能为空'],
-    [_user.password, '/^[\\S]+$/', '密码不能为空'],
-    [_user.email, '/^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$/', '邮箱格式不正确'],
-    [_user.telphone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '联系方式格式不正确'],
-    [_user.password, '/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
-  ]);
-
-  if (result.flag === false) {
-    res.json(errMsg(result.msg));
-    return;
-  } else {
-    result = null;
+  if (error !== null) {
+    return res.json(errMsg(error));
   }
 
   User.findOne({
@@ -77,30 +66,15 @@ exports.forgetpwd = function(req, res) {
   }
   var _user = req.body;
 
-  if (_user.name == undefined || _user.email == undefined || _user.telphone == undefined) {
-    res.json(errMsg('填写字段不完整！'));
-    return;
-  }
-
-  var result = checkField([
-    [_user.name, '/^[\\S]+$/', '用户名不能为空'],
-    [_user.name, '/^.{4,16}$/', '用户名长度为4-16位'],
-    [_user.email, '/^[\\S]+$/', '邮箱不能为空'],
-    [_user.telphone, '/^[\\S]+$/', '电话不能为空'],
-    [_user.email, '/^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$/', '邮箱格式不正确'],
-    [_user.telphone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '联系方式格式不正确'],
-  ]);
-  if (result.flag === false) {
-    res.json(errMsg(result.msg));
-    return;
-  } else {
-    result = null;
+  const { error } = Joi.validate(_user, schema.without('password'));
+  if (error !== null) {
+    return res.json(errMsg(error));
   }
 
   User.findOne({
     name: _user.name,
     email: _user.email,
-    telphone: _user.telphone
+    telephone: _user.telephone
   }, function(err, user) {
     if (err) {
       console.log(err);
@@ -137,32 +111,10 @@ exports.forgetpwd = function(req, res) {
 
 // signin
 exports.signin = function(req, res) {
-
-  var _user = req.body;
-
-  if (_user.name == undefined || _user.password == undefined) {
-    return res.json({
-      error_code: 0,
-      success: 0,
-      message: '填写字段不完整！'
-    });
-  }
-
-  var result = checkField([
-    [_user.name, '/^[\\S]+$/', '用户名不能为空'],
-    [_user.name, '/^.{4,16}$/', '用户名长度为4-16位'],
-    [_user.password, '/^[\\S]+$/', '密码不能为空'],
-    [_user.password, '/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
-  ]);
-  if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: result.msg
-    });
-    return;
-  } else {
-    result = null;
+  const _user = req.body;
+  const { error } = Joi.validate(_user, schema.without('email', 'telephone'));
+  if (error !== null) {
+    return res.json(errMsg(error));
   }
 
   User.findOne({
@@ -247,30 +199,14 @@ exports.changepwd = function(req, res) {
   }
 
   var _user = req.body;
+  const newSchema = Joi.object().keys({
+    pwd: Joi.string().regex(/^[a-zA-Z0-9]{6,16}$/).required(),
+    newpwd: Joi.string().regex(/^[a-zA-Z0-9]{6,16}$/).required(),
+  });
 
-  if (_user.newpwd == undefined || _user.pwd == undefined) {
-    return res.json({
-      error_code: 0,
-      success: 0,
-      message: '填写字段不完整！'
-    });
-  }
-
-  var result = checkField([
-    [_user.pwd, '/^[\\S]+$/', '原密码不能为空'],
-    [_user.pwd, '/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成'],
-    [_user.newpwd, '/^[\\S]+$/', '新密码不能为空'],
-    [_user.newpwd, '/^[A-Z 0-9 a-z]{6,16}$/', '密码应由6-16位的数字或字母组成']
-  ]);
-  if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: result.msg
-    });
-    return;
-  } else {
-    result = null;
+  const { error } = Joi.validate(_user, newSchema);
+  if (error !== null) {
+    return res.json(errMsg(error));
   }
 
   User.findById(user_id, function(err, user) {
@@ -342,7 +278,7 @@ exports.detail = function(req, res) {
 
   User.findOne({
     _id: user._id
-  }, ['name', 'password', 'telphone', 'email', 'Head_portrait', 'real_name', 'sex', 'birth',
+  }, ['name', 'password', 'telephone', 'email', 'Head_portrait', 'real_name', 'sex', 'birth',
     'signature', 'role', 'state', 'meta'
   ], function(err, user) {
     if (err) {
@@ -384,37 +320,24 @@ exports.showChange = function(req, res) {
 
 // changeprofile
 exports.changeprofile = function(req, res) {
-  var id = req.session.user._id;
+  const id = req.session.user._id;
 
   if (req.body == undefined || req.body.user == undefined) {
     res.redirect('account/change');
     return;
   }
-  var _user = req.body.user;
-
-  var result = checkField([
-    [_user.email, '/^[\\S]+$/', '邮箱不能为空'],
-    [_user.email, '/^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$/', '邮箱格式不正确'],
-    [_user.telphone, '/^[\\S]+$/', '电话不能为空'],
-    [_user.telphone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '联系方式格式不正确']
-  ]);
-  if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: result.msg
-    });
-    return;
-  } else {
-    result = null;
+  const _user = req.body.user;
+  const { error } = Joi.validate(_user, schema.without('name', 'telephone'));
+  if (error !== null) {
+    return res.json(errMsg(error));
   }
-  var userObj;
+
 
   User.findById(id, function(err, user) {
     if (err) {
       console.log(err);
     }
-    userObj = _.extend(user, _user);
+    const userObj = _.extend(user, _user);
     userObj.save(function(err) {
       if (err) {
         console.log(err);
@@ -468,7 +391,7 @@ exports.detailMO = function(req, res) {
 
   User.findOne({
     _id: user_id
-  }, ['name', 'password', 'telphone', 'email', 'Head_portrait', 'real_name', 'sex', 'birth',
+  }, ['name', 'password', 'telephone', 'email', 'Head_portrait', 'real_name', 'sex', 'birth',
     'signature', 'role'
   ], function(err, user) {
     if (err) {
@@ -492,7 +415,7 @@ exports.detailMO = function(req, res) {
 
 // App接口：修改个人资料
 exports.changeproMO = function(req, res) {
-  var id = req.headers['token'];
+  const id = req.headers['token'];
 
   if (req.body == undefined) {
     res.json({
@@ -502,27 +425,12 @@ exports.changeproMO = function(req, res) {
     });
     return;
   }
-  var _user = req.body;
-
-  var result = checkField([
-    [_user.name, '/^[\\S]+$/', '用户名不能为空'],
-    [_user.name, '/^.{4,16}$/', '用户名长度为4-16位'],
-    [_user.email, '/^[\\S]+$/', '邮箱不能为空'],
-    [_user.telphone, '/^[\\S]+$/', '电话不能为空'],
-    [_user.email, '/^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$/', '邮箱格式不正确'],
-    [_user.telphone, '/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', '联系方式格式不正确']
-  ]);
-  if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      message: result.msg
-    });
-    return;
-  } else {
-    result = null;
+  const _user = req.body;
+  const { error } = Joi.validate(_user, schema.without('password'));
+  if (error !== null) {
+    return res.json(errMsg(error));
   }
-  var userObj;
+
 
   User.findById(id, function(err, user) {
     if (err) {
@@ -534,7 +442,7 @@ exports.changeproMO = function(req, res) {
       });
       return;
     }
-    userObj = _.extend(user, _user);
+    const userObj = _.extend(user, _user);
     userObj.save(function(err) {
       if (err) {
         console.log(err);

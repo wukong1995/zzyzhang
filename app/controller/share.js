@@ -1,7 +1,14 @@
 const _ = require('underscore');
 const Share = require('../model/share');
 const User = require('../model/account');
-const Commen = require('./commen');
+const Joi = require('joi');
+
+const schema = Joi.object().keys({
+  name: Joi.string().alphanum().min(1).max(16).required(),
+  count: Joi.string().required(),
+  first_price: Joi.string().required().regex(/^\\d+(\\.\\d+)?$/),
+  last_price: Joi.number().required().regex(/^\\d+(\\.\\d+)?$/),
+});
 
 exports.detail = function(req, res, next) {
   if (!req.params || !req.params.id) {
@@ -119,38 +126,17 @@ exports.save = function(req, res) {
     res.redirect('/share/add');
     return;
   }
-  var shareObj = req.body.share;
-  var id = shareObj._id;
+  const shareObj = req.body.share;
+  const id = shareObj._id;
+  const { error } = Joi.validate(shareObj, schema);
 
-  if (shareObj.name == undefined || shareObj.count == undefined || shareObj.first_price == undefined || shareObj.last_price == undefined) {
+  if (error !== null) {
     if (id) {
       res.redirect('/share/edit/' + id);
     } else {
       res.redirect('/share/add');
     }
     return;
-  }
-
-  var result = Commen.checkField([
-    [shareObj.name, '/^[\\S]+$/', '名字不能为空'],
-    [shareObj.name, '/^.{1,16}$/', '名字长度为1-16位'],
-    [shareObj.count, '/^[\\S]+$/', '股数不能为空'],
-    [shareObj.count, '/^\\d+$/', '股数不能为空'],
-    [shareObj.first_price, '/^[\\S]+$/', '买入价格不能为空'],
-    [shareObj.first_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数'],
-    [shareObj.last_price, '/^[\\S]+$/', '价格不能为空'],
-    [shareObj.last_price, '/^\\d+(\\.\\d+)?$/', '卖出价格只能为大于零的数']
-  ]);
-
-  if (result.flag === false) {
-    if (id) {
-      res.redirect('/share/edit/' + id);
-    } else {
-      res.redirect('/share/add');
-    }
-    return;
-  } else {
-    result = null;
   }
 
   shareObj.income = parseInt(shareObj.count) * (parseInt(shareObj.last_price) - parseInt(shareObj.first_price));
@@ -250,111 +236,3 @@ exports.del = function(req, res) {
     }
   });
 };
-
-// App详情
-exports.detailMO = function(req, res) {
-  if (!req.params || !req.params.id) {
-    res.json({
-      success: 0,
-      msg: '无传递参数id'
-    });
-  }
-  Share.findById(req.params.id, function(err, share) {
-    res.json({
-      data: share,
-      success: 1
-    });
-  });
-};
-
-// App保存
-exports.saveMO = function(req, res) {
-  if (!req.body) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: '缺少参数'
-    });
-    return;
-  }
-  var shareObj = req.body;
-
-  if (shareObj.name == undefined || shareObj.count == undefined || shareObj.first_price == undefined || shareObj.last_price == undefined) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: '缺少参数'
-    });
-    return;
-  }
-
-  var result = Commen.checkField([
-    [shareObj.name, '/^[\\S]+$/', '名字不能为空'],
-    [shareObj.name, '/^.{1,16}$/', '名字长度为1-16位'],
-    [shareObj.count, '/^[\\S]+$/', '股数不能为空'],
-    [shareObj.count, '/^\\d+$/', '股数不能为空'],
-    [shareObj.first_price, '/^[\\S]+$/', '价格不能为空'],
-    [shareObj.first_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数'],
-    [shareObj.last_price, '/^[\\S]+$/', '价格不能为空'],
-    [shareObj.last_price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
-  ]);
-
-  if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: result.msg
-    });
-    return;
-  } else {
-    result = null;
-  }
-
-  var _share;
-
-  var user_id = req.headers['token'];
-  shareObj.account = user_id;
-  shareObj.income = parseInt(shareObj.count) * (parseInt(shareObj.last_price) - parseInt(shareObj.first_price));
-  _share = new Share(shareObj);
-
-  _share.save(function(err, share) {
-    if (err) {
-      console.log(err);
-      res.json({
-        error_code: 1,
-        success: 0,
-        msg: '数据库保存出错'
-      });
-    }
-
-    User.findById(user_id, function(err, user) {
-      if (err) {
-        console.log(err);
-        res.json({
-          error_code: 1,
-          success: 0,
-          msg: '数据未查询到用户'
-        });
-      }
-      user.share.push(share._id);
-      user.save(function(err) {
-        if (err) {
-          console.log(err);
-          res.json({
-            error_code: 0,
-            success: 0,
-            msg: '数据库保存出错'
-          });
-        }
-        res.json({
-          error_code: 0,
-          success: 1,
-          msg: '保存成功',
-          id: share._id
-        });
-      });
-    });
-  });
-};
-
-// App端删除与PC端相同

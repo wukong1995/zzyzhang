@@ -10,6 +10,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
     "express-session": "^1.15.5",
+    "joi": "^13.0.2",
     "mongoose": "^4.11.11",
     "pug": "^2.0.0-rc.4",
     "underscore": "^1.8.3"
@@ -26,7 +27,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "eslint": "eslint ./public/javascript --ext .jsx,.js,.vue -f table"
+    "eslint": "eslint ./app --ext .jsx,.js -f table"
   },
   "keywords": [
     "first"

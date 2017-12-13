@@ -22,24 +22,24 @@ $(function() {
       $('#borrowing_other').focus();
       return false;
     }
-    if ($('#borrowing_telphone').val() == '') {
-      $('#borrowing_telphone').tips({
+    if ($('#borrowing_telephone').val() == '') {
+      $('#borrowing_telephone').tips({
         msg: '请输入对方手机号码',
         side: 3,
         bg: '#AE81FF',
         time: 1,
       });
-      $('#borrowing_telphone').focus();
+      $('#borrowing_telephone').focus();
       return false;
     }
-    if (!/^1(3|4|5|7|8)[0-9]\d{8}$/.test($('#borrowing_telphone').val())) {
-      $('#borrowing_telphone').tips({
+    if (!/^1(3|4|5|7|8)[0-9]\d{8}$/.test($('#borrowing_telephone').val())) {
+      $('#borrowing_telephone').tips({
         msg: '请输入正确的手机号码',
         side: 3,
         bg: '#AE81FF',
         time: 1,
       });
-      $('#borrowing_telphone').focus();
+      $('#borrowing_telephone').focus();
       return false;
     }
     if ($('#borrowing_price').val() == '') {

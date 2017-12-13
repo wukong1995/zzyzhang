@@ -1,7 +1,14 @@
 const _ = require('underscore');
 const Bond = require('../model/bond');
 const User = require('../model/account');
-const Commen = require('./commen');
+const Joi = require('joi');
+
+const schema = Joi.object().keys({
+  name: Joi.string().alphanum().min(1).max(16).required(),
+  code: Joi.string().required().regex(/^[\\d]{6}$/),
+  purchase: Joi.string().required().regex(/^\\d+(\\.\\d+)?$/),
+  yield: Joi.number().required().regex(/^(\\-)?\\d+(\\.\\d+)?$/),
+});
 
 exports.detail = function(req, res, next) {
   if (!req.params || !req.params.id) {
@@ -120,38 +127,16 @@ exports.save = function(req, res) {
   }
   var id = req.body.bond._id;
   var bondObj = req.body.bond;
+  const { error } = Joi.validate(bondObj, schema);
 
-  if (bondObj.name == undefined || bondObj.code == undefined || bondObj.purchase == undefined || bondObj.yield == undefined) {
-    console.log('缺少参数	');
+  if (error !== null) {
+    console.log('缺少参数 ');
     if (id) {
       res.redirect('/bond/edit/' + id);
     } else {
       res.redirect('/bond/add');
     }
     return;
-  }
-
-  var result = Commen.checkField([
-    [bondObj.name, '/^[\\S]+$/', '名字不能为空'],
-    [bondObj.name, '/^.{1,16}$/', '名字长度为1-16位'],
-    [bondObj.code, '/^[\\S]+$/', '代码不能为空'],
-    [bondObj.code, '/^[\\d]{6}$/', '代码长度为6位'],
-    [bondObj.purchase, '/^[\\S]+$/', '价格不能为空'],
-    [bondObj.purchase, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数'],
-    [bondObj.yield, '/^[\\S]+$/', '收益率不能为空'],
-    [bondObj.yield, '/^(\\-)?\\d+(\\.\\d+)?$/', '收益率只能为数字']
-  ]);
-
-  if (result.flag === false) {
-    console.log(result.msg);
-    if (id) {
-      res.redirect('/bond/edit/' + id);
-    } else {
-      res.redirect('/bond/add');
-    }
-    return;
-  } else {
-    result = null;
   }
 
   bondObj.income = parseFloat(bondObj.purchase) * parseFloat(bondObj.yield);
@@ -256,105 +241,3 @@ exports.del = function(req, res) {
     }
   });
 };
-
-// App详情
-exports.detailMO = function(req, res) {
-  if (!req.params || !req.params.id) {
-    res.json({
-      success: 0,
-      msg: '无传递参数id'
-    });
-    return;
-  }
-
-  Bond.findById(req.params.id, function(err, bond) {
-    res.json({
-      data: bond,
-      success: 1
-    });
-  });
-};
-
-// App保存
-exports.saveMO = function(req, res) {
-  var bondObj = req.body;
-  var _bond;
-  if (bondObj.name == undefined || bondObj.code == undefined || bondObj.purchase == undefined || bondObj.yield == undefined) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: '缺少参数'
-    });
-    return;
-  }
-
-  var result = Commen.checkField([
-    [bondObj.name, '/^[\\S]+$/', '名字不能为空'],
-    [bondObj.name, '/^.{1,16}$/', '名字长度为1-16位'],
-    [bondObj.code, '/^[\\S]+$/', '代码不能为空'],
-    [bondObj.code, '/^[\\d]{6}$/', '代码长度为6位'],
-    [bondObj.purchase, '/^[\\S]+$/', '价格不能为空'],
-    [bondObj.purchase, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数'],
-    [bondObj.yield, '/^[\\S]+$/', '收益率不能为空'],
-    [bondObj.yield, '/^(\\-)?\\d+(\\.\\d+)?$/', '收益率只能为数字']
-  ]);
-
-  if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: res.msg
-    });
-    return;
-  } else {
-    result = null;
-  }
-
-
-  var user_id = req.headers['token'];
-  bondObj.account = user_id;
-  bondObj.income = parseFloat(bondObj.purchase) * parseFloat(bondObj.yield);
-
-  _bond = new Bond(bondObj);
-
-  _bond.save(function(err, bond) {
-    if (err) {
-      console.log(err);
-      res.json({
-        error_code: 1,
-        success: 0,
-        msg: '数据库保存出错'
-      });
-    }
-
-    User.findById(user_id, function(err, user) {
-      if (err) {
-        console.log(err);
-        res.json({
-          error_code: 1,
-          success: 0,
-          msg: '数据未查询到用户'
-        });
-      }
-      user.bond.push(bond._id);
-      user.save(function(err) {
-        if (err) {
-          console.log(err);
-          res.json({
-            error_code: 0,
-            success: 0,
-            msg: '数据库保存出错'
-          });
-        }
-        res.json({
-          error_code: 0,
-          success: 1,
-          msg: '保存成功',
-          id: bond._id
-        });
-      });
-    });
-  });
-};
-
-// App端删除与PC端相同
