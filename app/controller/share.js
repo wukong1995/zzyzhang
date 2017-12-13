@@ -4,10 +4,10 @@ const User = require('../model/account');
 const Joi = require('joi');
 
 const schema = Joi.object().keys({
-  name: Joi.string().alphanum().min(1).max(16).required(),
+  name: Joi.string().min(1).max(16).required(),
   count: Joi.string().required(),
   first_price: Joi.string().required().regex(/^\\d+(\\.\\d+)?$/),
-  last_price: Joi.number().required().regex(/^\\d+(\\.\\d+)?$/),
+  last_price: Joi.string().required().regex(/^\\d+(\\.\\d+)?$/),
 });
 
 exports.detail = function(req, res, next) {

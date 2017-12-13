@@ -4,10 +4,10 @@ const _ = require('underscore');
 const Joi = require('joi');
 
 const schema = Joi.object().keys({
-  name: Joi.string().alphanum().min(4).max(16).required(),
+  name: Joi.string().min(4).max(16).required(),
   email: Joi.string().required().email(),
   password: Joi.string().required().regex(/^[a-zA-Z0-9]{6,16}$/),
-  telephone: Joi.number().required().regex(/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/),
+  telephone: Joi.string().required().regex(/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/),
 });
 
 // showSignin

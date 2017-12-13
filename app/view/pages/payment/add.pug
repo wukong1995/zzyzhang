@@ -8,7 +8,7 @@ block content
 			li
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
-			li.active 
+			li.active
 				a(href="#") 添加收支
 	.page-content
 		include ../page
@@ -21,9 +21,9 @@ block content
 						| 	请填写以下信息：
 			.row
 				.col-xs-12
-					form#payment_form.form-horizontal(role='form',method="POST",action="/payment/action/save")
+					form#payment_form.form-horizontal(role='form',method="POST",action="/payment/save")
 						.form-group
-							label.col-sm-4.control-label.no-padding-right 收支类型 
+							label.col-sm-4.control-label.no-padding-right 收支类型
 							.col-sm-8
 								.radio
 									label
@@ -33,11 +33,11 @@ block content
 										input(name="payment[type]" type="radio" class="ace",value="1")
 										span.lbl 支出
 						.form-group
-							label.col-sm-4.control-label.no-padding-right 收支名字 
+							label.col-sm-4.control-label.no-padding-right 收支名字
 							.col-sm-8
 								input#payment_name.col-xs-10.col-sm-4(type='text', placeholder='收支名字',name="payment[name]",value=payment.name)
 						.form-group
-							label.col-sm-4.control-label.no-padding-right  分类 
+							label.col-sm-4.control-label.no-padding-right  分类
 							.col-sm-8
 								select#payment_type_0.col-xs-10.col-sm-4(name="payment[product_type]",value=payment.product_type)
 									option(value="奖金") 奖金
@@ -60,7 +60,7 @@ block content
 						.form-group
 							label.col-sm-4.control-label.no-padding-right  备注
 							.col-sm-8
-								textarea#payment_remark.col-xs-10.col-sm-4(name="payment[remark]") #{payment.remark}						
+								textarea#payment_remark.col-xs-10.col-sm-4(name="payment[remark]") #{payment.remark}
 						.clearfix.form-actions
 							.col-sm-offset-4.col-sm-4
 								button#form_submit.btn.btn-info(type='button')
@@ -71,5 +71,5 @@ block content
 									| 	重置
 	script(src="/javascript/payment_add.js")
 
-								
-						
+
+

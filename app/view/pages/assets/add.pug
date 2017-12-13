@@ -8,7 +8,7 @@ block content
 			li
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
-			li.active 
+			li.active
 				a(href="#") 添加资产
 	.page-content
 		include ../page
@@ -21,15 +21,15 @@ block content
 						| 	请填写以下信息：
 			.row
 				.col-xs-12
-					form#assets_form.form-horizontal(role='form',method="POST",action="/assets/action/save")
+					form#assets_form.form-horizontal(role='form',method="POST",action="/assets/save")
 						if assets._id
 							input(type="hidden",name="assets[id]",value=assets._id)
 						.form-group
-							label.col-sm-4.control-label.no-padding-right 资产名字 
+							label.col-sm-4.control-label.no-padding-right 资产名字
 							.col-sm-8
 								input#assets_name.col-xs-10.col-sm-4(type='text', placeholder='资产名字',name="assets[name]",value=assets.name)
 						.form-group
-							label.col-sm-4.control-label.no-padding-right  资产类型 
+							label.col-sm-4.control-label.no-padding-right  资产类型
 							.col-sm-8
 								select#assets_type.col-xs-10.col-sm-4(name="assets[type]",value=assets.type)
 									option(value="流动资产") 流动资产
@@ -44,7 +44,7 @@ block content
 						.form-group
 							label.col-sm-4.control-label.no-padding-right  备注
 							.col-sm-8
-								textarea#assets_remark.col-xs-10.col-sm-4(name="assets[remark]") #{assets.remark}						
+								textarea#assets_remark.col-xs-10.col-sm-4(name="assets[remark]") #{assets.remark}
 						.clearfix.form-actions
 							.col-md-offset-4.col-md-4
 								button#form_submit.btn.btn-info(type='button')
@@ -55,5 +55,5 @@ block content
 									| 	重置
 	script(src="/javascript/asserts_add.js")
 
-								
-						
+
+

@@ -1,190 +1,190 @@
 extends ../../layout
 
 block content
-	#breadcrumbs.breadcrumbs
-		script(type="text/javascript").
-			try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
-		ul.breadcrumb
-			li
-				i.ace-icon.fa.fa-home.home-icon
-				a(href="/index") 主页
-			li.active 
-				a(href="#") 心愿单列表
-	.page-content
-		include ../page
-		.page-content-area
-			.row
-				.col-xs-12
-					.table-header
-						| 心愿单列表
-					div
-						table#sample.table.table-striped.table-bordered.table-hover
-							thead
-								tr
-									th.center
-										label.position-relative
-											input.ace(type='checkbox')
-											span.lbl
-									th 名字
-									th 类型
-									th.hidden-480 价格
-									th 创建日期
-									th 操作
-									th 购买
-	script(src="/javascript/table.js")
-	script(type="text/javascript").
-		$(function() {
-			var lang = {
-				"sProcessing": "处理中...",
-				"sLengthMenu": "每页 _MENU_ 项",
-				"sZeroRecords": "没有匹配结果",
-				"sInfo": "当前显示第 _START_ 至 _END_ 项，共 _TOTAL_ 项。",
-				"sInfoEmpty": "当前显示第 0 至 0 项，共 0 项",
-				"sInfoFiltered": "(由 _MAX_ 项结果过滤)",
-				"sInfoPostFix": "",
-				"sSearch": "搜索:",
-				"sUrl": "",
-				"sEmptyTable": "表中数据为空",
-				"sLoadingRecords": "载入中...",
-				"sInfoThousands": ",",
-				"oPaginate": {
-					"sFirst": "首页",
-					"sPrevious": "上页",
-					"sNext": "下页",
-					"sLast": "末页",
-					"sJump": "跳转"
-				},
-				"oAria": {
-					"sSortAscending": ": 以升序排列此列",
-					"sSortDescending": ": 以降序排列此列"
-				}
-			};
-			var table = $("#sample").dataTable({
-					language:lang,  //提示信息
-					autoWidth: false,  //禁用自动调整列宽
-					processing: true,  //隐藏加载提示,自行处理
-					serverSide: true,  //启用服务器端分页
-					searching: true,  //禁用原生搜索
-					search: {
-				    "search": ""
-				  },
-					ordering:false,
-					renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
-					lengthChange: false,
-					pageLength:15,
-					rowId: '_id',
-					pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
-					columnDefs: [{
-						"targets": 'nosort',  //列的样式名
-						"orderable": false    //包含上样式名‘nosort’的禁止排序
-					}],
-					ajax: function (data, callback, settings) {
-						//封装请求参数
-						var param = {};
-						param.keyword = data.search.value;
-						param.limit = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
-						param.start = data.start;//开始的记录序号
-						param.page = (data.start / data.length)+1;//当前页码
-						//console.log(param);
-						//ajax请求数据
-						$.ajax({
-							type: "GET",
-							url: "/wishlist/result",
-							cache: false,  //禁用缓存
-							data: param,  //传入组装的参数
-							dataType: "json",
-							success: function (result) {
-								var returnData = {};
-								returnData.draw = data.draw;
-								returnData.recordsTotal = result.totalCount;
-								returnData.recordsFiltered = result.totalCount;
-								returnData.data = result.data;
-								callback(returnData);
-							}
-						});
-					},
-					//列表表头字段
-					columns: [ 
-						{  
-							className: "center",  
-							orderable : false,  
-							bSortable : false,  
-							data : "_id",  
-							render : function(data, type, row, meta) {  
-								var content = '<label class="position-relative">';  
-								content += '<input type="checkbox" class="ace" value="' + data + '" />';  
-								content += '<span class="lbl"></span>';  
-								content += '</label>';  
-								return content;  
-							}  
-						},
-						{ "data": "name" },
-						{ "data": "product_type" },
-						{ "data": "price" },
-						{ "data": "meta.createAt",
-							render:function(date,type,full) {
-								return date.slice(0,10);
-							}
-						},
-						{	bSortable : false,  
-							visible : true, 
-							data : "_id",     
-							render : function(data, type, full) {  
-								var content = '<div class="hidden-sm hidden-xs action-buttons">'+
-									'<a href="/wishlist/detail/' + data + '" class="blue">'+
-										'<i class="ace-icon fa fa-search-plus bigger-130"></i>'+
-									' </a>'+
-									'<a href="/wishlist/edit/' + data + '" class="blue">'+
-										'<i class="ace-icon fa fa-pencil bigger-130"></i>'+
-									' </a>'+
-									'<a href="javascript:void(0);" data-id="' + data + '" class="delete_btn red">'+
-										'<i class="ace-icon fa fa-trash-o bigger-130"></i>'+
-									'</a>'+
-								'</div>'+
-									'<div class="hidden-md hidden-lg">'+
-									'  <div class="inline position-relative">'+
-									'    <button data-toggle="dropdown" data-position="auto" class="btn btn-minier btn-yellow dropdown-toggle"><i class="ace-icon fa fa-caret-down icon-only bigger-120"></i></button>'+
-										'<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">'+
-										' <li><a href="/wishlist/detail/' + data + '" data-rel="tooltip" title="" data-original-title="View" class="tooltip-info"><span class="blue"><i class="ace-icon fa fa-search-plus bigger-120"></i></span></a>'+
-										'<li><a href="/wishlist/edit/' + data + '" class="tooltip-success" data-rel="tooltip" title="" data-original-title="Edit">'+
-										'<span class="green"><i class="ace-icon fa fa-pencil-square-o bigger-120"></i></span></a></li>'+
-										'<li><a data-rel="tooltip" title="" data-original-title="Delete" data-id="' + data + '" class="delete_btn tooltip-error"><span class="red"><i class="ace-icon fa fa-trash-o bigger-120"></i></span></a></li>'+
-									'</ul></div></div>';
-								return content;  
-							}   
-						},
-						{	bSortable : false,  
-							visible : true, 
-							data : "_id",     
-							render : function(data, type, full) {  
-								var content = '<button class="buy-btn btn btn-xs btn-success" type="button" data-id="' + data + '")>实现</button>';
-								return content;  
-							}   
-						},
-					]
-			}).api();
+  #breadcrumbs.breadcrumbs
+    script(type="text/javascript").
+      try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+    ul.breadcrumb
+      li
+        i.ace-icon.fa.fa-home.home-icon
+        a(href="/index") 主页
+      li.active 
+        a(href="#") 心愿单列表
+  .page-content
+    include ../page
+    .page-content-area
+      .row
+        .col-xs-12
+          .table-header
+            | 心愿单列表
+          div
+            table#sample.table.table-striped.table-bordered.table-hover
+              thead
+                tr
+                  th.center
+                    label.position-relative
+                      input.ace(type='checkbox')
+                      span.lbl
+                  th 名字
+                  th 类型
+                  th.hidden-480 价格
+                  th 创建日期
+                  th 操作
+                  th 购买
+  script(src="/javascript/table.js")
+  script(type="text/javascript").
+    $(function() {
+      var lang = {
+        "sProcessing": "处理中...",
+        "sLengthMenu": "每页 _MENU_ 项",
+        "sZeroRecords": "没有匹配结果",
+        "sInfo": "当前显示第 _START_ 至 _END_ 项，共 _TOTAL_ 项。",
+        "sInfoEmpty": "当前显示第 0 至 0 项，共 0 项",
+        "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+        "sInfoPostFix": "",
+        "sSearch": "搜索:",
+        "sUrl": "",
+        "sEmptyTable": "表中数据为空",
+        "sLoadingRecords": "载入中...",
+        "sInfoThousands": ",",
+        "oPaginate": {
+          "sFirst": "首页",
+          "sPrevious": "上页",
+          "sNext": "下页",
+          "sLast": "末页",
+          "sJump": "跳转"
+        },
+        "oAria": {
+          "sSortAscending": ": 以升序排列此列",
+          "sSortDescending": ": 以降序排列此列"
+        }
+      };
+      var table = $("#sample").dataTable({
+          language:lang,  //提示信息
+          autoWidth: false,  //禁用自动调整列宽
+          processing: true,  //隐藏加载提示,自行处理
+          serverSide: true,  //启用服务器端分页
+          searching: true,  //禁用原生搜索
+          search: {
+            "search": ""
+          },
+          ordering:false,
+          renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
+          lengthChange: false,
+          pageLength:15,
+          rowId: '_id',
+          pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
+          columnDefs: [{
+            "targets": 'nosort',  //列的样式名
+            "orderable": false    //包含上样式名‘nosort’的禁止排序
+          }],
+          ajax: function (data, callback, settings) {
+            //封装请求参数
+            var param = {};
+            param.keyword = data.search.value;
+            param.limit = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
+            param.start = data.start;//开始的记录序号
+            param.page = (data.start / data.length)+1;//当前页码
+            //console.log(param);
+            //ajax请求数据
+            $.ajax({
+              type: "GET",
+              url: "/wishlist/result",
+              cache: false,  //禁用缓存
+              data: param,  //传入组装的参数
+              dataType: "json",
+              success: function (result) {
+                var returnData = {};
+                returnData.draw = data.draw;
+                returnData.recordsTotal = result.totalCount;
+                returnData.recordsFiltered = result.totalCount;
+                returnData.data = result.data;
+                callback(returnData);
+              }
+            });
+          },
+          //列表表头字段
+          columns: [ 
+            {  
+              className: "center",  
+              orderable : false,  
+              bSortable : false,  
+              data : "_id",  
+              render : function(data, type, row, meta) {  
+                var content = '<label class="position-relative">';  
+                content += '<input type="checkbox" class="ace" value="' + data + '" />';  
+                content += '<span class="lbl"></span>';  
+                content += '</label>';  
+                return content;  
+              }  
+            },
+            { "data": "name" },
+            { "data": "product_type" },
+            { "data": "price" },
+            { "data": "meta.createAt",
+              render:function(date,type,full) {
+                return date.slice(0,10);
+              }
+            },
+            { bSortable : false,  
+              visible : true, 
+              data : "_id",     
+              render : function(data, type, full) {  
+                var content = '<div class="hidden-sm hidden-xs action-buttons">'+
+                  '<a href="/wishlist/detail/' + data + '" class="blue">'+
+                    '<i class="ace-icon fa fa-search-plus bigger-130"></i>'+
+                  ' </a>'+
+                  '<a href="/wishlist/edit/' + data + '" class="blue">'+
+                    '<i class="ace-icon fa fa-pencil bigger-130"></i>'+
+                  ' </a>'+
+                  '<a href="javascript:void(0);" data-id="' + data + '" class="delete_btn red">'+
+                    '<i class="ace-icon fa fa-trash-o bigger-130"></i>'+
+                  '</a>'+
+                '</div>'+
+                  '<div class="hidden-md hidden-lg">'+
+                  '  <div class="inline position-relative">'+
+                  '    <button data-toggle="dropdown" data-position="auto" class="btn btn-minier btn-yellow dropdown-toggle"><i class="ace-icon fa fa-caret-down icon-only bigger-120"></i></button>'+
+                    '<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">'+
+                    ' <li><a href="/wishlist/detail/' + data + '" data-rel="tooltip" title="" data-original-title="View" class="tooltip-info"><span class="blue"><i class="ace-icon fa fa-search-plus bigger-120"></i></span></a>'+
+                    '<li><a href="/wishlist/edit/' + data + '" class="tooltip-success" data-rel="tooltip" title="" data-original-title="Edit">'+
+                    '<span class="green"><i class="ace-icon fa fa-pencil-square-o bigger-120"></i></span></a></li>'+
+                    '<li><a data-rel="tooltip" title="" data-original-title="Delete" data-id="' + data + '" class="delete_btn tooltip-error"><span class="red"><i class="ace-icon fa fa-trash-o bigger-120"></i></span></a></li>'+
+                  '</ul></div></div>';
+                return content;  
+              }   
+            },
+            { bSortable : false,  
+              visible : true, 
+              data : "_id",     
+              render : function(data, type, full) {  
+                var content = '<button class="buy-btn btn btn-xs btn-success" type="button" data-id="' + data + '")>实现</button>';
+                return content;  
+              }   
+            },
+          ]
+      }).api();
 
-			$('#sample').on('click','.buy-btn',function(e) {
-				var target = $(e.target);
-				var id = target.data('id');
-				var tr = target.closest('tr');
-				$.ajax({
-						type: 'GET',
-						url: '/wishlist/action/buy?id=' + id,
-					})
-					.success(function(results) {
-						if (results.success === 1) {
-							if (tr.length > 0) {
-								tr.remove()
-							}
-							bootbox.alert('购买成功！');
-						} else {
-							bootbox.alert('购买失败，请重试！');
-						}
-					})
-					.error(function(err) {
-						bootbox.alert(err)
-					});
-			});
-		});
+      $('#sample').on('click','.buy-btn',function(e) {
+        var target = $(e.target);
+        var id = target.data('id');
+        var tr = target.closest('tr');
+        $.ajax({
+            type: 'GET',
+            url: '/wishlist/buy?id=' + id,
+          })
+          .success(function(results) {
+            if (results.success === 1) {
+              if (tr.length > 0) {
+                tr.remove()
+              }
+              bootbox.alert('购买成功！');
+            } else {
+              bootbox.alert('购买失败，请重试！');
+            }
+          })
+          .error(function(err) {
+            bootbox.alert(err)
+          });
+      });
+    });
 
