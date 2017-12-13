@@ -10,7 +10,7 @@ const AccountSchema = new mongoose.Schema({
     type: String
   },
   password: String,
-  telphone: String,
+  telephone: String,
   email: String,
 
   // head_portrait: String,
@@ -23,10 +23,10 @@ const AccountSchema = new mongoose.Schema({
   // 0:normal user
   // 1:verified user
   // professonal user
-  // 
+  //
   // >10:super admin
   // >50:super super admin
-  // 
+  //
   role: {
     type: Number,
     default: 0

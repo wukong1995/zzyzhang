@@ -8,7 +8,7 @@ block content
 			li
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
-			li.active 
+			li.active
 				a(href="#") 借贷列表
 	.page-content
 		include ../page
@@ -107,22 +107,22 @@ block content
 						});
 					},
 					//列表表头字段
-					columns: [ 
-						{  
-							className: "center",  
-							orderable : false,  
-							bSortable : false,  
-							data : "_id",  
-							render : function(data, type, row, meta) {  
-								var content = '<label class="position-relative">';  
-								content += '<input type="checkbox" class="ace" value="' + data + '" />';  
-								content += '<span class="lbl"></span>';  
-								content += '</label>';  
-								return content;  
-							}  
-						},  
+					columns: [
+						{
+							className: "center",
+							orderable : false,
+							bSortable : false,
+							data : "_id",
+							render : function(data, type, row, meta) {
+								var content = '<label class="position-relative">';
+								content += '<input type="checkbox" class="ace" value="' + data + '" />';
+								content += '<span class="lbl"></span>';
+								content += '</label>';
+								return content;
+							}
+						},
 						{ "data": "other" },
-						{ "data": "telphone" },
+						{ "data": "telephone" },
 						{ "data": "price" },
 						{ "data": "type" ,
 							render:function(date,type,full) {
@@ -140,10 +140,10 @@ block content
 								return date.slice(0,10);
 							}
 						},
-						{	bSortable : false,  
-							visible : true, 
-							data : "_id",     
-							render : function(data, type, full) {  
+						{	bSortable : false,
+							visible : true,
+							data : "_id",
+							render : function(data, type, full) {
 								var content = '<div class="hidden-sm hidden-xs action-buttons">'+
 									'<a href="/borrowing/detail/' + data + '" class="blue">'+
 										'<i class="ace-icon fa fa-search-plus bigger-130"></i>'+
@@ -159,12 +159,12 @@ block content
 										' <li><a href="/borrowing/detail/' + data + '" data-rel="tooltip" title="" data-original-title="View" class="tooltip-info"><span class="blue"><i class="ace-icon fa fa-search-plus bigger-120"></i></span></a>'+
 										'<li><a data-rel="tooltip" title="" data-original-title="Delete" data-id="' + data + '" class="delete_btn tooltip-error"><span class="red"><i class="ace-icon fa fa-trash-o bigger-120"></i></span></a></li>'+
 									'</ul></div></div>';
-								return content;  
-							}   
-						} 
+								return content;
+							}
+						}
 					]
 			}).api();
-			
+
 		});
-		
+
 

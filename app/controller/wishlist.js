@@ -2,7 +2,13 @@ const _ = require('underscore');
 const Wishlist = require('../model/wishlist');
 const User = require('../model/account');
 const Payment = require('../model/payment');
-const Commen = require('./commen');
+const Joi = require('joi');
+
+const schema = Joi.object().keys({
+  name: Joi.string().alphanum().min(1).max(16).required(),
+  product_type: Joi.string().required(),
+  price: Joi.string().required().regex(/^\\d+(\\.\\d+)?$/),
+});
 
 exports.detail = function(req, res, next) {
   if (!req.params || !req.params.id) {
@@ -115,11 +121,11 @@ exports.save = function(req, res) {
     res.redirect('/wishlist/add');
     return;
   }
-  var wishlistObj = req.body.wishlist;
-  var id = wishlistObj._id;
+  const wishlistObj = req.body.wishlist;
+  const id = wishlistObj._id;
+  const { error } = Joi.validate(wishlistObj, schema);
 
-  if (wishlistObj.name == undefined || wishlistObj.price == undefined ||
-    wishlistObj.product_type == undefined) {
+  if (error !== null) {
     if (id) {
       res.redirect('/wishlist/edit/' + id);
     } else {
@@ -128,24 +134,6 @@ exports.save = function(req, res) {
     return;
   }
 
-  var result = Commen.checkField([
-    [wishlistObj.name, '/^[\\S]+$/', '名字不能为空'],
-    [wishlistObj.name, '/^.{1,16}$/', '名字长度为1-16位'],
-    [wishlistObj.product_type, '/^[\\S]+$/', '类型不能为空'],
-    [wishlistObj.price, '/^[\\S]+$/', '价格不能为空'],
-    [wishlistObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
-  ]);
-
-  if (result.flag === false) {
-    if (id) {
-      res.redirect('/wishlist/edit/' + id);
-    } else {
-      res.redirect('/wishlist/add');
-    }
-    return;
-  } else {
-    result = null;
-  }
   var _wishlist;
 
   if (id) {
@@ -324,137 +312,3 @@ exports.buy = function(req, res) {
   }
 };
 
-// App详情
-exports.detailMO = function(req, res) {
-  if (!req.params || !req.params.id) {
-    res.json({
-      success: 0,
-      msg: '无传递参数id'
-    });
-  }
-  Wishlist.findById(req.params.id, function(err, wishlist) {
-    res.json({
-      data: wishlist,
-      success: 1
-    });
-  });
-};
-
-// App保存
-exports.saveMO = function(req, res) {
-  if (!req.body) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: '缺少参数'
-    });
-    return;
-  }
-  var wishlistObj = req.body;
-
-  if (wishlistObj.name == undefined || wishlistObj.price == undefined ||
-    wishlistObj.product_type == undefined) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: '缺少参数'
-    });
-    return;
-  }
-
-  var result = Commen.checkField([
-    [wishlistObj.name, '/^[\\S]+$/', '资产不能为空'],
-    [wishlistObj.name, '/^.{1,16}$/', '资产长度为1-16位'],
-    [wishlistObj.product_type, '/^[\\S]+$/', '类型不能为空'],
-    [wishlistObj.price, '/^[\\S]+$/', '价格不能为空'],
-    [wishlistObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
-  ]);
-
-  if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: result.msg
-    });
-    return;
-  } else {
-    result = null;
-  }
-
-  var _wishlist;
-  var id = wishlistObj._id;
-
-  if (id) {
-    Wishlist.findById(id, function(err, wishlist) {
-      if (err) {
-        console.log(err);
-        res.json({
-          error_code: 1,
-          success: 0,
-          msg: '数据库保存出错'
-        });
-      }
-      _wishlist = _.extend(wishlist, wishlistObj);
-      _wishlist.save(function(err, wishlist) {
-        if (err) {
-          console.log(err);
-          res.json({
-            error_code: 1,
-            success: 0,
-            msg: '数据库保存出错'
-          });
-        }
-        res.json({
-          error_code: 0,
-          success: 1,
-          msg: '保存成功',
-          id: wishlist._id
-        });
-      });
-    });
-  } else {
-    var user_id = req.headers['token'];
-    wishlistObj.account = user_id;
-    _wishlist = new Wishlist(wishlistObj);
-    _wishlist.save(function(err, wishlist) {
-      if (err) {
-        console.log(err);
-        res.json({
-          error_code: 1,
-          success: 0,
-          msg: '数据库保存出错'
-        });
-      }
-
-      User.findById(user_id, function(err, user) {
-        if (err) {
-          console.log(err);
-          res.json({
-            error_code: 1,
-            success: 0,
-            msg: '数据未查询到用户'
-          });
-        }
-        user.wishlist.push(wishlist._id);
-        user.save(function(err) {
-          if (err) {
-            console.log(err);
-            res.json({
-              error_code: 0,
-              success: 0,
-              msg: '数据库保存出错'
-            });
-          }
-          res.json({
-            error_code: 0,
-            success: 1,
-            msg: '保存成功',
-            id: wishlist._id
-          });
-        });
-      });
-    });
-  }
-};
-
-// App端删除与PC端相同

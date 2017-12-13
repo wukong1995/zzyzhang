@@ -4,7 +4,7 @@ const ObjectId = Schema.Types.ObjectId;
 
 const BorrowingSchema = new mongoose.Schema({
   other: String,
-  telphone: Number,
+  telephone: Number,
   price: String,
   // 0 借出
   // 1 借入

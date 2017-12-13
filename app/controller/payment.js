@@ -1,8 +1,12 @@
-const mongoose = require('mongoose');
 const Payment = require('../model/payment');
 const User = require('../model/account');
-const Commen = require('./commen');
+const Joi = require('joi');
 
+const schema = Joi.object().keys({
+  name: Joi.string().alphanum().min(1).max(16).required(),
+  product_type: Joi.string().required(),
+  price: Joi.number().required().regex(/^\\d+(\\.\\d+)?$/),
+});
 
 exports.detail = function(req, res, next) {
   try {
@@ -139,31 +143,17 @@ exports.save = function(req, res) {
     res.redirect('/payment/add');
     return;
   }
-  var paymentObj = req.body.payment;
+  const paymentObj = req.body.payment;
 
-  if (paymentObj.type == undefined || paymentObj.name == undefined || paymentObj.product_type == undefined || paymentObj.price == undefined) {
+  const { error } = Joi.validate(paymentObj, schema);
+
+  if (error !== null) {
     res.redirect('/payment/add');
     return;
   }
 
-  var result = Commen.checkField([
-    [paymentObj.type, '/^[\\S]+$/', '类型不能为空'],
-    [paymentObj.name, '/^[\\S]+$/', '名字不能为空'],
-    [paymentObj.name, '/^.{1,16}$/', '名字为4-16位'],
-    [paymentObj.product_type, '/^[\\S]+$/', '类型不能为空'],
-    [paymentObj.price, '/^[\\S]+$/', '价格不能为空'],
-    [paymentObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
-  ]);
-
-  if (result.flag === false) {
-    res.redirect('/payment/add');
-    return;
-  } else {
-    result = null;
-  }
 
   var _payment;
-
   var user_id = req.session.user._id;
   paymentObj.account = user_id;
   _payment = new Payment(paymentObj);
@@ -242,170 +232,4 @@ exports.del = function(req, res) {
         });
     }
   });
-};
-
-
-// App详情
-exports.detailMO = function(req, res) {
-  if (!req.params || !req.params.id) {
-    res.json({
-      success: 0,
-      msg: '无传递参数id'
-    });
-    return;
-  }
-
-  Payment.findById(req.params.id, function(err, payment) {
-    res.json({
-      data: payment,
-      success: 1
-    });
-    return;
-  });
-};
-
-// App保存
-exports.saveMO = function(req, res) {
-  if (!req.body) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: '缺少参数'
-    });
-    return;
-  }
-  var paymentObj = req.body;
-
-  if (paymentObj.type == undefined || paymentObj.name == undefined || paymentObj.product_type == undefined || paymentObj.price == undefined) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: '缺少参数'
-    });
-    return;
-  }
-
-  var result = Commen.checkField([
-    [paymentObj.type, '/^[\\S]+$/', '类型不能为空'],
-    [paymentObj.name, '/^[\\S]+$/', '对方名字不能为空'],
-    [paymentObj.name, '/^.{1,16}$/', '对方名字为1-16位'],
-    [paymentObj.product_type, '/^[\\S]+$/', '类型电话不能为空'],
-    [paymentObj.price, '/^[\\S]+$/', '价格不能为空'],
-    [paymentObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
-  ]);
-
-  if (result.flag === false) {
-    res.json({
-      error_code: 0,
-      success: 0,
-      msg: result.msg
-    });
-    return;
-  } else {
-    result = null;
-  }
-  var _payment;
-
-  var user_id = req.headers['token'];
-  paymentObj.account = user_id;
-  _payment = new Payment(paymentObj);
-
-  _payment.save(function(err, payment) {
-    if (err) {
-      console.log(err);
-      res.json({
-        error_code: 1,
-        success: 0,
-        msg: '数据库保存出错'
-      });
-      return;
-    }
-
-    User.findById(user_id, function(err, user) {
-      if (err) {
-        console.log(err);
-        res.json({
-          error_code: 1,
-          success: 0,
-          msg: '数据未查询到用户'
-        });
-        return;
-      }
-      user.payment.push(payment._id);
-      user.save(function(err) {
-        if (err) {
-          console.log(err);
-          res.json({
-            error_code: 0,
-            success: 0,
-            msg: '数据库保存出错'
-          });
-          return;
-        }
-        res.json({
-          error_code: 0,
-          success: 1,
-          msg: '保存成功',
-          id: payment._id
-        });
-        return;
-      });
-    });
-  });
-};
-
-// App端删除与PC端相同
-
-// 查看月账单
-exports.monthBill = function(req, res) {
-  var year = new Date().getFullYear();
-  var month = new Date().getMonth() + 1;
-  var date = req.query.date;
-  if (date) {
-    year = date.split('-')[0];
-    month = date.split('-')[1];
-  }
-  date = new Date(year, month, 0);
-
-  Payment
-    .aggregate()
-    .match({
-      'meta.createAt': {
-        $gte: new Date(year + '-' + month + '-01'),
-        $lt: new Date(year + '-' + month + '-' + date.getDate())
-      },
-      'account': new mongoose.Types.ObjectId(req.session.user._id)
-    })
-    .group({
-      _id: '$type',
-      data: {
-        $sum: '$price'
-      }
-    })
-    .exec(function(err, payment) {
-      if (err) {
-        console.log(err);
-        res.json({
-          error_code: 1,
-          success: 0,
-          msg: '数据库查询出错'
-        });
-        return;
-      }
-      payment.forEach(function(item) {
-        if (item._id == 0) {
-          item.label = '收入(' + item.data + ')';
-        } else {
-          item.label = '支出(' + item.data + ')';
-        }
-      });
-
-      res.json({
-        error_code: 0,
-        success: 1,
-        msg: '查询成功',
-        data: payment
-      });
-      return;
-    });
 };

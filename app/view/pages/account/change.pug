@@ -10,7 +10,7 @@ block content
 				a(href="/index") 主页
 			li
 				a(href="/user/detail") 个人资料
-			li.active 
+			li.active
 				a(href="#") 修改资料
 	.page-content
 		include ../page
@@ -51,14 +51,14 @@ block content
 															if user.sex == 1
 																input.ace(type='radio',checked="checked",value="1",name="user[sex]")
 																span.lbl.middle  男
-															else 
+															else
 																input.ace(type='radio',value="1",name="user[sex]")
 																span.lbl.middle  男
 														label.inline
 															if user.sex == 2
 																input.ace(type='radio',checked="checked",value="2",name="user[sex]")
 																span.lbl.middle  女
-															else 
+															else
 																input.ace(type='radio',value="2",name="user[sex]")
 																span.lbl.middle  女
 												.space-4
@@ -82,7 +82,7 @@ block content
 													label.col-sm-3.control-label.no-padding-right(for='form-field-phone') 手机号
 													.col-sm-9
 														span.input-icon.input-icon-right
-															input#form-field-phone.input-xlarge(type='text',value=user.telphone,name="user[telphone]")
+															input#form-field-phone.input-xlarge(type='text',value=user.telephone,name="user[telephone]")
 															i.ace-icon.fa.fa-phone.fa-flip-horizontal
 												.space-4
 												.form-group

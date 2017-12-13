@@ -8,7 +8,7 @@ block content
 			li
 				i.ace-icon.fa.fa-home.home-icon
 				a(href="/index") 主页
-			li.active 
+			li.active
 				a(href="#") 用户列表
 	.page-content
 		include ../page
@@ -107,9 +107,9 @@ block content
 						});
 					},
 					//列表表头字段
-					columns: [ 
+					columns: [
 						{ "data": "name" },
-						{ "data": "telphone" },
+						{ "data": "telephone" },
 						{ "data": "email" },
 						{ "data": "role",
 							render:function(date,type,full) {
@@ -133,10 +133,10 @@ block content
 								return content;
 							}
 						},
-						{	bSortable : false,  
-							visible : true, 
-							data : "_id",     
-							render : function(data, type, full) {  
+						{	bSortable : false,
+							visible : true,
+							data : "_id",
+							render : function(data, type, full) {
 								var content = '<div class="hidden-sm hidden-xs action-buttons">'+
 									'<a href="/admin/detail/' + data + '" class="blue">'+
 										'<i class="ace-icon fa fa-search-plus bigger-130"></i>'+
@@ -153,9 +153,9 @@ block content
 										'<li><a href="javascript:void(0);" class="tooltip-success change_btn" data-rel="tooltip" title="" data-original-title="Edit" data-id="' + data + '" >'+
 										'<span class="green"><i class="ace-icon fa fa-pencil-square-o bigger-120"></i></span></a></li>'+
 									'</ul></div></div>';
-								return content;  
-							}   
-						} 
+								return content;
+							}
+						}
 					]
 			}).api();
 

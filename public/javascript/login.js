@@ -275,7 +275,7 @@ jQuery(function($) {
         data: {
           name: $('#new_name').val(),
           email: $('#new_email').val(),
-          telphone: $('#new_tel').val(),
+          telephone: $('#new_tel').val(),
           password: $('#new_pwd').val()
         },
         success: function(res) {
@@ -371,7 +371,7 @@ jQuery(function($) {
       data: {
         name: $('#forget_name').val(),
         email: $('#forget_email').val(),
-        telphone: $('#forget_tel').val()
+        telephone: $('#forget_tel').val()
       },
       success: function(res) {
         if (res.success == 1) {

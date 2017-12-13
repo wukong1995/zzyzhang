@@ -1,7 +1,12 @@
 const _ = require('underscore');
 const Assets = require('../model/assets');
 const User = require('../model/account');
-const Commen = require('./commen');
+const Joi = require('joi');
+const schema = Joi.object().keys({
+  name: Joi.string().alphanum().min(1).max(16).required(),
+  type: Joi.string().required(),
+  price: Joi.string().required().regex(/^\\d+(\\.\\d+)?$/),
+});
 
 exports.detail = function(req, res, next) {
   if (!req.params || !req.params.id) {
@@ -139,25 +144,14 @@ exports.save = function(req, res) {
     return;
   }
 
-  var result = Commen.checkField([
-    [assetsObj.name, '/^[\\S]+$/', '资产不能为空'],
-    [assetsObj.name, '/^.{1,16}$/', '资产长度为1-16位'],
-    [assetsObj.type, '/^[\\S]+$/', '类型不能为空'],
-    [assetsObj.price, '/^[\\S]+$/', '价格不能为空'],
-    [assetsObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
-  ]);
-
-  if (result.flag === false) {
+  const { error } = Joi.validate(assetsObj, schema.without('password'));
+  if (error !== null) {
     if (id) {
       res.redirect('/assets/edit/' + id);
     } else {
       res.redirect('/assets/add');
     }
-    return;
-  } else {
-    result = null;
   }
-  var _assets;
 
   if (id) {
     Assets.findById(id, function(err, assets) {
@@ -166,7 +160,7 @@ exports.save = function(req, res) {
         res.redirect('/assets/edit/' + id);
       }
 
-      _assets = _.extend(assets, assetsObj);
+      const _assets = _.extend(assets, assetsObj);
       _assets.save(function(err, assets) {
         if (err) {
           console.log(err);
@@ -180,7 +174,7 @@ exports.save = function(req, res) {
 
     var user_id = req.session.user._id;
     assetsObj.account = user_id;
-    _assets = new Assets(assetsObj);
+    const _assets = new Assets(assetsObj);
 
     _assets.save(function(err, assets) {
       if (err) {
@@ -286,9 +280,10 @@ exports.saveMO = function(req, res) {
     });
     return;
   }
-  var assetsObj = req.body;
+  const assetsObj = req.body;
+  const { error } = Joi.validate(assetsObj, schema);
 
-  if (assetsObj.name == undefined || assetsObj.type == undefined || assetsObj.price == undefined) {
+  if (error !== null) {
     if (id) {
       res.redirect('/assets/edit/' + id);
     } else {
@@ -297,26 +292,8 @@ exports.saveMO = function(req, res) {
     return;
   }
 
-  var result = Commen.checkField([
-    [assetsObj.name, '/^[\\S]+$/', '资产不能为空'],
-    [assetsObj.name, '/^.{1,16}$/', '资产长度为1-16位'],
-    [assetsObj.type, '/^[\\S]+$/', '类型不能为空'],
-    [assetsObj.price, '/^[\\S]+$/', '价格不能为空'],
-    [assetsObj.price, '/^\\d+(\\.\\d+)?$/', '价格只能为大于零的数']
-  ]);
-
-  if (result.flag === false) {
-    res.json({
-      error_code: 1,
-      success: 0,
-      msg: result.msg
-    });
-    return;
-  } else {
-    result = null;
-  }
   var _assets;
-  var id = assetsObj._id;
+  const id = assetsObj._id;
 
   if (id) {
     Assets.findById(id, function(err, assets) {
