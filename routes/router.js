@@ -150,14 +150,14 @@ module.exports = function(app) {
     // render the error page
     res.status(err.status || 500);
     if (err.status === 404) {
-      res.render('404.jade', {
+      res.render('404.pug', {
         title: '页面不存在'
       });
       return;
     }
 
     if (err) {
-      res.render('500.jade', {
+      res.render('500.pug', {
         title: '出错了'
       });
       return;

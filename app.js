@@ -40,8 +40,8 @@ db.on('close', function() {
 const port = process.env.PORT || 3000;
 
 app.set('port', port);
-app.set('views', path.join(__dirname, 'app/view/pages'));
 app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'app/view/pages'));
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
