@@ -10,7 +10,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
 /* 连接数据库 */
-const dbUrl = 'mongodb://wangpp:admin888@123.206.124.111:27017/account';
+const dbUrl = 'mongodb://127.0.0.1:27017/account';
 mongoose.connect(dbUrl, {
   server: {
     auto_reconnect: true
