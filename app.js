@@ -37,7 +37,7 @@ db.on('close', function() {
 });
 /* 连接数据库终 */
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 app.set('port', port);
 app.set('view engine', 'pug');
